@@ -1,0 +1,4183 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的行程規劃 - 疫後大丈夫 Steam 成就系統階梯旗艦版</title>
+<style>
+  :root {
+    --excel-green: #107c41;
+    --excel-green-dark: #0c5e31;
+    --excel-green-light: #e6f2ec;
+    --excel-header-bg: #f3f2f1;
+    --excel-border: #d4d4d4;
+    --excel-border-dark: #b3b3b3;
+    --excel-row-hover: #eef7ff;
+    --text-main: #201f1e;
+    --text-muted: #605e5c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Microsoft JhengHei", "PingFang TC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background-color: #faf9f8;
+    color: var(--text-main);
+    font-size: 12.5px;
+    padding-bottom: 50px;
+  }
+
+  /* 頂部工具列 */
+  .excel-topbar {
+    background-color: var(--excel-green);
+    color: #fff;
+    padding: 7px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+  .excel-title { font-weight: bold; font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
+  .editable-name { border-bottom: 1px dashed rgba(255,255,255,0.7); padding: 0 3px; outline: none; cursor: text; min-width: 1em; display: inline-block; }
+  .editable-name:focus { background: rgba(255,255,255,0.22); border-bottom-style: solid; border-radius: 2px; }
+  .welcome-banner { background: #fef9c3; color: #713f12; border-bottom: 1px solid #facc15; padding: 8px 14px; font-size: 13px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .welcome-banner button { cursor: pointer; border: 1px solid #ca8a04; background: #fff; border-radius: 4px; padding: 3px 10px; font-size: 12px; }
+  .share-banner { background: #ede9fe; color: #4c1d95; border-bottom: 1px solid #a78bfa; padding: 7px 14px; font-size: 13px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .share-banner a { color: #6d28d9; font-weight: 700; text-decoration: none; border: 1px solid #a78bfa; border-radius: 4px; padding: 2px 9px; background: #fff; }
+  body.share-mode .top-actions, body.share-mode .quick-add-bar, body.share-mode .col-act, body.share-mode thead th:last-child { display: none !important; }
+  body.share-mode [contenteditable], body.share-mode .cell-date-input { pointer-events: none; }
+  body.share-mode .editable-name { border-bottom: none; cursor: default; }
+  .badge-file { background: rgba(255,255,255,0.25); padding: 2px 7px; border-radius: 3px; font-size: 11px; }
+  .top-actions { display: flex; align-items: center; gap: 6px; }
+  .btn-tool {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-tool:hover { background: rgba(255,255,255,0.3); }
+  .btn-rescue { background: #d97706; border-color: #f59e0b; font-weight: bold; }
+  .btn-rescue:hover { background: #b45309; }
+
+  /* 置頂倒數看板 */
+  .next-trip-banner-box {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    color: #ecfdf5;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    border: 1.5px solid #34d399;
+    user-select: none;
+  }
+  .next-trip-badge-title {
+    background: #047857;
+    color: #a7f3d0;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .countdown-digits {
+    font-family: Consolas, monospace;
+    font-size: 14.5px;
+    font-weight: 900;
+    color: #fef08a;
+  }
+  .countdown-meta { font-size: 11.5px; color: #d1fae5; }
+
+  /* 動態權益看板 */
+  .quota-ribbon {
+    background: #ffffff;
+    border-bottom: 1px solid var(--excel-border-dark);
+    padding: 7px 14px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .quota-card {
+    border: 1px solid var(--excel-border);
+    border-left: 4px solid var(--excel-green);
+    background: #fcfcfc;
+    border-radius: 3px;
+    padding: 6px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .quota-card.card-hsbc { border-left-color: #d83b01; }
+  .quota-card.card-ctbc { border-left-color: #0078d4; }
+  .quota-card.card-trip { border-left-color: #8764b8; }
+  .quota-card.card-status { border-left-color: #0891b2; }
+
+  .quota-head { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 12px; }
+  .cycle-select { font-size: 11px; padding: 1px 3px; border: 1px solid #ccc; border-radius: 3px; background: #fff; color: #333; cursor: pointer; }
+  .quota-bars { display: flex; flex-direction: column; gap: 3px; }
+  .q-row { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; gap: 6px; }
+  .q-bar-wrap { flex: 1; height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden; max-width: 80px; }
+  .q-bar-fill { height: 100%; background: #107c41; transition: width 0.25s; }
+  .q-bar-fill.warn { background: #f59e0b; }
+  .q-bar-fill.danger { background: #dc2626; }
+  .q-badge { font-family: Consolas, monospace; font-weight: 700; padding: 0 4px; border-radius: 3px; font-size: 10.5px; }
+  .q-badge.ok { background: #dff6dd; color: #0f6b0f; }
+  .q-badge.full { background: #fff4ce; color: #8a5600; }
+  .q-badge.over { background: #fde7e9; color: #a80000; }
+  .quota-sub { font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e5e5e5; padding-top: 2px; }
+
+  /* 快速新增航段列 */
+  .quick-add-bar {
+    background: #eef7f1;
+    border-bottom: 1px solid #b7d8c4;
+    padding: 5px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .qa-title { font-weight: bold; color: var(--excel-green-dark); font-size: 12px; }
+  .qa-input { border: 1px solid #a3c4b1; border-radius: 2px; padding: 3px 6px; font-size: 12px; background: #fff; }
+  .qa-input:focus { outline: 2px solid var(--excel-green); }
+  .btn-qa-submit { background: var(--excel-green); color: #fff; border: none; padding: 4px 12px; border-radius: 2px; font-weight: bold; font-size: 12px; cursor: pointer; }
+  .btn-qa-submit:hover { background: var(--excel-green-dark); }
+
+  /* 篩選列 */
+  .filter-bar {
+    background: var(--excel-header-bg);
+    border-bottom: 1px solid var(--excel-border-dark);
+    padding: 4px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .year-buttons-container { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .filter-btn { border: 1px solid #ccc; background: #fff; color: #333; padding: 2px 8px; font-size: 11.5px; border-radius: 2px; cursor: pointer; }
+  .filter-btn.active { background: var(--excel-green); color: #fff; border-color: var(--excel-green-dark); font-weight: bold; }
+
+  /* 表格本體 */
+  .table-container { width: 100%; overflow-x: auto; background: #fff; }
+  table.excel-grid { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  table.excel-grid th {
+    position: sticky;
+    top: 36px;
+    background: var(--excel-green-light);
+    color: #0b4f28;
+    font-weight: 700;
+    border: 1px solid var(--excel-border-dark);
+    padding: 5px 6px;
+    text-align: center;
+    z-index: 20;
+    white-space: nowrap;
+  }
+  table.excel-grid td {
+    border: 1px solid var(--excel-border);
+    padding: 4px 6px;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  td.row-num { background: #f3f2f1; color: #605e5c; text-align: center; font-family: Consolas, monospace; font-size: 11px; width: 36px; }
+  tr.year-banner-row { cursor: pointer; user-select: none; }
+  tr.year-banner-row td {
+    background: #f4f6f5;
+    color: #0c5e31;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-top: 2px solid #a4c4b0 !important;
+    border-bottom: 2px solid #a4c4b0 !important;
+  }
+  tr.year-banner-row:hover td { background: #e6f1e9; }
+  .year-banner-inner { display:flex; align-items:center; gap:8px; width:100%; }
+  .bn-arrow { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: #0c5e31; font-size: 12px; font-weight: 900; }
+  .year-banner-title { font-weight:800; letter-spacing:.2px; font-size: 12.5px; }
+  .bn-count { font-weight: 400; color: #7a8a82; margin-left: 6px; font-size: 11px; }
+  .year-stat { margin-left:auto; display:flex; align-items:center; gap:6px; font-size:10.5px; font-weight:600; }
+  .year-stat-pill { border-radius:999px; padding:2px 7px; background:#e8ece9; color:#4b5c52; }
+  .year-stat-pill.real { background:#d9f7e6; color:#166534; }
+  .year-stat-pill.plan { background:#fff0d6; color:#92400e; }
+
+  tr.collapsed-hide { display: none !important; }
+
+  /* 成立狀態標籤 */
+  tr.data-row.confirmed-row td { background-color:#f7fcf9; }
+  tr.data-row.confirmed-row td:first-child { box-shadow: inset 3px 0 0 #16a34a; }
+  tr.data-row.planned-row td:first-child { box-shadow: inset 3px 0 0 #d97706; }
+  .reality-badge { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:1px 6px; font-size:10.5px; line-height:1.3; font-weight:700; white-space:nowrap; }
+  .reality-badge.confirmed { background:#dcfce7; color:#15803d; border:1px solid #86efac; }
+  .reality-badge.planned { background:#fef3c7; color:#b45309; border:1px solid #fde68a; }
+
+  .ui-btn { border: 1px solid #ccc; background: #fff; color: #333; padding: 2px 8px; font-size: 11.5px; border-radius: 2px; cursor: pointer; }
+  .ui-btn:hover { background: #f1f5f3; }
+  .ui-btn.on { background: #0369a1; color: #fff; border-color: #0284c7; font-weight: bold; }
+
+  /* 已過日期暗化 */
+  tr.data-row.past-row { opacity: 0.45; filter: grayscale(0.65); transition: opacity .15s; }
+  tr.data-row.past-row:hover, tr.data-row.past-row:focus-within { opacity: 0.95; filter: none; }
+
+  /* 閉環格子包覆樣式 */
+  tr.data-row.in-closed-loop td:not(.row-num) { background-color: #fafdfb; }
+  tr.data-row.in-closed-loop:hover td:not(.row-num) { background-color: #edf7f2 !important; }
+  tr.data-row.loop-start td:not(.row-num) { border-top: 2px solid #16a34a !important; }
+  tr.data-row.loop-start td.col-year { border-left: 2px solid #16a34a !important; }
+  tr.data-row.loop-body td.col-year { border-left: 2px solid #16a34a !important; }
+  tr.data-row.loop-end td:not(.row-num) { border-bottom: 2px solid #16a34a !important; }
+  tr.data-row.loop-end td.col-year { border-left: 2px solid #16a34a !important; }
+  tr.data-row.loop-single td:not(.row-num) { border-top: 2px solid #16a34a !important; border-bottom: 2px solid #16a34a !important; }
+  tr.data-row.loop-single td.col-year { border-left: 2px solid #16a34a !important; }
+
+  .trip-loop-tag {
+    display: inline-block;
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+    padding: 0 4px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-right: 4px;
+    font-family: Consolas, monospace;
+    user-select: none;
+  }
+  .trip-loop-tag.loop-finish { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+  .trip-loop-tag.loop-draft { background: #fef3c7; color: #b45309; border-color: #fde68a; }
+
+  /* 請假 >= 3天需申報警告 */
+  .trip-loop-tag.loop-report-warn {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-color: #f87171;
+    font-weight: 900;
+  }
+
+  /* 浮動提示卡片 (破框顯示) */
+  td.col-date {
+    width: 200px;
+    font-family: Consolas, monospace;
+    overflow: visible !important;
+  }
+  td.col-date.has-gap-tooltip {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .gap-hover-card {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 8px;
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+    border: 1.5px solid #38bdf8;
+    z-index: 1000;
+    pointer-events: none;
+    line-height: 1.45;
+    white-space: nowrap;
+  }
+  .gap-hover-card::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: #0f172a transparent transparent transparent;
+  }
+  .gap-hover-card.is-long {
+    border-color: #f59e0b;
+    box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+  }
+  .gap-hover-card .card-main-title {
+    font-weight: 800;
+    color: #38bdf8;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .gap-hover-card.is-long .card-main-title { color: #fbbf24; }
+  .gap-hover-card .card-sub-info {
+    color: #94a3b8;
+    font-size: 11px;
+    font-family: Consolas, monospace;
+    margin-top: 3px;
+  }
+
+  td.col-date.has-gap-tooltip:hover .gap-hover-card {
+    display: block !important;
+  }
+
+  /* 閉環間隔列 */
+  tr.inter-trip-gap-row { display: none; }
+  body.show-gaps tr.inter-trip-gap-row:not(.collapsed-hide) { display: table-row; }
+  
+  tr.inter-trip-gap-row td {
+    background: #f8fafc;
+    padding: 5px 12px;
+    border-left: 3px dashed #cbd5e1 !important;
+    border-right: 1px solid #e2e8f0;
+    border-top: 1px dashed #e2e8f0;
+    border-bottom: 1px dashed #e2e8f0;
+    color: #475569;
+    user-select: none;
+  }
+  .gap-row-content { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; }
+  .gap-left { display: flex; align-items: center; gap: 8px; }
+  .gap-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; font-family: Consolas, monospace; }
+  .gap-pill.normal { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+  .gap-pill.moderate { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+  .gap-pill.long-gap { background: #fef3c7; color: #92400e; border: 1.5px solid #f59e0b; font-weight: 900; }
+  .btn-insert-gap { border: 1px dashed #0284c7; background: #f0f9ff; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 700; }
+  .btn-insert-gap:hover { background: #bae6fd; }
+
+  /* 請假滿 3 天(含)以上紅字加粗 */
+  .col-leave.leave-over-three {
+    color: #dc2626 !important;
+    font-weight: 900 !important;
+    background-color: #fef2f2 !important;
+    letter-spacing: 0.3px;
+  }
+
+  /* 自訂外站票框線樣式 */
+  .ticket-custom-frame {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1.35;
+    user-select: none;
+    border: 1.5px solid transparent;
+  }
+  .frame-purple { background: #faf5ff; color: #6b21a8; border-color: #a855f7; }
+  .frame-cyan   { background: #ecfeff; color: #0e7490; border-color: #06b6d4; }
+  .frame-orange { background: #fff7ed; color: #c2410c; border-color: #fb923c; }
+  .frame-pink   { background: #fdf2f8; color: #be185d; border-color: #f472b6; }
+  .frame-yellow { background: #fefce8; color: #854d0e; border-color: #facc15; }
+
+  tr.data-row.ticket-active-glow td:not(.row-num) {
+    background-color: #fdf4ff !important;
+    outline: 2px solid #d946ef !important;
+    outline-offset: -1px;
+  }
+
+  /* 航空公司品牌徽章 */
+  .air-brand-pill { display: inline-flex; align-items: center; gap: 4px; padding: 1px 6px; border-radius: 3px; font-weight: 700; font-size: 11.5px; color: #fff; }
+  .air-cabin-mini { font-size: 9.5px; padding: 0 3px; border-radius: 2px; background: rgba(255,255,255,0.25); font-weight: normal; }
+  .air-ci   { background: #193c78; }
+  .air-eva  { background: #006837; }
+  .air-jx   { background: #4a3c31; color: #f5e6d3; }
+  .air-cx   { background: #006564; }
+  .air-jl   { background: #c8102e; }
+  .air-ke   { background: #006494; }
+  .air-tg   { background: #4b2882; }
+  .air-mh   { background: #002b66; }
+  .air-pr   { background: #0038a8; }
+  .air-vn   { background: #005f73; color: #fdf0d5; }
+  .air-bi   { background: #f59e0b; color: #000; }
+  .air-pg   { background: #0284c7; }
+  .air-it   { background: #f59e0b; color: #000; }
+  .air-tr   { background: #ffcc00; color: #222; }
+  .air-ak   { background: #ed1c24; }
+  .air-vj   { background: #e11d48; color: #ffeb3b; }
+  .air-sl   { background: #dc2626; }
+  .air-5j   { background: #ffdd00; color: #0077b6; }
+  .air-bc   { background: #002060; }
+  .air-tw   { background: #ea580c; }
+  .air-od   { background: #831843; }
+  .air-qg   { background: #16a34a; }
+  .air-def  { background: #52525b; }
+
+  /* 附加 BUFF 膠囊 */
+  .buff-container { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; min-height: 20px; }
+  .buff-chip { display: inline-flex; align-items: center; gap: 2px; padding: 1px 5px; border-radius: 3px; font-size: 11px; font-weight: 600; line-height: 1.35; border: 1px solid transparent; }
+  .buff-ci-gold     { background: #fff8e6; color: #945d00; border-color: #f5d380; }
+  .buff-biz-lounge  { background: #f5eeff; color: #5c2d91; border-color: #d5b8ff; }
+  .buff-hsbc-lounge { background: #fdebed; color: #a4262c; border-color: #f1abb3; }
+  .buff-hsbc-retired{ background: #efefef; color: #666666; border-color: #cccccc; }
+  .buff-ctbc-lounge { background: #e6f2fa; color: #005a9e; border-color: #99c9ef; }
+  .buff-jcb-lounge  { background: #e8f5e9; color: #1b5e20; border-color: #a5d6a7; }
+  .buff-trip-lounge { background: #eef0ff; color: #3949ab; border-color: #b0b9f0; }
+  .buff-transfer    { background: #e0f7fa; color: #006064; border-color: #80deea; }
+  .buff-guest       { background: #f3f2f1; color: #3b3a39; border-color: #c8c6c4; }
+  .buff-overquota   { background: #dc2626 !important; color: #fff !important; }
+
+  /* 欄位寬度 */
+  .col-year { width: 48px; text-align: center; font-family: Consolas, monospace; font-weight: 700; color: #0c5e31; }
+  .col-wk   { width: 40px; text-align: center; font-weight: 600; }
+  .col-route{ width: 95px; font-family: Consolas, monospace; font-weight: 700; text-align: center; }
+  .col-air  { width: 140px; }
+  .col-buff { width: 280px; cursor: pointer; }
+  .col-buff:hover { background: #e2f0e8 !important; }
+  .col-leave{ width: 48px; text-align: right; font-family: Consolas, monospace; font-weight: 600; }
+  .col-chan { width: 145px; }
+  .col-swipe{ width: 125px; text-align: center; font-family: Consolas, monospace; }
+  .col-act  { width: 85px; text-align: center; }
+
+  .editable-text { cursor: text; }
+  .editable-text:focus { background: #fff !important; outline: 2px solid var(--excel-green); padding: 2px 4px; }
+  
+  .cell-date-input {
+    border: none;
+    background: transparent;
+    font-family: Consolas, inherit;
+    font-size: 12px;
+    cursor: pointer;
+    width: 118px !important;
+    padding: 1px 2px;
+    color: inherit;
+  }
+  .cell-date-input:focus { outline: 1px solid var(--excel-green); background: #fff; }
+
+  .wk-sat { color: #0066cc; background: #f0f7ff; border-radius: 2px; padding: 0 4px; }
+  .wk-sun { color: #d13438; background: #fdf3f4; border-radius: 2px; padding: 0 4px; }
+  .row-actions { display: inline-flex; align-items: center; gap: 3px; }
+  .act-btn { border: 1px solid #ccc; background: #fff; padding: 1px 5px; border-radius: 3px; font-size: 11px; cursor: pointer; }
+  .act-btn:hover { background: #f0f0f0; }
+  .act-btn.del:hover { background: #fee2e2; color: #c00; }
+
+  .channel-cell-wrap { display: flex; align-items: center; gap: 4px; justify-content: space-between; }
+  .channel-text { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+
+  /* 底部 Excel 工作表分頁（Sheet Tabs） */
+  .sheet-tabs-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 100%;
+  }
+  .sheet-tab-btn {
+    background: #d4d4d4;
+    color: #444;
+    border: 1px solid #b3b3b3;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 25px;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .sheet-tab-btn:hover { background: #e5e5e5; }
+  .sheet-tab-btn.active {
+    background: #ffffff;
+    color: var(--excel-green-dark);
+    border-top: 3px solid var(--excel-green);
+    height: 28px;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.08);
+  }
+
+  /* Steam 成就室專屬版面 */
+  #view-achievements {
+    display: none;
+    padding: 16px 20px;
+    background: #0f172a;
+    color: #f8fafc;
+    min-height: calc(100vh - 80px);
+  }
+  body.tab-achievements #view-schedule { display: none; }
+  body.tab-achievements #view-achievements { display: block; }
+  body.tab-achievements .quota-ribbon,
+  body.tab-achievements .quick-add-bar,
+  body.tab-achievements .filter-bar { display: none !important; }
+
+  .agent-profile-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1.5px solid #334155;
+    border-radius: 12px;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    margin-bottom: 20px;
+  }
+  .agent-left { display: flex; align-items: center; gap: 14px; }
+  .agent-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #107c41, #0284c7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    border: 2px solid #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+  }
+  .agent-title-main { font-size: 18px; font-weight: 900; color: #f8fafc; letter-spacing: 0.5px; }
+  .agent-rank-badge {
+    background: #0369a1;
+    color: #e0f2fe;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-top: 4px;
+    border: 1px solid #38bdf8;
+  }
+  .agent-metrics-grid { display: flex; gap: 24px; }
+  .agent-metric-item { text-align: right; }
+  .agent-metric-val { font-family: Consolas, monospace; font-size: 20px; font-weight: 900; color: #38bdf8; }
+  .agent-metric-label { font-size: 11px; color: #94a3b8; }
+
+  .achieve-category-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #e2e8f0;
+    margin: 24px 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 6px;
+  }
+  .achieve-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 12px;
+  }
+
+  .steam-badge-card {
+    background: #1e293b;
+    border: 1.5px solid #334155;
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .steam-badge-card.unlocked {
+    background: linear-gradient(135deg, #1e293b 0%, #1e3a5f 100%);
+    border-color: #38bdf8;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+  }
+  .steam-badge-card.planned {
+    background: #1e293b;
+    border-color: #64748b;
+    border-style: dashed;
+  }
+  .steam-badge-card.locked {
+    opacity: 0.5;
+    filter: grayscale(0.9);
+  }
+
+  .badge-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: #0f172a;
+    border: 1.5px solid #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .steam-badge-card.unlocked .badge-icon-box {
+    border-color: #facc15;
+    background: #854d0e;
+    box-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
+  }
+
+  .steam-badge-card.locked.has-progress { opacity: 0.85; filter: grayscale(0.4); }
+  .badge-progress { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
+  .badge-progress-track { flex: 1; height: 7px; background: #0f172a; border: 1px solid #334155; border-radius: 4px; overflow: hidden; }
+  .badge-progress-fill { height: 100%; background: linear-gradient(90deg, #0ea5e9, #38bdf8); border-radius: 3px; }
+  .steam-badge-card.unlocked .badge-progress-fill { background: linear-gradient(90deg, #eab308, #facc15); }
+  .steam-badge-card.planned .badge-progress-fill { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .badge-progress-text { font-size: 10.5px; color: #cbd5e1; font-family: Consolas, monospace; white-space: nowrap; }
+  .badge-text-box { flex: 1; }
+  .badge-name { font-size: 13px; font-weight: 800; color: #f8fafc; margin-bottom: 2px; }
+  .steam-badge-card.unlocked .badge-name { color: #fef08a; }
+  .badge-desc { font-size: 11px; color: #94a3b8; line-height: 1.35; }
+  .badge-status-pill {
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 800;
+    font-family: Consolas, monospace;
+  }
+  .badge-status-pill.unlocked { background: #065f46; color: #6ee7b7; border: 1px solid #10b981; }
+  .badge-status-pill.planned { background: #1e3a8a; color: #93c5fd; border: 1px solid #3b82f6; }
+  .badge-status-pill.locked { background: #334155; color: #94a3b8; }
+
+  /* 彈出式點選器 */
+  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 100; align-items: center; justify-content: center; }
+  .modal-backdrop.open { display: flex; }
+  .modal-box { background: #fff; border: 1px solid var(--excel-border-dark); border-top: 4px solid var(--excel-green); border-radius: 4px; width: 580px; max-width: 95vw; box-shadow: 0 10px 25px rgba(0,0,0,0.25); max-height: 85vh; display: flex; flex-direction: column; }
+  .mb-head { background: #f3f2f1; padding: 8px 14px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+  .mb-body { padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+  .mb-foot { background: #f8f8f8; padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #ddd; }
+  .bm-section-title { font-size: 12px; font-weight: 700; color: #333; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 3px; display: flex; justify-content: space-between; }
+  .bm-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .bm-option { border: 1px solid #d4d4d4; border-radius: 3px; padding: 5px 8px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; background: #fafafa; user-select: none; }
+  .bm-option:hover { background: #f0f7ff; border-color: #0078d4; }
+  .bm-option.selected { background: #e6f2ec; border-color: var(--excel-green); font-weight: bold; }
+  .bm-opt-quota { font-family: Consolas, monospace; font-size: 10.5px; padding: 0 4px; border-radius: 2px; background: #eaeaea; }
+  .bm-opt-quota.rem-ok { background: #dff6dd; color: #107c10; }
+  .bm-opt-quota.rem-zero { background: #fde7e9; color: #c00; }
+  .color-picker-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+  .color-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+  .color-dot.selected { border-color: #000; transform: scale(1.15); }
+  .dot-purple { background: #a855f7; }
+  .dot-cyan   { background: #06b6d4; }
+  .dot-orange { background: #fb923c; }
+  .dot-pink   { background: #f472b6; }
+  .dot-yellow { background: #facc15; }
+
+  .excel-bottombar { position: fixed; bottom: 0; left: 0; right: 0; background: #e1dfdd; border-top: 1px solid var(--excel-border-dark); display: flex; align-items: center; justify-content: space-between; height: 30px; padding: 0 10px; font-size: 11.5px; font-family: Consolas, monospace; z-index: 40; }
+  .quota-card.card-off { opacity: 0.55; }
+  .bmgr-row { border:1px solid #d4d4d4; border-left:4px solid var(--excel-green); border-radius:3px; padding:8px 10px; background:#fcfcfc; display:flex; flex-direction:column; gap:6px; }
+  .bmgr-row.off { border-left-color:#999; background:#f3f3f3; }
+  .bmgr-line { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+  .bmgr-line label { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:#333; }
+  .bmgr-tag { font-size:10.5px; padding:0 5px; border-radius:3px; background:#e6f2ec; color:#0c5e31; }
+  .bmgr-tag.custom { background:#eef0ff; color:#3949ab; }
+  .bmgr-hint { font-size:11px; color:#777; }
+</style>
+</head>
+<body>
+
+  <!-- 頂部工具列 -->
+  <div class="excel-topbar">
+    <div class="excel-title">
+      <span>📊 個人規劃.xlsx — <span id="userNameEl" class="editable-name" contenteditable="true" spellcheck="false" title="點一下可編輯名稱 (Enter 儲存)"></span>的行程</span>
+      <span class="badge-file">Steam 成就 ＋ 階梯翻倍版</span>
+      
+      <!-- 置頂倒數跑馬燈 -->
+      <div class="next-trip-banner-box" id="nextTripTicker">
+        <span class="next-trip-badge-title">🚀 下一趟出發倒數</span>
+        <span class="countdown-digits" id="nextTripCountdown">計算中...</span>
+        <span class="countdown-meta" id="nextTripMeta"></span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn-tool" style="background:#0078d4;" onclick="openBenefitMgr()">⚙️ 權益管理</button>
+      <button class="btn-tool btn-rescue" onclick="exportJSON()">📥 匯出 JSON 備份檔</button>
+      <button class="btn-tool" style="background:#7c3aed;" onclick="exportJSON(true)" title="產生 share.json，上傳到網站後，朋友就能用唯讀頁看到最新資料">🌐 匯出分享版 share.json</button>
+      <button class="btn-tool" style="background:#7c3aed;" onclick="copyShareLink()">🔗 複製分享連結</button>
+      <button class="btn-tool btn-rescue" onclick="triggerImportJSON()">📤 匯入 JSON 檔還原</button>
+      <input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="handleJSONFile(event)">
+      <button class="btn-tool" style="background:#15803d; font-weight:bold;" onclick="exportOriginalExcelCSV()">📥 匯出原生格式 CSV</button>
+      <button class="btn-tool" style="background:#dc2626;" onclick="resetData()">🔄 還原預設</button>
+    </div>
+  </div>
+
+  <!-- 分頁 1：行程規劃表格總覽 (view-schedule) -->
+  <div id="view-schedule">
+    <div class="quota-ribbon" id="quotaRibbon">
+      <div class="quota-card card-hsbc" id="qc-hsbc">
+        <div class="quota-head">
+          <span>🦁 匯豐旅人無限卡</span>
+          <select class="cycle-select" id="selHsbcCycle" onchange="renderTable()"></select>
+        </div>
+        <div class="quota-bars" id="bars-hsbc"></div>
+        <div class="quota-sub">
+          <span id="note-hsbc">每年 7/1 重置</span>
+          <span id="sub-hsbc"></span>
+        </div>
+      </div>
+
+      <div class="quota-card card-ctbc" id="qc-ctbc">
+        <div class="quota-head">
+          <span>✈️ 中信華航聯名卡</span>
+          <select class="cycle-select" id="selCtbcCycle" onchange="renderTable()"></select>
+        </div>
+        <div class="quota-bars" id="bars-ctbc"></div>
+        <div class="quota-sub">
+          <span id="note-ctbc">每年 1/1 重置</span>
+          <span id="sub-ctbc"></span>
+        </div>
+      </div>
+
+      <div class="quota-card card-trip" id="qc-trip">
+        <div class="quota-head">
+          <span>💎 Trip.com 鑽石貴賓室</span>
+          <select class="cycle-select" id="selTripCycle" onchange="renderTable()"></select>
+        </div>
+        <div class="quota-bars" id="bars-trip"></div>
+        <div class="quota-sub">
+          <span id="note-trip">每年 8/1 重置</span>
+          <span id="sub-trip"></span>
+        </div>
+      </div>
+
+      <div class="quota-card card-status">
+        <div class="quota-head">
+          <span>👑 華航金卡 / JCB / 🔗 外站套票</span>
+          <span style="font-size:11px; color:#0e7490; font-weight:700;" id="label-status-yr">全表統計</span>
+        </div>
+        <div class="quota-bars" id="bars-status"></div>
+        <div class="quota-sub">
+          <span>點擊外站標籤可觸發跨趟連動高亮</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 快速新增航段列 -->
+    <div class="quick-add-bar">
+      <span class="qa-title">➕ 快速新增航段：</span>
+      <input type="date" id="qaDate" class="qa-input" title="飛行日期">
+      <input type="text" id="qaRoute" class="qa-input" placeholder="航線 (如 TPE-NRT)" style="width:115px;">
+      <input type="text" id="qaAir" class="qa-input" placeholder="航司 (如 華航)" style="width:120px;">
+      <input type="text" id="qaBuff" class="qa-input" placeholder="附加福利 (如 匯豐無貴)" style="width:150px;">
+      <input type="number" step="0.5" id="qaLeave" class="qa-input" placeholder="請假" style="width:55px;">
+      <input type="text" id="qaChan" class="qa-input" placeholder="購票方式 (有填算成立)" style="width:145px;">
+      <button class="btn-qa-submit" onclick="quickAddFlight()">插入行程表 ↵</button>
+      <span style="font-size:11.5px; color:#3b6e4d; margin-left:auto;">
+        🔴 <b>請假滿 3 天(含)以上標紅加粗</b>；滑鼠移到 <b>🛬 回台</b> 或日期區間浮現距下趟天數！
+      </span>
+    </div>
+
+    <!-- 篩選列 -->
+    <div class="filter-bar">
+      <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+        <input type="text" class="qa-input" id="searchInput" placeholder="🔍 搜尋航線、航司、福利..." oninput="renderTable()" style="width:170px;">
+        <div class="year-buttons-container" id="yearButtonsBar"></div>
+        <button class="filter-btn" style="background:#f5f3ff; color:#6b21a8; border-color:#c084fc;" onclick="filterCustomFrames()">🔗 只看套票組</button>
+        <span style="width:1px; height:16px; background:#bbb; display:inline-block; margin:0 3px;"></span>
+        <button class="ui-btn" id="btnToggleGaps" onclick="toggleShowGaps()" title="在表格中展開/隱藏每一趟出國之間的空檔天數橫條">⏳ 顯示閉環間隔列 (開/關)</button>
+        <span style="width:1px; height:16px; background:#bbb; display:inline-block; margin:0 3px;"></span>
+        <button class="ui-btn" onclick="setCollapseMode('open')" title="展開所有年度">📂 展開全部</button>
+        <button class="ui-btn" onclick="setCollapseMode('past')" title="收合今年以前的歷史年度">📁 收合歷史年度</button>
+        <button class="ui-btn" onclick="setCollapseMode('all')" title="將所有年度收合成標題橫條">📁 全部收合</button>
+        <span style="width:1px; height:16px; background:#bbb; display:inline-block; margin:0 3px;"></span>
+        <button class="ui-btn" id="btnDimPast" onclick="toggleDimPast()" title="把已經過去的日期整列變暗">🌙 暗化已過日期</button>
+      </div>
+    </div>
+
+    <!-- 表格主體 -->
+    <div class="table-container">
+      <table class="excel-grid">
+        <thead>
+          <tr>
+            <th style="width:36px;">#</th>
+            <th style="width:48px;">年度</th>
+            <th style="width:200px;">日期 (綠框代表閉環)</th>
+            <th style="width:40px;">星期</th>
+            <th style="width:95px;">航班 (航線)</th>
+            <th style="width:140px;">航空公司 (代表色)</th>
+            <th style="width:280px;">附加 BUFF (點擊選取福利 & 自動編號)</th>
+            <th style="width:48px;">請假</th>
+            <th style="width:145px;">購票方式 (填寫即成立)</th>
+            <th style="width:125px;">刷卡日 (選填)</th>
+            <th style="width:85px;">操作</th>
+          </tr>
+        </thead>
+        <tbody id="gridBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 分頁 2：疫後大丈夫 Steam 成就室 (view-achievements) -->
+  <div id="view-achievements">
+    <div class="agent-profile-card">
+      <div class="agent-left">
+        <div class="agent-avatar">✈️</div>
+        <div>
+          <div class="agent-title-main" id="agentRankTitle">飛行特工 · 旅人</div>
+          <div class="agent-rank-badge" id="agentBadgeLevel">Lv.1 新手拓荒者</div>
+        </div>
+      </div>
+      <div class="agent-metrics-grid">
+        <div class="agent-metric-item">
+          <div class="agent-metric-val" id="metricAchieveCount">0 / 0</div>
+          <div class="agent-metric-label">🏆 成就點亮進度</div>
+        </div>
+        <div class="agent-metric-item">
+          <div class="agent-metric-val" id="metricCountryCount">0 / 18</div>
+          <div class="agent-metric-label">🗺️ 亞洲國家解鎖率</div>
+        </div>
+        <div class="agent-metric-item">
+          <div class="agent-metric-val" id="metricBizCount">0 腿</div>
+          <div class="agent-metric-label">🥂 商務平躺實戰</div>
+        </div>
+        <div class="agent-metric-item">
+          <div class="agent-metric-val" id="metricLegCount">0 腿</div>
+          <div class="agent-metric-label">✈️ 累積實飛腿數</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 成就動態渲染容器 -->
+    <div id="achievementsContainer"></div>
+  </div>
+
+  <!-- 底部固定狀態列 ＆ Sheet Tabs 工作表切換列 -->
+  <div class="excel-bottombar">
+    <div class="sheet-tabs-container">
+      <div class="sheet-tab-btn active" id="tabBtnSchedule" onclick="switchMainTab('schedule')">📑 <span class="user-name-slot">旅人</span>的行程</div>
+      <div class="sheet-tab-btn" id="tabBtnAchievements" onclick="switchMainTab('achievements')">🏆 疫後大丈夫 成就室</div>
+    </div>
+    <span id="statusSummary">載入中...</span>
+  </div>
+
+  <!-- 彈出式點選器 -->
+  <div class="modal-backdrop" id="buffModal">
+    <div class="modal-box">
+      <div class="mb-head">
+        <span id="buffModalTitle">🎯 設定航段福利與外站套票</span>
+        <button class="act-btn" onclick="closeBuffModal()">✕</button>
+      </div>
+      <div class="mb-body">
+        <div>
+          <div class="bm-section-title">
+            <span>🏷️ 自訂外站票框線（同色或同名稱將跨趟同步高亮）</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span>選擇框線色：</span>
+              <div class="color-picker-row" style="margin-top:0;">
+                <div class="color-dot dot-purple selected" onclick="selectFrameColor('purple', this)" title="紫羅蘭色"></div>
+                <div class="color-dot dot-cyan" onclick="selectFrameColor('cyan', this)" title="電光青色"></div>
+                <div class="color-dot dot-orange" onclick="selectFrameColor('orange', this)" title="活力橙色"></div>
+                <div class="color-dot dot-pink" onclick="selectFrameColor('pink', this)" title="珊瑚粉色"></div>
+                <div class="color-dot dot-yellow" onclick="selectFrameColor('yellow', this)" title="金絲雀黃"></div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span>套票名稱：</span>
+              <input type="text" id="frameLabelInput" class="qa-input" style="flex:1;" placeholder="例如：長榮套票 或 日航外站 (可自訂)">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="bm-section-title">
+            <span>📊 扣額度福利（自動編號並扣減週期額度）</span>
+            <span style="font-size:11px; color:#107c41;" id="bmCycleHint"></span>
+          </div>
+          <div class="bm-grid" id="bmQuotaOptions"></div>
+        </div>
+
+        <div>
+          <div class="bm-section-title">
+            <span>👑 會籍 / 商務艙自帶福利（不扣信用卡次數）</span>
+          </div>
+          <div class="bm-grid" id="bmUnlimitedOptions"></div>
+        </div>
+
+        <div>
+          <div class="bm-section-title">
+            <span>🤝 特殊情形（免扣自己額度）</span>
+          </div>
+          <div class="bm-grid" id="bmSpecialOptions"></div>
+        </div>
+
+        <div>
+          <div class="bm-section-title">
+            <span>✍️ 完整福利字串編輯</span>
+          </div>
+          <input type="text" id="bmRawInput" class="qa-input" style="width:100%; padding:5px 8px;">
+        </div>
+      </div>
+      <div class="mb-foot">
+        <button class="act-btn del" onclick="clearCurrentBuff()">🧹 清空福利與套框</button>
+        <div style="display:flex; gap:6px;">
+          <button class="act-btn" onclick="closeBuffModal()">取消</button>
+          <button class="btn-qa-submit" onclick="saveBuffModal()">✅ 套用並重算</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 權益管理視窗 -->
+  <div class="modal-backdrop" id="benefitMgrModal">
+    <div class="modal-box" style="width:880px;">
+      <div class="mb-head">
+        <span>⚙️ 附加權益管理（停用 / 刪除 / 調整次數）</span>
+        <button class="act-btn" onclick="closeBenefitMgr()">✖</button>
+      </div>
+      <div class="mb-body" id="bmgrBody"></div>
+      <div class="mb-foot">
+        <div style="display:flex; gap:6px;">
+          <button class="btn-qa-submit" onclick="addCustomBenefit()">➕ 新增自訂權益</button>
+          <button class="act-btn" onclick="restoreDefaultBenefits()">↩️ 還原內建權益預設值</button>
+        </div>
+        <button class="btn-qa-submit" onclick="closeBenefitMgr()">完成</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const SafeStorage = {
+  get: function(key) {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) return window.localStorage.getItem(key);
+    } catch (e) {}
+    return null;
+  },
+  set: function(key, val) {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) window.localStorage.setItem(key, val);
+    } catch (e) {}
+  },
+  remove: function(key) {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) window.localStorage.removeItem(key);
+    } catch (e) {}
+  }
+};
+
+// ── 唯讀分享模式：網址加 ?view=share，只讀取 share.json 顯示，不讀也不寫這個瀏覽器自己的資料 ──
+const IS_SHARE = new URLSearchParams(location.search).get('view') === 'share';
+if (IS_SHARE) {
+  SafeStorage.get = () => null;
+  SafeStorage.set = () => {};
+  SafeStorage.remove = () => {};
+  document.body.classList.add('share-mode');
+}
+
+// 範例資料 (第一次開啟時顯示)。你自己的行程請用「匯入 JSON」還原，或直接在表格中新增。
+const INITIAL_DATA = [
+  {"section_year":2025,"date":"2025-03-14","route":"TPE-NRT","airline":"星宇","buff":"匯豐無貴1","leave":1,"channel":"官網","swipe_date":""},
+  {"section_year":2025,"date":"2025-03-16","route":"NRT-TPE","airline":"星宇","buff":"","leave":"","channel":"官網","swipe_date":""},
+  {"section_year":2025,"date":"2025-06-20","route":"TPE-BKK","airline":"華航","buff":"華航金卡貴賓室","leave":2,"channel":"TRIP","swipe_date":""},
+  {"section_year":2025,"date":"2025-06-21","route":"BKK-CNX","airline":"曼航","buff":"","leave":"","channel":"TRIP","swipe_date":""},
+  {"section_year":2025,"date":"2025-06-24","route":"CNX-BKK","airline":"曼航","buff":"","leave":"","channel":"TRIP","swipe_date":""},
+  {"section_year":2025,"date":"2025-06-26","route":"BKK-TPE","airline":"華航","buff":"華航金卡貴賓室","leave":"","channel":"TRIP","swipe_date":""},
+  {"section_year":2025,"date":"2025-10-03","route":"TPE-ICN","airline":"大韓(商)","buff":"貴賓室","leave":0,"channel":"哩程/國泰","swipe_date":""},
+  {"section_year":2025,"date":"2025-10-07","route":"ICN-TPE","airline":"大韓(商)","buff":"貴賓室","leave":"","channel":"哩程/國泰","swipe_date":""},
+  {"section_year":2027,"date":"2027-01-08","route":"TPE-KIX","airline":"虎航","buff":"","leave":2,"channel":"","swipe_date":""},
+  {"section_year":2027,"date":"2027-01-12","route":"KIX-TPE","airline":"虎航","buff":"","leave":"","channel":"","swipe_date":""}
+];
+
+
+const INITIAL_BENEFITS = [
+  {"enabled":true,"endDate":"","offsets":{},"mode":"prefix","keywords":["匯豐無貴"],"limit":8,"cycleType":"JUL","cls":"buff-hsbc-lounge","group":"HSBC","unit":"貴","builtin":true,"id":"HSBC_INF_LOUNGE","name":"🦁 匯豐無限貴賓室","short":"無限貴賓室"},
+  {"enabled":true,"endDate":"","offsets":{},"mode":"prefix","keywords":["匯豐無接","匯豐無送"],"limit":4,"cycleType":"JUL","cls":"buff-transfer","group":"HSBC","unit":"接","builtin":true,"id":"HSBC_INF_TRANS","name":"🚐 匯豐無限接送","short":"無限接送"},
+  {"enabled":true,"endDate":"2026-10-31","offsets":{},"mode":"prefix","keywords":["中信指定貴賓室"],"limit":4,"cycleType":"JAN","cls":"buff-ctbc-lounge","group":"CTBC","unit":"貴","builtin":true,"id":"CTBC_LOUNGE","name":"✈️ 中信指定貴賓室","short":"指定貴賓室"},
+  {"enabled":true,"endDate":"","offsets":{},"mode":"prefix","keywords":["中信接送"],"limit":2,"cycleType":"JAN","cls":"buff-transfer","group":"CTBC","unit":"接","builtin":true,"id":"CTBC_TRANS","name":"🚐 中信華航接送","short":"接送"},
+  {"enabled":true,"endDate":"","offsets":{},"mode":"prefix","keywords":["trip貴賓室鑽石"],"limit":2,"cycleType":"AUG","cls":"buff-trip-lounge","group":"TRIP","unit":"次","builtin":true,"id":"TRIP_DIA_LOUNGE","name":"💎 Trip鑽石貴賓室","short":"鑽石貴賓室"},
+  {"enabled":true,"endDate":"","offsets":{},"mode":"contains","keywords":["JCB"],"limit":4,"cycleType":"JAN","cls":"buff-jcb-lounge","group":"STATUS","unit":"次","builtin":true,"id":"JCB_LOUNGE","name":"💳 JCB免費貴賓室","short":"JCB貴賓室","modalToken":"JCB貴賓室"}
+];
+
+const STORAGE_KEY = 'heng_itinerary_v20_tiered_legends';
+const NAME_KEY = 'heng_itinerary_username';
+const DEFAULT_NAME = '旅人';
+let userName = (SafeStorage.get(NAME_KEY) || DEFAULT_NAME);
+function cleanName(s) { return String(s || '').replace(/[\r\n]+/g, ' ').trim().slice(0, 12) || DEFAULT_NAME; }
+function applyUserName() {
+  const el = document.getElementById('userNameEl');
+  if (el && document.activeElement !== el) el.textContent = userName;
+  document.querySelectorAll('.user-name-slot').forEach(n => n.textContent = userName);
+  document.title = `${userName}的行程規劃${IS_SHARE ? '（唯讀）' : ''} - 疫後大丈夫 Steam 成就系統階梯旗艦版`;
+  const rk = document.getElementById('agentRankTitle');
+  if (rk && (rk.textContent || '').includes(' · ')) rk.textContent = rk.textContent.split(' · ')[0] + ' · ' + userName;
+}
+function setUserName(raw) {
+  userName = cleanName(raw);
+  SafeStorage.set(NAME_KEY, userName);
+  applyUserName();
+}
+function safeFileName(s) { return String(s).replace(/[\\/:*?"<>|]/g, '_'); }
+let flightData;
+
+const cached = SafeStorage.get(STORAGE_KEY);
+const IS_FIRST_VISIT = !cached;
+if (cached) {
+  try {
+    const parsed = JSON.parse(cached);
+    if (Array.isArray(parsed) && parsed.length >= 1) flightData = parsed;
+    else flightData = JSON.parse(JSON.stringify(INITIAL_DATA));
+  } catch (e) {
+    flightData = JSON.parse(JSON.stringify(INITIAL_DATA));
+  }
+} else {
+  flightData = JSON.parse(JSON.stringify(INITIAL_DATA));
+}
+if (IS_SHARE) flightData = [];   // 分享模式：先清空，等 share.json 載入後再顯示
+
+sortFlightsChronologically();
+
+let currentYearFilter = 'ALL';
+let currentMainTab = 'schedule';
+let editingRowIdx = null;
+let selectedFrameColor = 'purple';
+const TW_AIRPORTS = new Set(['TPE', 'TSA', 'KHH', 'RMQ']);
+
+const BENEFIT_KEY = 'heng_benefits_v14';
+
+function defaultBenefits() {
+  return normalizeBenefits(JSON.parse(JSON.stringify(INITIAL_BENEFITS)));
+}
+
+function normalizeBenefits(arr) {
+  const base = { enabled: true, endDate: '', offsets: {}, mode: 'prefix', keywords: [], limit: 0, cycleType: 'JAN', cls: 'buff-biz-lounge', group: 'STATUS', unit: '次', builtin: false };
+  return (arr || []).filter(b => b && b.id).map(b => {
+    const o = Object.assign({}, base, b);
+    if (!o.offsets || typeof o.offsets !== 'object') o.offsets = {};
+    if (!Array.isArray(o.keywords)) o.keywords = [];
+    o.limit = Math.max(0, parseInt(o.limit, 10) || 0);
+    return o;
+  });
+}
+
+let benefits;
+(function loadBenefits() {
+  const raw = SafeStorage.get(BENEFIT_KEY);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) { benefits = normalizeBenefits(parsed); return; }
+    } catch (e) {}
+  }
+  benefits = defaultBenefits();
+})();
+
+let QUOTA_DEFS = {};
+function syncQuotaDefs() {
+  QUOTA_DEFS = {};
+  benefits.forEach(b => { QUOTA_DEFS[b.id] = b; });
+}
+function saveBenefits() { SafeStorage.set(BENEFIT_KEY, JSON.stringify(benefits)); }
+syncQuotaDefs();
+
+function escRe(x) { return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+function esc(x) { return String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+function matchBenefit(t) {
+  for (const b of benefits) {
+    for (const kw of b.keywords) {
+      if (!kw) continue;
+      if (b.mode === 'contains') {
+        if (t.toLowerCase().includes(kw.toLowerCase())) return b;
+      } else if (new RegExp('^' + escRe(kw) + '\\d*(-\\d+)?$', 'i').test(t)) {
+        return b;
+      }
+    }
+  }
+  return null;
+}
+
+function getCycleKey(dateStr, fallbackYear, cycleType) {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return String(fallbackYear || 2026);
+  const yr = parseInt(dateStr.slice(0, 4), 10);
+  const mo = parseInt(dateStr.slice(5, 7), 10);
+  if (cycleType === 'JAN') return String(yr);
+  if (cycleType === 'JUL') return String(mo >= 7 ? yr : yr - 1);
+  if (cycleType === 'AUG') return String(mo >= 8 ? yr : yr - 1);
+  return String(yr);
+}
+
+const AIRLINE_COLORS = {
+  '日航': 'air-jl', '星宇': 'air-jx', '長榮': 'air-eva', '華航': 'air-ci', '國泰': 'air-cx',
+  '大韓': 'air-ke', '泰航': 'air-tg', '馬航': 'air-mh', '菲航': 'air-pr', '越航': 'air-vn',
+  '汶萊': 'air-bi', '曼航': 'air-pg', '虎航': 'air-it', '酷航': 'air-tr', '亞航': 'air-ak',
+  '越捷': 'air-vj', '泰越捷': 'air-vj', '獅航': 'air-sl', '宿霧': 'air-5j', '天馬': 'air-bc',
+  '德威': 'air-tw', '峇迪': 'air-od', 'citylink': 'air-qg'
+};
+
+// 航司名稱正規化：去掉括號備註與艙等字樣 (華航商、亞航X平躺座、日航(華航執飛) → 華航/亞航/日航)
+function airlineBaseName(s) {
+  return String(s || '').replace(/[（(][^）)]*[）)]/g, '').replace(/X?平躺座/g, '')
+    .replace(/PLUS/gi, '').replace(/[哩里]商/g, '').replace(/商$/, '').replace(/\+/g, '').trim();
+}
+// 沒有指定品牌色的航司：依名稱自動產生固定的顏色 (同一個名字永遠同一個色，不用再改程式)
+function autoAirlineStyle(base) {
+  let h = 0;
+  for (const ch of base.toLowerCase()) h = (h * 31 + ch.codePointAt(0)) >>> 0;
+  return `background:hsl(${h % 360} 52% 32%);color:#fff;`;
+}
+function getAirlineBadgeHtml(airStr) {
+  if (!airStr || !airStr.trim()) return '<span class="air-brand-pill air-def">未定航司</span>';
+  const raw = airStr.trim();
+  const base = airlineBaseName(raw) || raw;
+  const lower = base.toLowerCase();
+  // 長的關鍵字優先 (泰越捷 先於 越捷)
+  const key = Object.keys(AIRLINE_COLORS).sort((a, b) => b.length - a.length).find(k => lower.includes(k.toLowerCase()));
+  const styleAttr = key ? '' : ` style="${autoAirlineStyle(base)}"`;
+  const foundCls = key ? AIRLINE_COLORS[key] : '';
+  let cabin = '';
+  if (raw.includes('商') || raw.includes('平躺')) cabin = '<span class="air-cabin-mini">商務</span>';
+  else if (raw.includes('哩') || raw.includes('ASM') || raw.includes('FB')) cabin = '<span class="air-cabin-mini">哩程</span>';
+  else if (raw.includes('+') || raw.toUpperCase().includes('PLUS')) cabin = '<span class="air-cabin-mini">Plus</span>';
+  return `<span class="air-brand-pill ${foundCls}"${styleAttr}>${raw} ${cabin}</span>`;
+}
+
+function calcWeekday(dateStr) {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return '';
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return isNaN(dt.getTime()) ? '' : ['日', '一', '二', '三', '四', '五', '六'][dt.getDay()];
+}
+
+function tokenizeBuffString(buffStr) {
+  if (!buffStr || !buffStr.trim()) return [];
+  const normalized = buffStr.replace(/\s+\(舊額度\)/g, '(舊額度)');
+  return normalized.trim().split(/\s+/).filter(Boolean);
+}
+
+function classifyToken(token) {
+  const t = token.trim();
+  if (!t) return null;
+  const bf = matchBenefit(t);
+  if (bf) return { category: 'QUOTA', qKey: bf.id, raw: t };
+  if (/^匯豐御貴(\d+)接(\d+)$/.test(t)) {
+    const m = t.match(/^匯豐御貴(\d+)接(\d+)$/);
+    return { category: 'RETIRED_COMBO', labels: [`🦁 匯豐御璽貴#${m[1]}(已停)`, `🚐 匯豐御璽接#${m[2]}(已停)`], raw: t };
+  }
+  if (/^匯豐(接|送)(\d+)貴(\d+)$/.test(t)) {
+    const m = t.match(/^匯豐(接|送)(\d+)貴(\d+)$/);
+    return { category: 'RETIRED_COMBO', labels: [`🚐 匯豐旅人${m[1]}#${m[2]}(舊)`, `🦁 匯豐旅人貴#${m[3]}(舊)`], raw: t };
+  }
+  if (/^匯豐貴\d*$/.test(t) || /^匯豐接\d*$/.test(t)) return { category: 'RETIRED', label: `🦁 ${t}(舊卡)`, raw: t };
+  if (t.toLowerCase().includes('trip')) return { category: 'SPECIAL', label: `💎 ${t}`, cls: 'buff-trip-lounge', raw: t };
+  if (t.includes('華航金卡')) return { category: 'UNLIMITED', label: `👑 ${t}`, cls: 'buff-ci-gold', raw: t };
+  if (t === '貴賓室') return { category: 'UNLIMITED', label: `🥂 商務艙貴賓室`, cls: 'buff-biz-lounge', raw: t };
+  if (t.includes('曼谷航空')) return { category: 'UNLIMITED', label: `🌺 ${t}`, cls: 'buff-biz-lounge', raw: t };
+  return { category: 'SPECIAL', label: `🤝 ${t}`, cls: 'buff-guest', raw: t };
+}
+
+let quotaUsageMap = {};
+let rowComputedBadges = [];
+
+function recomputeAllQuotas() {
+  quotaUsageMap = {};
+  Object.keys(QUOTA_DEFS).forEach(k => { quotaUsageMap[k] = {}; });
+  rowComputedBadges = flightData.map(() => []);
+
+  const chronologicalRows = flightData
+    .map((row, index) => ({ row, index }))
+    .sort((a, b) => {
+      const ad = a.row.date || '';
+      const bd = b.row.date || '';
+      if (!ad && bd) return 1;
+      if (ad && !bd) return -1;
+      return ad.localeCompare(bd) || a.index - b.index;
+    });
+
+  chronologicalRows.forEach(({ row, index: rIdx }) => {
+    const tokens = tokenizeBuffString(row.buff);
+    tokens.forEach(tok => {
+      if (tok.includes('(舊額度)')) {
+        rowComputedBadges[rIdx].push({ label: `💎 ${tok}`, cls: 'buff-trip-lounge' });
+        return;
+      }
+      const info = classifyToken(tok);
+      if (!info) return;
+
+      if (info.category === 'QUOTA') {
+        const def = QUOTA_DEFS[info.qKey];
+        if (!def.enabled) {
+          rowComputedBadges[rIdx].push({ label: `🚫 ${tok}(已停用)`, cls: 'buff-hsbc-retired' });
+          return;
+        }
+        if (def.endDate && row.date && row.date > def.endDate) {
+          rowComputedBadges[rIdx].push({ label: `⛔ ${tok}(已過停用日 ${def.endDate})`, cls: 'buff-overquota' });
+          return;
+        }
+        const cKey = getCycleKey(row.date, row.section_year, def.cycleType);
+        if (!quotaUsageMap[info.qKey][cKey]) quotaUsageMap[info.qKey][cKey] = { used: (def.offsets && def.offsets[cKey]) || 0, limit: def.limit };
+        quotaUsageMap[info.qKey][cKey].used += 1;
+        const seqNum = quotaUsageMap[info.qKey][cKey].used;
+        const isOver = seqNum > def.limit;
+
+        rowComputedBadges[rIdx].push({
+          label: `${def.name} #${seqNum}/${def.limit}${isOver ? ' ⚠️超額!' : ''}`,
+          cls: isOver ? 'buff-overquota' : def.cls,
+          qKey: info.qKey
+        });
+      } else if (info.category === 'RETIRED_COMBO') {
+        info.labels.forEach(lb => rowComputedBadges[rIdx].push({ label: lb, cls: 'buff-hsbc-retired' }));
+      } else if (info.category === 'RETIRED') {
+        rowComputedBadges[rIdx].push({ label: info.label, cls: 'buff-hsbc-retired' });
+      } else {
+        rowComputedBadges[rIdx].push({ label: info.label, cls: info.cls });
+      }
+    });
+  });
+}
+
+function getQuotaStat(qKey, cycleKey) {
+  const def = QUOTA_DEFS[qKey];
+  if (!def) return { used: 0, limit: 0, rem: 0, isOver: false };
+  const ck = String(cycleKey);
+  const rec = quotaUsageMap[qKey] && quotaUsageMap[qKey][ck];
+  const used = rec ? rec.used : ((def.offsets && def.offsets[ck]) || 0);
+  return { used: used, limit: def.limit, rem: Math.max(0, def.limit - used), isOver: used > def.limit };
+}
+
+function buildQuotaBarHtml(title, stat) {
+  const pct = stat.limit > 0 ? Math.max(0, Math.min(100, Math.round((stat.used / stat.limit) * 100))) : (stat.used > 0 ? 100 : 0);
+  let barCls = '', badgeCls = 'ok';
+  if (stat.isOver) { barCls = 'danger'; badgeCls = 'over'; }
+  else if (stat.rem === 0) { barCls = 'warn'; badgeCls = 'full'; }
+
+  return `
+    <div class="q-row">
+      <span>${title}</span>
+      <div class="q-bar-wrap"><div class="q-bar-fill ${barCls}" style="width:${pct}%"></div></div>
+      <span class="q-badge ${badgeCls}">已用 ${stat.used}/${stat.limit} (剩 ${stat.rem})</span>
+    </div>
+  `;
+}
+
+const DASH_GROUPS = [
+  { key: 'hsbc', sel: 'selHsbcCycle', ids: ['HSBC_INF_LOUNGE', 'HSBC_INF_TRANS'], scope: '週期' },
+  { key: 'ctbc', sel: 'selCtbcCycle', ids: ['CTBC_LOUNGE', 'CTBC_TRANS'], scope: '年度' },
+  { key: 'trip', sel: 'selTripCycle', ids: ['TRIP_DIA_LOUNGE'], scope: '週期' }
+];
+
+function resetTextFor(type) {
+  return type === 'JAN' ? '每年 1/1 重置' : (type === 'JUL' ? '每年 7/1 重置' : '每年 8/1 重置');
+}
+
+function syncQuotaSelectOptions() {
+  const allYears = [...new Set(flightData.map(r => Number(r.section_year)).filter(Number.isFinite))].sort((a,b)=>a-b);
+  if (!allYears.length) allYears.push(2026);
+  const minYr = Math.min(2022, allYears[0]);
+  const maxYr = Math.max(2028, allYears[allYears.length - 1]);
+  const rangeYears = [];
+  for (let y = minYr; y <= maxYr; y++) rangeYears.push(y);
+
+  DASH_GROUPS.forEach(g => {
+    const sel = document.getElementById(g.sel);
+    if (!sel) return;
+    const oldVal = sel.value;
+    const defs = g.ids.map(id => QUOTA_DEFS[id]).filter(Boolean);
+    if (!defs.length) return;
+    const cType = defs[0].cycleType;
+
+    sel.innerHTML = rangeYears.map(yr => {
+      const label = cycleOptionLabel(cType, yr);
+      return `<option value="${yr}">${label}</option>`;
+    }).join('');
+
+    if (oldVal && rangeYears.includes(Number(oldVal))) {
+      sel.value = oldVal;
+    } else {
+      sel.value = rangeYears.includes(2026) ? '2026' : String(rangeYears[rangeYears.length - 1]);
+    }
+  });
+}
+
+function renderQuotaDashboard() {
+  DASH_GROUPS.forEach(g => {
+    const card = document.getElementById('qc-' + g.key);
+    const defs = g.ids.map(id => QUOTA_DEFS[id]).filter(Boolean);
+    card.style.display = defs.length ? '' : 'none';
+    if (!defs.length) return;
+    const cyc = document.getElementById(g.sel).value;
+    card.classList.toggle('card-off', !defs.some(d => d.enabled));
+
+    let bars = '';
+    const subs = [];
+    defs.forEach(d => {
+      const title = d.short || d.name;
+      if (!d.enabled) {
+        bars += `<div class="q-row"><span>${esc(title)}</span><span class="q-badge full">已停用</span></div>`;
+        return;
+      }
+      const st = getQuotaStat(d.id, cyc);
+      bars += buildQuotaBarHtml(esc(title), st);
+      subs.push(`${st.rem} ${esc(d.unit || '次')}`);
+    });
+    document.getElementById('bars-' + g.key).innerHTML = bars;
+    document.getElementById('sub-' + g.key).innerText = subs.length ? `${g.scope}剩餘：` + subs.join(' · ') : '';
+
+    const ends = defs.filter(d => d.enabled && d.endDate).map(d => `${d.endDate} 停用`);
+    document.getElementById('note-' + g.key).innerText =
+      `${resetTextFor(defs[0].cycleType)} (` + defs.map(d => `${d.short || d.name}${d.limit}${d.unit || ''}`).join(' / ') + ')' +
+      (ends.length ? ' ⏳' + ends[0] : '');
+  });
+
+  let ciGoldCnt = 0, guestCnt = 0;
+  flightData.forEach(r => {
+    if ((r.buff || '').includes('華航金卡')) ciGoldCnt++;
+    if ((r.buff || '').includes('被帶') || (r.buff || '').includes('友人')) guestCnt++;
+  });
+  let html = `
+    <div class="q-row">
+      <span>👑 華航金卡貴賓室</span>
+      <span class="q-badge ok">${ciGoldCnt} 次 (無限次)</span>
+    </div>
+    <div class="q-row">
+      <span>🤝 被人帶進 / 友人龍騰</span>
+      <span class="q-badge ok">${guestCnt} 次 (免扣額度)</span>
+    </div>`;
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  Object.values(QUOTA_DEFS).filter(d => d.group === 'STATUS').forEach(d => {
+    const title = esc(d.short || d.name);
+    if (!d.enabled) {
+      html += `<div class="q-row"><span>${title}</span><span class="q-badge full">已停用</span></div>`;
+      return;
+    }
+    const ck = getCycleKey(todayStr, now.getFullYear(), d.cycleType);
+    html += buildQuotaBarHtml(title + '(本期)', getQuotaStat(d.id, ck));
+  });
+  document.getElementById('bars-status').innerHTML = html;
+}
+
+// 智慧獨立閉環演算法 (空檔天數同時綁定至 tripList 物件本體)
+function computeClosedLoops(flights) {
+  const n = flights.length;
+  const loopInfo = new Array(n).fill(null);
+  const tripList = [];
+  let tripNum = 1;
+
+  let i = 0;
+  while (i < n) {
+    const row = flights[i];
+    const route = (row.route || '').trim().toUpperCase();
+    const parts = route.split('-');
+    const orig = parts[0] ? parts[0].trim() : '';
+    const dest = parts[1] ? parts[1].trim() : '';
+
+    if (TW_AIRPORTS.has(orig)) {
+      if (TW_AIRPORTS.has(dest)) {
+        const totalLeave = parseFloat(row.leave) || 0;
+        const meta = {
+          tripNum: tripNum,
+          startIdx: i,
+          endIdx: i,
+          startDate: row.date,
+          endDate: row.date,
+          totalLeave: totalLeave,
+          leaveRecorded: String(row.leave ?? '').trim() !== '',
+          routeSummary: row.route
+        };
+        tripList.push(meta);
+        loopInfo[i] = {
+          tripNum: tripNum,
+          position: 'loop-single',
+          isStart: true,
+          isEnd: true,
+          totalLeave: totalLeave,
+          startDate: row.date,
+          endDate: row.date,
+          tripMeta: meta
+        };
+        tripNum++;
+        i++;
+        continue;
+      }
+
+      const loopIndices = [i];
+      let foundReturn = false;
+      let j = i + 1;
+
+      while (j < n) {
+        const nextRow = flights[j];
+        const nextRoute = (nextRow.route || '').trim().toUpperCase();
+        const nextParts = nextRoute.split('-');
+        const nextOrig = nextParts[0] ? nextParts[0].trim() : '';
+        const nextDest = nextParts[1] ? nextParts[1].trim() : '';
+
+        if (TW_AIRPORTS.has(nextOrig)) {
+          break;
+        }
+
+        loopIndices.push(j);
+        if (TW_AIRPORTS.has(nextDest)) {
+          foundReturn = true;
+          break;
+        }
+        j++;
+      }
+
+      if (foundReturn) {
+        const len = loopIndices.length;
+        const totalLeave = loopIndices.reduce((sum, idx) => sum + (parseFloat(flights[idx].leave) || 0), 0);
+        const startDate = flights[loopIndices[0]].date;
+        const endDate = flights[loopIndices[len - 1]].date;
+
+        const thisTripMeta = {
+          tripNum: tripNum,
+          startIdx: loopIndices[0],
+          endIdx: loopIndices[len - 1],
+          startDate: startDate,
+          endDate: endDate,
+          totalLeave: totalLeave,
+          leaveRecorded: loopIndices.some(idx => String(flights[idx].leave ?? '').trim() !== ''),
+          routeSummary: `${flights[loopIndices[0]].route} ➔ ${flights[loopIndices[len - 1]].route}`
+        };
+        tripList.push(thisTripMeta);
+
+        loopIndices.forEach((idx, pos) => {
+          let position = 'loop-body';
+          if (pos === 0) position = 'loop-start';
+          else if (pos === len - 1) position = 'loop-end';
+
+          loopInfo[idx] = {
+            tripNum: tripNum,
+            position: position,
+            isStart: pos === 0,
+            isEnd: pos === len - 1,
+            totalLeave: totalLeave,
+            startDate: startDate,
+            endDate: endDate,
+            tripMeta: thisTripMeta
+          };
+        });
+
+        tripNum++;
+        i = loopIndices[len - 1] + 1;
+      } else {
+        loopInfo[i] = {
+          tripNum: null,
+          position: 'loop-draft',
+          isStart: false,
+          isEnd: false,
+          totalLeave: parseFloat(row.leave) || 0
+        };
+        i++;
+      }
+    } else {
+      i++;
+    }
+  }
+
+  // 將空檔天數同時掛載至 loopInfo 與 tripList 物件上
+  for (let k = 0; k < tripList.length - 1; k++) {
+    const cur = tripList[k];
+    const next = tripList[k + 1];
+    if (cur.endDate && next.startDate && isValidISODate(cur.endDate) && isValidISODate(next.startDate)) {
+      const d1 = new Date(cur.endDate);
+      const d2 = new Date(next.startDate);
+      const diffDays = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+      
+      cur.daysToNextTrip = diffDays;
+      cur.nextTripStart = next.startDate;
+      cur.nextTripMeta = next;
+
+      loopInfo[cur.endIdx].daysToNextTrip = diffDays;
+      loopInfo[cur.endIdx].nextTripStart = next.startDate;
+      loopInfo[cur.endIdx].nextTripMeta = next;
+    }
+  }
+
+  const todayStr = getTodayStr();
+  let nextUpcomingTrip = null;
+  for (let t of tripList) {
+    if (t.startDate && t.startDate >= todayStr) {
+      const dToday = new Date(todayStr);
+      const dStart = new Date(t.startDate);
+      const countdown = Math.round((dStart - dToday) / (1000 * 60 * 60 * 24));
+      nextUpcomingTrip = {
+        days: countdown,
+        date: t.startDate,
+        tripNum: t.tripNum,
+        route: flights[t.startIdx].route,
+        airline: flights[t.startIdx].airline || ''
+      };
+      break;
+    }
+  }
+
+  return { loopInfo, nextUpcomingTrip, tripList };
+}
+
+function renderDynamicYearButtons() {
+  const container = document.getElementById('yearButtonsBar');
+  if (!container) return;
+  const years = [...new Set(flightData.map(r => Number(r.section_year)).filter(Number.isFinite))].sort((a,b)=>a-b);
+
+  let html = `<button class="filter-btn ${currentYearFilter === 'ALL' ? 'active' : ''}" onclick="setYearFilter('ALL', this)">全部年度</button>`;
+  years.forEach(yr => {
+    html += `<button class="filter-btn ${String(currentYearFilter) === String(yr) ? 'active' : ''}" onclick="setYearFilter(${yr}, this)">${yr}</button>`;
+  });
+  container.innerHTML = html;
+}
+
+// 主表格渲染 (年度分組確保各年度橫幅與箭頭健全)
+function renderTable() {
+  renderDynamicYearButtons();
+  recomputeAllQuotas();
+  renderQuotaDashboard();
+
+  const tbody = document.getElementById('gridBody');
+  tbody.innerHTML = '';
+  const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+  
+  const { loopInfo: loops, nextUpcomingTrip } = computeClosedLoops(flightData);
+
+  const tickerEl = document.getElementById('nextTripCountdown');
+  const metaEl = document.getElementById('nextTripMeta');
+  if (nextUpcomingTrip) {
+    tickerEl.innerText = `還有 ${nextUpcomingTrip.days} 天！`;
+    metaEl.innerText = `(Trip #${nextUpcomingTrip.tripNum} · ${nextUpcomingTrip.date} ${nextUpcomingTrip.route} ${nextUpcomingTrip.airline})`;
+  } else {
+    tickerEl.innerText = `目前無排定未來出國`;
+    metaEl.innerText = '';
+  }
+
+  const todayStr = getTodayStr();
+  const searching = !!keyword;
+
+  const yearGroupMap = new Map();
+  flightData.forEach((row, idx) => {
+    const yrNum = Number(row.section_year) || ((row.date && /^\d{4}/.test(row.date)) ? Number(row.date.slice(0,4)) : 2026);
+    if (!yearGroupMap.has(yrNum)) {
+      yearGroupMap.set(yrNum, []);
+    }
+    yearGroupMap.get(yrNum).push({ row, idx });
+  });
+
+  const sortedYears = [...yearGroupMap.keys()].sort((a, b) => a - b);
+  let visibleCount = 0;
+  let totalLeave = 0;
+  let totalLounge = 0;
+  let totalTransfer = 0;
+  let confirmedCount = 0;
+
+  sortedYears.forEach(yrNum => {
+    if (currentYearFilter !== 'ALL' && yrNum !== Number(currentYearFilter)) return;
+
+    const allRowsInYear = yearGroupMap.get(yrNum);
+    const matchedRows = allRowsInYear.filter(({ row }) => {
+      if (!keyword) return true;
+      const hay = `${row.section_year} ${row.date} ${row.route} ${row.airline} ${row.buff} ${row.channel} ${(row.customFrame && row.customFrame.label) || ''}`.toLowerCase();
+      return hay.includes(keyword);
+    });
+
+    if (matchedRows.length === 0) return;
+
+    const yKey = 'Y' + yrNum;
+    const yCollapsed = !searching && uiState.collapsed.includes(yKey);
+
+    let yearRealCnt = 0;
+    let yearPlanCnt = 0;
+    allRowsInYear.forEach(({ row }) => {
+      if (row.channel && String(row.channel).trim()) yearRealCnt++;
+      else yearPlanCnt++;
+    });
+
+    const bannerTr = document.createElement('tr');
+    bannerTr.className = 'year-banner-row';
+    bannerTr.dataset.k = yKey;
+    bannerTr.setAttribute('onclick', 'toggleCollapse(this.dataset.k)');
+    
+    const arrowSymbol = yCollapsed ? '▶' : '▼';
+    const statusText = yCollapsed ? `（已摺疊 ${matchedRows.length} 筆，點擊展開）` : '';
+
+    bannerTr.innerHTML = `
+      <td class="row-num"></td>
+      <td colspan="10">
+        <div class="year-banner-inner">
+          <span class="bn-arrow">${arrowSymbol}</span>
+          <span class="year-banner-title">📅 ${yrNum} 年度 ${statusText}</span>
+          <span class="bn-count">${matchedRows.length} 筆航段</span>
+          <span class="year-stat">
+            <span class="year-stat-pill real">✓ 已購票 ${yearRealCnt}</span>
+            <span class="year-stat-pill plan">◇ 構想中 ${yearPlanCnt}</span>
+          </span>
+        </div>
+      </td>`;
+    tbody.appendChild(bannerTr);
+
+    matchedRows.forEach(({ row, idx }) => {
+      visibleCount++;
+      const leaveNum = parseFloat(row.leave);
+      if (!isNaN(leaveNum)) totalLeave += leaveNum;
+      const bStr = row.buff || '';
+      if (bStr.includes('貴') || bStr.includes('龍騰')) totalLounge++;
+      if (bStr.includes('接') || bStr.includes('送')) totalTransfer++;
+
+      const isConfirmed = !!(row.channel && String(row.channel).trim());
+      if (isConfirmed) confirmedCount++;
+
+      const wk = calcWeekday(row.date);
+      let wkCls = wk === '六' ? 'wk-sat' : (wk === '日' ? 'wk-sun' : '');
+
+      const loop = loops[idx];
+      let loopCls = '';
+      let loopTag = '';
+      let dateCellExtraCls = '';
+      let hoverCardHtml = '';
+
+      if (loop) {
+        if (loop.position === 'loop-draft') {
+          loopTag = `<span class="trip-loop-tag loop-draft" title="尚未成閉環的草稿/單程票">◇ 未閉環</span>`;
+        } else {
+          loopCls = `in-closed-loop ${loop.position}`;
+          if (loop.isStart) {
+            const needsReport = loop.totalLeave >= 3;
+            loopTag = needsReport 
+              ? `<span class="trip-loop-tag loop-report-warn" title="整趟閉環累計請假 ${loop.totalLeave} 天 (>=3天需申報！)">Trip #${loop.tripNum} 🛫 假${loop.totalLeave}d⚠️</span>`
+              : `<span class="trip-loop-tag" title="整趟閉環請假合計 ${loop.totalLeave} 天">Trip #${loop.tripNum} 🛫</span>`;
+          } else if (loop.isEnd) {
+            loopTag = `<span class="trip-loop-tag loop-finish">🛬 回台</span>`;
+
+            if (loop.daysToNextTrip !== undefined) {
+              dateCellExtraCls = 'has-gap-tooltip';
+              const gapDays = loop.daysToNextTrip;
+              const gapMonths = (gapDays / 30).toFixed(1);
+              const isLong = gapDays >= 60;
+              const nextRoute = loop.nextTripMeta ? loop.nextTripMeta.routeSummary : '';
+
+              hoverCardHtml = `
+                <div class="gap-hover-card ${isLong ? 'is-long' : ''}">
+                  <div class="card-main-title">
+                    ${isLong ? '⚡ 空檔長達 ' + gapDays + ' 天（約 ' + gapMonths + ' 個月）！適合插快閃！' : '⏳ 距離下趟出國還有 ' + gapDays + ' 天（約 ' + gapMonths + ' 個月）'}
+                  </div>
+                  <div class="card-sub-info">
+                    🛫 下趟預定：${loop.nextTripStart} ${nextRoute ? '· ' + nextRoute : ''}
+                  </div>
+                </div>
+              `;
+            }
+          }
+        }
+      }
+
+      let customFrameHtml = '';
+      if (row.customFrame && row.customFrame.label) {
+        customFrameHtml = `<span class="ticket-custom-frame frame-${row.customFrame.color || 'purple'}" onclick="event.stopPropagation(); highlightSameFrame('${row.customFrame.label}')">🔗 ${row.customFrame.label}</span>`;
+      }
+
+      const badges = rowComputedBadges[idx] || [];
+      let buffChipsHtml = '';
+      if (customFrameHtml) buffChipsHtml += customFrameHtml;
+      if (badges.length > 0) {
+        buffChipsHtml += badges.map(b => `<span class="buff-chip ${b.cls}">${b.label}</span>`).join('');
+      }
+      const buffContainerHtml = buffChipsHtml || '<span style="color:#aaa;">＋ 點擊選取福利/外站套票</span>';
+
+      const isPast = uiState.dimPast && row.date && row.date < todayStr;
+      const isLeaveOverThree = !isNaN(leaveNum) && leaveNum >= 3;
+
+      const tr = document.createElement('tr');
+      tr.className = `data-row ${loopCls} ${isConfirmed ? 'confirmed-row' : 'planned-row'}${isPast ? ' past-row' : ''}${yCollapsed ? ' collapsed-hide' : ''}`;
+      tr.id = `row-${idx}`;
+      tr.dataset.year = yrNum;
+      if (row.customFrame && row.customFrame.label) {
+        tr.setAttribute('data-frame-label', row.customFrame.label);
+      }
+
+      tr.innerHTML = `
+        <td class="row-num">${idx + 1}</td>
+        <td class="col-year editable-text" contenteditable="true" onblur="updateField(${idx}, 'section_year', this.innerText)">${row.section_year}</td>
+        <td class="col-date ${dateCellExtraCls}">
+          ${hoverCardHtml}
+          ${loopTag}
+          <input type="date" class="cell-date-input" value="${row.date || ''}" onchange="updateDateField(${idx}, this.value)">
+        </td>
+        <td class="col-wk"><span class="${wkCls}">${wk || '—'}</span></td>
+        <td class="col-route editable-text" contenteditable="true" onblur="updateField(${idx}, 'route', this.innerText)">${row.route || ''}</td>
+        <td class="col-air editable-text" contenteditable="true" onfocus="this.innerText = flightData[${idx}].airline || ''" onblur="updateField(${idx}, 'airline', this.innerText)">${getAirlineBadgeHtml(row.airline)}</td>
+        <td class="col-buff" onclick="openBuffModal(${idx})" title="點擊選取福利或自訂外站票框線">
+          <div class="buff-container">${buffContainerHtml}</div>
+        </td>
+        <td class="col-leave editable-text ${isLeaveOverThree ? 'leave-over-three' : ''}" contenteditable="true" onblur="updateField(${idx}, 'leave', this.innerText)" title="${isLeaveOverThree ? '請假滿 3 天(含)以上需申報！' : ''}">${row.leave !== '' ? row.leave : ''}</td>
+        <td class="col-chan">
+          <div class="channel-cell-wrap">
+            <span class="channel-text editable-text" contenteditable="true" onblur="updateField(${idx}, 'channel', this.innerText)" placeholder="未填">${row.channel || ''}</span>
+            <span class="reality-badge ${isConfirmed ? 'confirmed' : 'planned'}">${isConfirmed ? '✓ 成立' : '◇ 構想'}</span>
+          </div>
+        </td>
+        <td class="col-swipe">
+          <input type="date" class="cell-date-input" value="${row.swipe_date || ''}" aria-label="刷卡日期" onchange="updateField(${idx}, 'swipe_date', this.value)">
+        </td>
+        <td class="col-act">
+          <div class="row-actions">
+            <button class="act-btn" onclick="insertRowAfter(${idx})" title="插入新航段">➕</button>
+            <button class="act-btn" onclick="duplicateRow(${idx})" title="複製此列">📋</button>
+            <button class="act-btn del" onclick="deleteRow(${idx})" title="刪除此列">🗑️</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+
+      // 間隔列
+      if (loop && loop.isEnd && loop.daysToNextTrip !== undefined) {
+        const gapDays = loop.daysToNextTrip;
+        const gapMonths = (gapDays / 30).toFixed(1);
+        const isLongGap = gapDays >= 60;
+        const isModerate = gapDays >= 35 && gapDays < 60;
+
+        let pillCls = isLongGap ? 'long-gap' : (isModerate ? 'moderate' : 'normal');
+        let gapHint = isLongGap 
+          ? `⚡ 空檔長達 ${gapDays} 天（約 ${gapMonths} 個月）👉 適合插一趟快閃！` 
+          : `⏳ 間隔 ${gapDays} 天（約 ${gapMonths} 個月）`;
+
+        const gapTr = document.createElement('tr');
+        gapTr.className = `inter-trip-gap-row ${yCollapsed ? 'collapsed-hide' : ''}`;
+        gapTr.dataset.year = yrNum;
+        gapTr.innerHTML = `
+          <td class="row-num" style="background:#f8fafc; border-left:none;"></td>
+          <td colspan="10">
+            <div class="gap-row-content">
+              <div class="gap-left">
+                <span class="gap-pill ${pillCls}">${gapHint}</span>
+                <span style="font-size:11px; color:#64748b;">(回台 ${loop.endDate} ➔ 下趟出發 ${loop.nextTripStart})</span>
+              </div>
+              <div>
+                <button class="btn-insert-gap" onclick="insertTripInGap(${idx}, '${loop.endDate}', '${loop.nextTripStart}')" title="在此空檔期間插入新航段">➕ 在此處插行程</button>
+              </div>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(gapTr);
+      }
+    });
+  });
+
+  const plannedCount = visibleCount - confirmedCount;
+  document.getElementById('statusSummary').innerHTML = `
+    顯示航段：<strong>${visibleCount}</strong> 筆 ｜ <span style="color:#15803d;font-weight:700">✓ 已購票成立 ${confirmedCount}</span> ｜ <span style="color:#b45309;font-weight:700">◇ 構想中 ${plannedCount}</span> ｜
+    福利標記：<strong>${totalLounge}</strong> 次 ｜ 機場接送：<strong>${totalTransfer}</strong> 次 ｜ 請假合計：<strong>${Math.round(totalLeave * 10) / 10}</strong> 天
+  `;
+  syncUiButtons();
+}
+
+function insertTripInGap(afterIdx, endDateStr, nextStartDateStr) {
+  let targetDate = '';
+  let targetYear = Number(flightData[afterIdx].section_year) || 2026;
+
+  if (endDateStr && nextStartDateStr && isValidISODate(endDateStr) && isValidISODate(nextStartDateStr)) {
+    const d1 = new Date(endDateStr);
+    const d2 = new Date(nextStartDateStr);
+    const midTime = d1.getTime() + (d2.getTime() - d1.getTime()) / 2;
+    const midDate = new Date(midTime);
+    targetDate = midDate.toISOString().slice(0, 10);
+    targetYear = midDate.getFullYear();
+  } else if (endDateStr && isValidISODate(endDateStr)) {
+    const d = new Date(endDateStr);
+    d.setDate(d.getDate() + 1);
+    targetDate = d.toISOString().slice(0, 10);
+    targetYear = d.getFullYear();
+  }
+
+  const newRow = {
+    section_year: targetYear,
+    date: targetDate,
+    route: 'TPE-BKK',
+    airline: '',
+    buff: '',
+    leave: '',
+    channel: '',
+    swipe_date: ''
+  };
+
+  flightData.splice(afterIdx + 1, 0, newRow);
+  saveData();
+  renderTable();
+
+  setTimeout(() => {
+    const newRowEl = document.getElementById(`row-${afterIdx + 1}`);
+    if (newRowEl) {
+      const dateInput = newRowEl.querySelector('.cell-date-input');
+      if (dateInput) {
+        dateInput.focus();
+        newRowEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, 100);
+}
+
+function toggleShowGaps() {
+  document.body.classList.toggle('show-gaps');
+  const btn = document.getElementById('btnToggleGaps');
+  const isOn = document.body.classList.contains('show-gaps');
+  btn.classList.toggle('on', isOn);
+}
+
+function isValidISODate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value))) return false;
+  const [y,m,d] = String(value).split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
+}
+
+function sortFlightsChronologically() {
+  flightData.forEach(row => {
+    if (row.date && isValidISODate(row.date)) row.section_year = Number(row.date.slice(0,4));
+  });
+  flightData = flightData.map((row, order) => ({row, order})).sort((a,b) => {
+    const ay = Number(a.row.section_year) || 9999;
+    const by = Number(b.row.section_year) || 9999;
+    if (ay !== by) return ay - by;
+    const ad = a.row.date && isValidISODate(a.row.date) ? a.row.date : '9999-99-99';
+    const bd = b.row.date && isValidISODate(b.row.date) ? b.row.date : '9999-99-99';
+    return ad.localeCompare(bd) || a.order - b.order;
+  }).map(x => x.row);
+}
+
+function updateField(idx, field, val) {
+  const clean = (val || '').trim();
+  if (field !== 'airline' && String(flightData[idx][field] ?? '') === clean) return;
+  if (field === 'swipe_date' && clean && !isValidISODate(clean)) { alert('刷卡日期格式不正確。'); renderTable(); return; }
+  if (field === 'section_year') {
+    const parsed = parseInt(clean, 10);
+    if (parsed && !flightData[idx].date) flightData[idx].section_year = parsed;
+    else if (flightData[idx].date) alert('年度會依航班日期自動決定。');
+  }
+  else if (field === 'leave') flightData[idx].leave = clean === '' ? '' : (parseFloat(clean) || 0);
+  else flightData[idx][field] = clean;
+  saveData();
+  renderTable();
+  if (field === 'route') setTimeout(promptNextUnknownAirport, 60);
+}
+
+function updateDateField(idx, val) {
+  if (val && !isValidISODate(val)) { alert('日期格式不正確。'); renderTable(); return; }
+  flightData[idx].date = val;
+  if (val) flightData[idx].section_year = parseInt(val.slice(0, 4), 10);
+  sortFlightsChronologically();
+  saveData();
+  renderTable();
+}
+
+function setYearFilter(yr, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  currentYearFilter = yr;
+  renderTable();
+}
+
+function filterCustomFrames() {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const rows = document.querySelectorAll('tbody tr.data-row');
+  document.querySelectorAll('tbody tr.year-banner-row').forEach(b => b.style.display = 'none');
+  document.querySelectorAll('tbody tr.inter-trip-gap-row').forEach(b => b.style.display = 'none');
+  rows.forEach(r => {
+    r.style.display = r.getAttribute('data-frame-label') ? '' : 'none';
+    if (r.getAttribute('data-frame-label')) r.classList.remove('collapsed-hide');
+  });
+}
+
+function insertRowAfter(idx) {
+  const ref = flightData[idx];
+  let nextRoute = 'TPE-BKK';
+  if (ref.route && ref.route.includes('-')) {
+    const [o, d] = ref.route.split('-');
+    nextRoute = `${d}-TPE`;
+  }
+  const newRow = {
+    section_year: ref.section_year,
+    date: ref.date,
+    route: nextRoute,
+    airline: ref.airline,
+    buff: '',
+    leave: '',
+    channel: ref.channel,
+    swipe_date: ''
+  };
+  flightData.splice(idx + 1, 0, newRow);
+  saveData();
+  renderTable();
+}
+
+function duplicateRow(idx) {
+  const copy = JSON.parse(JSON.stringify(flightData[idx]));
+  flightData.splice(idx + 1, 0, copy);
+  saveData();
+  renderTable();
+}
+
+function deleteRow(idx) {
+  if (confirm(`確定要刪除「${flightData[idx].date || '未定日期'} ${flightData[idx].route}」嗎？`)) {
+    flightData.splice(idx, 1);
+    saveData();
+    renderTable();
+  }
+}
+
+function quickAddFlight() {
+  const dt = document.getElementById('qaDate').value;
+  const route = document.getElementById('qaRoute').value.trim().toUpperCase() || 'TPE-NRT';
+  const air = document.getElementById('qaAir').value.trim();
+  const buff = document.getElementById('qaBuff').value.trim();
+  const leaveVal = document.getElementById('qaLeave').value;
+  const chan = document.getElementById('qaChan').value.trim();
+  
+  let fallbackYr = currentYearFilter !== 'ALL' ? Number(currentYearFilter) : 2026;
+  const yr = dt ? parseInt(dt.slice(0, 4), 10) : fallbackYr;
+
+  const newObj = {
+    section_year: yr,
+    date: dt,
+    route: route,
+    airline: air,
+    buff: buff,
+    leave: leaveVal === '' ? '' : parseFloat(leaveVal),
+    channel: chan,
+    swipe_date: ''
+  };
+
+  let insertIdx = flightData.length;
+  if (dt) {
+    for (let i = 0; i < flightData.length; i++) {
+      if (flightData[i].date && flightData[i].date > dt) {
+        insertIdx = i;
+        break;
+      }
+    }
+  }
+  flightData.splice(insertIdx, 0, newObj);
+  saveData();
+  renderTable();
+
+  document.getElementById('qaRoute').value = '';
+  document.getElementById('qaLeave').value = '';
+}
+
+function getModalQuotaItems() {
+  return benefits.filter(b => b.enabled && b.keywords.length).map(b => ({
+    token: b.modalToken || b.keywords[0], qKey: b.id, label: b.name
+  }));
+}
+
+const MODAL_UNLIMITED_ITEMS = [
+  { token: '華航金卡貴賓室', label: '👑 華航金卡貴賓室' },
+  { token: '華航金卡貴賓室(應該有)', label: '👑 華航金卡貴賓室(應該有)' },
+  { token: '貴賓室', label: '🥂 商務艙自帶貴賓室' },
+  { token: '曼谷航空貴賓室', label: '🌺 曼谷航空貴賓室' }
+];
+
+const MODAL_SPECIAL_ITEMS = [
+  { token: '被帶貴賓室', label: '🤝 被人帶進貴賓室 (免扣額度)' },
+  { token: '被帶貴賓室優先行李', label: '🤝 被帶貴賓室 + 優先行李' },
+  { token: '友人龍騰(絕版)', label: '🎟️ 友人龍騰 / 親友借卡' },
+  { token: 'trip貴賓室鑽石2(舊額度)', label: '💎 Trip鑽石 (舊額度)' }
+];
+
+function openBuffModal(idx) {
+  editingRowIdx = idx;
+  const row = flightData[idx];
+  document.getElementById('buffModalTitle').innerText = `🎯 設定航段福利：${row.date || '未定日期'} ${row.route} (${row.airline || '未填航司'})`;
+  document.getElementById('bmCycleHint').innerText = `依飛行日 ${row.date || row.section_year} 計入週期額度`;
+  document.getElementById('bmRawInput').value = row.buff || '';
+
+  const frame = row.customFrame || {};
+  document.getElementById('frameLabelInput').value = frame.label || '';
+  selectFrameColor(frame.color || 'purple');
+
+  renderModalOptions();
+  document.getElementById('buffModal').classList.add('open');
+}
+
+function closeBuffModal() {
+  document.getElementById('buffModal').classList.remove('open');
+  editingRowIdx = null;
+}
+
+function selectFrameColor(colorName, el) {
+  selectedFrameColor = colorName;
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+  if (el) el.classList.add('selected');
+  else {
+    const target = document.querySelector(`.dot-${colorName}`);
+    if (target) target.classList.add('selected');
+  }
+}
+
+function hasToken(rawStr, baseToken) {
+  const tokens = tokenizeBuffString(rawStr);
+  return tokens.some(t => t === baseToken || t.replace(/[\d-]+$/, '') === baseToken);
+}
+
+function toggleBuffToken(baseToken) {
+  const input = document.getElementById('bmRawInput');
+  let tokens = tokenizeBuffString(input.value);
+  const exists = tokens.some(t => t === baseToken || t.replace(/[\d-]+$/, '') === baseToken);
+  if (exists) {
+    tokens = tokens.filter(t => !(t === baseToken || t.replace(/[\d-]+$/, '') === baseToken));
+  } else {
+    tokens.push(baseToken);
+  }
+  input.value = tokens.join(' ');
+  renderModalOptions();
+}
+
+function renderModalOptions() {
+  if (editingRowIdx === null) return;
+  const row = flightData[editingRowIdx];
+  const rawVal = document.getElementById('bmRawInput').value;
+
+  document.getElementById('bmQuotaOptions').innerHTML = getModalQuotaItems().map(item => {
+    const def = QUOTA_DEFS[item.qKey];
+    const cKey = getCycleKey(row.date, row.section_year, def.cycleType);
+    const stat = getQuotaStat(item.qKey, cKey);
+    const selected = hasToken(rawVal, item.token);
+    return `
+      <div class="bm-option ${selected ? 'selected' : ''}" data-t="${esc(item.token)}" onclick="toggleBuffToken(this.dataset.t)">
+        <div style="display:flex; align-items:center; gap:5px;">
+          <input type="checkbox" ${selected ? 'checked' : ''} style="pointer-events:none;">
+          <span>${esc(item.label)}</span>
+        </div>
+        <span class="bm-opt-quota ${stat.rem > 0 ? 'rem-ok' : 'rem-zero'}">剩 ${stat.rem}/${stat.limit}</span>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('bmUnlimitedOptions').innerHTML = MODAL_UNLIMITED_ITEMS.map(item => {
+    const selected = hasToken(rawVal, item.token);
+    return `
+      <div class="bm-option ${selected ? 'selected' : ''}" onclick="toggleBuffToken('${item.token}')">
+        <div style="display:flex; align-items:center; gap:5px;">
+          <input type="checkbox" ${selected ? 'checked' : ''} style="pointer-events:none;">
+          <span>${item.label}</span>
+        </div>
+        <span class="bm-opt-quota">不限次數</span>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('bmSpecialOptions').innerHTML = MODAL_SPECIAL_ITEMS.map(item => {
+    const selected = tokenizeBuffString(rawVal).includes(item.token);
+    return `
+      <div class="bm-option ${selected ? 'selected' : ''}" onclick="toggleBuffToken('${item.token}')">
+        <div style="display:flex; align-items:center; gap:5px;">
+          <input type="checkbox" ${selected ? 'checked' : ''} style="pointer-events:none;">
+          <span>${item.label}</span>
+        </div>
+        <span class="bm-opt-quota">免扣己額</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function clearCurrentBuff() {
+  document.getElementById('bmRawInput').value = '';
+  document.getElementById('frameLabelInput').value = '';
+  renderModalOptions();
+}
+
+function saveBuffModal() {
+  if (editingRowIdx === null) return;
+  flightData[editingRowIdx].buff = document.getElementById('bmRawInput').value.trim();
+
+  const frameLabel = document.getElementById('frameLabelInput').value.trim();
+  if (frameLabel) {
+    flightData[editingRowIdx].customFrame = {
+      label: frameLabel,
+      color: selectedFrameColor
+    };
+  } else {
+    delete flightData[editingRowIdx].customFrame;
+  }
+
+  saveData();
+  closeBuffModal();
+  renderTable();
+}
+
+function highlightSameFrame(label) {
+  const rows = document.querySelectorAll(`tr[data-frame-label="${label}"]`);
+  rows.forEach(r => {
+    r.classList.add('ticket-active-glow');
+    r.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+  setTimeout(() => {
+    rows.forEach(r => r.classList.remove('ticket-active-glow'));
+  }, 3500);
+}
+
+function saveData() {
+  sortFlightsChronologically();
+  syncQuotaSelectOptions();
+  SafeStorage.set(STORAGE_KEY, JSON.stringify(flightData));
+}
+
+function resetData() {
+  if (confirm(`確定要還原回內建的 ${INITIAL_DATA.length} 筆資料嗎？`)) {
+    SafeStorage.remove(STORAGE_KEY);
+    SafeStorage.remove(BENEFIT_KEY);
+    benefits = defaultBenefits();
+    syncQuotaDefs();
+    flightData = JSON.parse(JSON.stringify(INITIAL_DATA));
+    saveData();
+    renderTable();
+  }
+}
+
+// 原生 Excel 還原匯出
+function exportOriginalExcelCSV() {
+  const headerNote = ` (1月): 華航聯名卡  2次接送 4次指定貴賓室 /JCB (新年度)\n (7月): 匯豐旅人卡 (新週期) 2次接送/貴賓室 無限卡4次接送/8次貴賓室\n (8月): TRIP.com (新週期) 2次貴賓室`;
+  const headers = ['', '日期', '星期', '航班', '航司', '附加BUFF', '請假', '購票方式', '刷卡日', `"${headerNote.replace(/"/g, '""')}"`];
+  
+  const lines = [headers.join(',')];
+  let lastPrintedYear = null;
+
+  flightData.forEach((r, idx) => {
+    const yrNum = Number(r.section_year);
+    let yrColVal = '';
+    if (yrNum !== lastPrintedYear) {
+      yrColVal = yrNum;
+      lastPrintedYear = yrNum;
+    }
+
+    const wk = calcWeekday(r.date);
+    const wkStr = wk ? `週${wk}` : '';
+
+    let buffStr = r.buff || '';
+    if (r.customFrame && r.customFrame.label) {
+      buffStr = buffStr ? `${buffStr} ${r.customFrame.label}` : r.customFrame.label;
+    }
+
+    const rowArr = [
+      yrColVal,
+      r.date || '',
+      wkStr,
+      r.route || '',
+      r.airline || '',
+      `"${buffStr.replace(/"/g, '""')}"`,
+      r.leave !== '' && r.leave !== undefined ? r.leave : '',
+      r.channel ? `"${r.channel.replace(/"/g, '""')}"` : '',
+      r.swipe_date || '',
+      ''
+    ];
+    lines.push(rowArr.join(','));
+  });
+
+  const blob = new Blob(["\uFEFF" + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const d = new Date();
+  const dateStr = d.toISOString().slice(0, 10).replace(/-/g, '');
+  a.href = url;
+  a.download = `個人規劃_原生Excel還原版_${dateStr}.csv`;
+  a.click();
+}
+
+function exportJSON(asShare) {
+  let achSnapshot = [];
+  try {
+    achSnapshot = evaluateAchievementsState().achievements.map(a => ({
+      id: a.id, name: a.name, unlocked: !!a.isUnlocked, unlockDate: a.unlockDate || null, planned: !!a.isPlanned
+    }));
+  } catch (e) {}
+  // achievements 只是匯出當下的快照供對照；匯入時一律以航班資料重新計算。
+  const jsonStr = JSON.stringify({
+    version: 2,
+    profile: { name: userName },
+    exportedAt: new Date().toISOString(),
+    flights: flightData,
+    benefits: benefits,
+    customAirports: customAirports,
+    achievements: achSnapshot
+  }, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const d = new Date();
+  const dateStr = d.toISOString().slice(0, 10).replace(/-/g, '');
+  a.href = url;
+  a.download = asShare ? 'share.json' : `${safeFileName(userName)}的行程備份_${dateStr}.json`;
+  a.click();
+  if (asShare) {
+    const link = shareLinkUrl();
+    setTimeout(() => alert(`✅ 已下載 share.json\n\n下一步：\n1. 把它上傳到網站，取代舊的 share.json (要和 index.html 放在同一個資料夾)\n2. 朋友用這個網址看：\n${link}\n\n網址後面加 &tab=achievements 可以直接打開成就頁。`), 150);
+  }
+}
+
+function shareLinkUrl() {
+  if (location.protocol === 'file:') return '(目前是本機檔案；放上網站後，網址會是 你的網站網址/?view=share)';
+  return location.origin + location.pathname + '?view=share';
+}
+function copyShareLink() {
+  const link = shareLinkUrl();
+  if (location.protocol === 'file:') { alert(link); return; }
+  const done = () => alert('🔗 已複製分享連結：\n' + link);
+  try { navigator.clipboard.writeText(link).then(done, () => prompt('請手動複製分享連結：', link)); }
+  catch (e) { prompt('請手動複製分享連結：', link); }
+}
+
+function triggerImportJSON() {
+  document.getElementById('jsonFileInput').click();
+}
+
+function handleJSONFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      const fl = Array.isArray(imported) ? imported : (imported && Array.isArray(imported.flights) ? imported.flights : null);
+      if (fl && fl.length > 0) {
+        const norm = fl.filter(r => r && typeof r === 'object').map(r => {
+          const o = Object.assign({}, r);
+          const y = parseInt(o.section_year, 10);
+          o.section_year = y || ((o.date && /^\d{4}/.test(o.date)) ? parseInt(o.date.slice(0, 4), 10) : new Date().getFullYear());
+          return o;
+        });
+        const cnt = {};
+        norm.forEach(r => { cnt[r.section_year] = (cnt[r.section_year] || 0) + 1; });
+        const summary = Object.keys(cnt).sort().map(y => `${y}：${cnt[y]} 筆`).join('\n');
+        if (!confirm(`此檔案共 ${norm.length} 筆，各年度如下：\n${summary}\n\n確定匯入覆蓋嗎？`)) return;
+        flightData = norm;
+        sortFlightsChronologically();
+        
+        uiState.collapsed = [];
+        saveUiState();
+        currentYearFilter = 'ALL';
+        document.getElementById('searchInput').value = '';
+        
+        let extra = '';
+        if (!Array.isArray(imported) && Array.isArray(imported.benefits)) {
+          benefits = normalizeBenefits(imported.benefits);
+          syncQuotaDefs();
+          saveBenefits();
+          extra = `與 ${benefits.length} 項權益設定`;
+        }
+        if (!Array.isArray(imported) && imported.profile && imported.profile.name) setUserName(imported.profile.name);
+        if (!Array.isArray(imported) && imported.customAirports && typeof imported.customAirports === 'object') {
+          Object.entries(imported.customAirports).forEach(([k, v]) => { if (/^[A-Z]{3}$/.test(k) && COUNTRY_INFO[v]) customAirports[k] = v; });
+          SafeStorage.set(CUSTOM_AIRPORT_KEY, JSON.stringify(customAirports));
+          applyCustomAirports();
+        }
+        const wb = document.getElementById('welcomeBanner'); if (wb) wb.remove();
+        syncQuotaSelectOptions();
+        saveData();
+        renderTable();
+        alert(`✅ 成功還原匯入！共載入 ${norm.length} 筆航段${extra}。`);
+        setTimeout(promptNextUnknownAirport, 100);
+      } else {
+        alert('❌ 檔案格式不正確：JSON 內必須包含航段清單陣列！');
+      }
+    } catch (err) {
+      alert('❌ 讀取 JSON 失敗，請確認檔案格式是否正確！');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function exportCSV() {
+  const headers = ['年度', '日期', '星期', '航班', '航司', '附加BUFF', '請假', '購票方式', '刷卡日', '外站套票標籤'];
+  const lines = [headers.join(',')];
+  flightData.forEach(r => {
+    const wk = calcWeekday(r.date);
+    const frameLabel = (r.customFrame && r.customFrame.label) || '';
+    const rowArr = [
+      r.section_year,
+      r.date,
+      wk ? `週${wk}` : '',
+      r.route,
+      r.airline,
+      `"${(r.buff || '').replace(/"/g, '""')}"`,
+      r.leave,
+      r.channel,
+      r.swipe_date,
+      `"${frameLabel.replace(/"/g, '""')}"`
+    ];
+    lines.push(rowArr.join(','));
+  });
+  const blob = new Blob(["\uFEFF" + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${safeFileName(userName)}的行程_最新完整版.csv`;
+  a.click();
+}
+
+// 視覺狀態管理
+const UI_KEY = 'heng_ui_v14';
+let uiState = { collapsed: [], dimPast: false };
+(function loadUiState() {
+  try {
+    const raw = SafeStorage.get(UI_KEY);
+    if (raw) {
+      const o = JSON.parse(raw);
+      if (o && Array.isArray(o.collapsed)) uiState.collapsed = o.collapsed.filter(x => typeof x === 'string' && /^Y\d+$/.test(x));
+      uiState.dimPast = !!(o && o.dimPast);
+    }
+  } catch (e) {}
+})();
+function saveUiState() { SafeStorage.set(UI_KEY, JSON.stringify(uiState)); }
+
+function getTodayStr() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`;
+}
+
+function toggleCollapse(key) {
+  const i = uiState.collapsed.indexOf(key);
+  if (i >= 0) uiState.collapsed.splice(i, 1); else uiState.collapsed.push(key);
+  saveUiState();
+  renderTable();
+}
+
+function setCollapseMode(mode) {
+  const years = [...new Set(flightData.map(r => Number(r.section_year)).filter(Number.isFinite))];
+  const curYear = Number(getTodayStr().slice(0, 4));
+  if (mode === 'all') {
+    uiState.collapsed = years.map(y => 'Y' + y);
+  } else if (mode === 'past') {
+    uiState.collapsed = years.filter(y => y < curYear).map(y => 'Y' + y);
+  } else {
+    uiState.collapsed = [];
+  }
+  saveUiState();
+  renderTable();
+}
+
+function toggleDimPast() {
+  uiState.dimPast = !uiState.dimPast;
+  saveUiState();
+  renderTable();
+}
+
+function syncUiButtons() {
+  const b = document.getElementById('btnDimPast');
+  if (b) {
+    b.classList.toggle('on', uiState.dimPast);
+    b.innerText = uiState.dimPast ? '🌙 已暗化過去日期' : '🌙 暗化已過日期';
+  }
+}
+
+// 權益管理
+function openBenefitMgr() { renderBenefitMgr(); document.getElementById('benefitMgrModal').classList.add('open'); }
+function closeBenefitMgr() { document.getElementById('benefitMgrModal').classList.remove('open'); }
+
+function cycleOptionLabel(type, yr) {
+  const a = String(yr).slice(2), b = String(yr + 1).slice(2);
+  if (type === 'JAN') return `${yr} 年度 (1~12月)`;
+  if (type === 'JUL') return `${a}/07 ~ ${b}/06`;
+  return `${a}/08 ~ ${b}/07`;
+}
+
+function todayCycleKey(type) {
+  const n = new Date();
+  const ds = `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`;
+  return getCycleKey(ds, n.getFullYear(), type);
+}
+
+function renderBenefitMgr() {
+  const body = document.getElementById('bmgrBody');
+  if (!benefits.length) {
+    body.innerHTML = '<div class="bmgr-hint">目前沒有任何權益。可按下方「新增自訂權益」或「還原內建權益預設值」。</div>';
+    return;
+  }
+  const allYears = [...new Set(flightData.map(r => Number(r.section_year)).filter(Number.isFinite))].sort((a,b)=>a-b);
+  const minYr = Math.min(2022, allYears[0] || 2022);
+  const maxYr = Math.max(2029, allYears[allYears.length - 1] || 2029);
+  const rangeYears = [];
+  for (let y = minYr; y <= maxYr; y++) rangeYears.push(y);
+
+  body.innerHTML = benefits.map(b => {
+    const defYear = todayCycleKey(b.cycleType);
+    const yearOpts = rangeYears.map(y => `<option value="${y}" ${String(y) === defYear ? 'selected' : ''}>${cycleOptionLabel(b.cycleType, y)}</option>`).join('');
+    const off = (b.offsets && b.offsets[defYear]) || 0;
+    return `
+    <div class="bmgr-row ${b.enabled ? '' : 'off'}">
+      <div class="bmgr-line">
+        <label><input type="checkbox" ${b.enabled ? 'checked' : ''} onchange="bmgrSet('${b.id}','enabled',this.checked,true)"> 啟用</label>
+        <input class="qa-input" style="width:210px;" value="${esc(b.name)}" onchange="bmgrSet('${b.id}','name',this.value)">
+        <span class="bmgr-tag ${b.builtin ? '' : 'custom'}">${b.builtin ? '內建' : '自訂'}</span>
+        <button class="act-btn del" style="margin-left:auto;" onclick="deleteBenefit('${b.id}')">🗑️ 刪除</button>
+      </div>
+      <div class="bmgr-line">
+        <label>每週期次數 <input type="number" min="0" class="qa-input" style="width:60px;" value="${b.limit}" onchange="bmgrSet('${b.id}','limit',this.value)"></label>
+        <label>重置週期
+          <select class="cycle-select" onchange="bmgrSet('${b.id}','cycleType',this.value,true)">
+            <option value="JAN" ${b.cycleType === 'JAN' ? 'selected' : ''}>每年 1/1</option>
+            <option value="JUL" ${b.cycleType === 'JUL' ? 'selected' : ''}>每年 7/1</option>
+            <option value="AUG" ${b.cycleType === 'AUG' ? 'selected' : ''}>每年 8/1</option>
+          </select>
+        </label>
+        <label>停用日 <input type="date" class="qa-input" value="${esc(b.endDate || '')}" onchange="bmgrSet('${b.id}','endDate',this.value,true)" title="此日期之後的航段不再計入這項權益"></label>
+      </div>
+      <div class="bmgr-line">
+        <label>手動校正已用
+          <select class="cycle-select" id="off-sel-${b.id}" onchange="bmgrLoadOffset('${b.id}')">${yearOpts}</select>
+          <input type="number" class="qa-input" style="width:60px;" id="off-val-${b.id}" value="${off}" onchange="bmgrSetOffset('${b.id}')">
+          <span class="bmgr-hint">(+N = 額外已用 N 次，−N = 減少)</span>
+        </label>
+      </div>
+      <div class="bmgr-line">
+        <label>比對關鍵字 <input class="qa-input" style="width:230px;" value="${esc(b.keywords.join(','))}" onchange="bmgrSet('${b.id}','keywords',this.value)"></label>
+        <label>比對方式
+          <select class="cycle-select" onchange="bmgrSet('${b.id}','mode',this.value)">
+            <option value="prefix" ${b.mode !== 'contains' ? 'selected' : ''}>開頭相符(可接數字)</option>
+            <option value="contains" ${b.mode === 'contains' ? 'selected' : ''}>文字中包含</option>
+          </select>
+        </label>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function bmgrSet(id, field, val, rerender) {
+  const b = benefits.find(x => x.id === id);
+  if (!b) return;
+  if (field === 'enabled') b.enabled = !!val;
+  else if (field === 'limit') b.limit = Math.max(0, parseInt(val, 10) || 0);
+  else if (field === 'keywords') b.keywords = String(val).split(/[,，、]/).map(x => x.trim()).filter(Boolean);
+  else if (field === 'name') { b.name = String(val).trim() || b.name; delete b.short; }
+  else b[field] = val;
+  saveBenefits();
+  syncQuotaDefs();
+  renderTable();
+  if (rerender) renderBenefitMgr();
+}
+
+function bmgrLoadOffset(id) {
+  const b = benefits.find(x => x.id === id);
+  if (!b) return;
+  const yr = document.getElementById('off-sel-' + id).value;
+  document.getElementById('off-val-' + id).value = (b.offsets && b.offsets[yr]) || 0;
+}
+
+function bmgrSetOffset(id) {
+  const b = benefits.find(x => x.id === id);
+  if (!b) return;
+  const yr = document.getElementById('off-sel-' + id).value;
+  const n = parseInt(document.getElementById('off-val-' + id).value, 10) || 0;
+  if (!b.offsets) b.offsets = {};
+  if (n === 0) delete b.offsets[yr]; else b.offsets[yr] = n;
+  saveBenefits();
+  renderTable();
+}
+
+function deleteBenefit(id) {
+  const b = benefits.find(x => x.id === id);
+  if (!b) return;
+  if (!confirm(`確定要刪除「${b.name}」嗎？`)) return;
+  benefits = benefits.filter(x => x.id !== id);
+  saveBenefits();
+  syncQuotaDefs();
+  renderTable();
+  renderBenefitMgr();
+}
+
+function addCustomBenefit() {
+  benefits.push({
+    id: 'CUSTOM_' + Date.now(), name: '🆕 新權益', unit: '次', limit: 2, cycleType: 'JAN',
+    cls: 'buff-biz-lounge', group: 'STATUS', keywords: ['新權益'], mode: 'prefix',
+    enabled: true, endDate: '', offsets: {}, builtin: false
+  });
+  saveBenefits();
+  syncQuotaDefs();
+  renderTable();
+  renderBenefitMgr();
+  const body = document.getElementById('bmgrBody');
+  body.scrollTop = body.scrollHeight;
+}
+
+function restoreDefaultBenefits() {
+  if (!confirm('將所有內建權益還原成預設值？')) return;
+  benefits = defaultBenefits().concat(benefits.filter(b => !b.builtin));
+  saveBenefits();
+  syncQuotaDefs();
+  renderTable();
+  renderBenefitMgr();
+}
+
+// 🌟🌟🌟🌟🌟【🏆 疫後大丈夫 Steam 成就室】系統 (含次數階梯、翻倍指標、解鎖時間戳) 🌟🌟🌟🌟🌟
+const AIRPORT_REGIONS = {
+  // 日本
+  "NRT": { country: "JP", region: "KANTO", name: "東京成田" },
+  "HND": { country: "JP", region: "KANTO", name: "東京羽田" },
+  "KIX": { country: "JP", region: "KANSAI", name: "大阪關西" },
+  "ITM": { country: "JP", region: "KANSAI", name: "大阪伊丹" },
+  "NGO": { country: "JP", region: "CHUBU", name: "名古屋中部" },
+  "FSZ": { country: "JP", region: "CHUBU", name: "靜岡富士山" },
+  "SDJ": { country: "JP", region: "TOHOKU", name: "仙台" },
+  "CTS": { country: "JP", region: "HOKKAIDO", name: "札幌新千歲" },
+  "HKD": { country: "JP", region: "HOKKAIDO", name: "函館" },
+  "FUK": { country: "JP", region: "KYUSHU", name: "福岡" },
+  "KMJ": { country: "JP", region: "KYUSHU", name: "熊本" },
+  "OKA": { country: "JP", region: "OKINAWA", name: "沖繩那霸" },
+  "TAK": { country: "JP", region: "SHIKOKU", name: "高松" },
+  "OKJ": { country: "JP", region: "CHUGOKU", name: "岡山" },
+  "HIJ": { country: "JP", region: "CHUGOKU", name: "廣島" },
+
+  // 韓國
+  "ICN": { country: "KR", region: "SEOUL", name: "首爾仁川" },
+  "GMP": { country: "KR", region: "SEOUL", name: "首爾金浦" },
+  "PUS": { country: "KR", region: "BUSAN", name: "釜山" },
+  "CJU": { country: "KR", region: "JEJU", name: "濟州島" },
+
+  // 泰國
+  "BKK": { country: "TH", region: "BKK_METRO", name: "曼谷素萬那普" },
+  "DMK": { country: "TH", region: "BKK_METRO", name: "曼谷廊曼" },
+  "CNX": { country: "TH", region: "NORTH_THAI", name: "清邁" },
+  "UTH": { country: "TH", region: "NE_THAI", name: "烏隆他尼" },
+  "UTP": { country: "TH", region: "EAST_THAI", name: "芭達雅烏打拋" },
+  "HKT": { country: "TH", region: "SOUTH_THAI", name: "普吉島" },
+  "HDY": { country: "TH", region: "SOUTH_THAI", name: "合艾" },
+
+  // 越南
+  "HAN": { country: "VN", region: "NORTH_VN", name: "河內" },
+  "DAD": { country: "VN", region: "CENTRAL_VN", name: "峴港" },
+  "CXR": { country: "VN", region: "CENTRAL_VN", name: "芽莊" },
+  "SGN": { country: "VN", region: "SOUTH_VN", name: "胡志明" },
+
+  // 印尼
+  "CGK": { country: "ID", region: "JAVA", name: "雅加達" },
+  "DPS": { country: "ID", region: "BALI", name: "峇里島" },
+
+  // 菲律賓
+  "MNL": { country: "PH", region: "LUZON", name: "馬尼拉" },
+  "CRK": { country: "PH", region: "LUZON", name: "克拉克" },
+  "CEB": { country: "PH", region: "VISAYAS", name: "宿霧" },
+  "PPS": { country: "PH", region: "PALAWAN", name: "巴拉望公主港" },
+
+  // 馬來西亞
+  "KUL": { country: "MY", region: "WEST_MY", name: "吉隆坡" },
+  "PEN": { country: "MY", region: "WEST_MY", name: "檳城" },
+  "AOR": { country: "MY", region: "WEST_MY", name: "亞羅士打" },
+  "LGK": { country: "MY", region: "WEST_MY", name: "蘭卡威" },
+  "BKI": { country: "MY", region: "EAST_MY", name: "亞庇(沙巴)" },
+  "KCH": { country: "MY", region: "EAST_MY", name: "古晉(砂拉越)" },
+
+  // 新加坡、汶萊、柬埔寨、寮國、緬甸
+  "SIN": { country: "SG", region: "SG", name: "新加坡樟宜" },
+  "BWN": { country: "BN", region: "BN", name: "汶萊斯里巴加灣" },
+  "DIL": { country: "TL", region: "TL", name: "東帝汶帝力" },
+  "PNH": { country: "KH", region: "KH", name: "金邊" },
+  "SAI": { country: "KH", region: "KH", name: "暹粒" },
+  "VTE": { country: "LA", region: "LA", name: "永珍" },
+  "LPQ": { country: "LA", region: "LA", name: "龍坡邦" },
+  "RGN": { country: "MM", region: "MM", name: "仰光" },
+  "MDL": { country: "MM", region: "MM", name: "曼德勒" },
+
+  // 東亞 (港澳蒙中)
+  "HKG": { country: "HK", region: "HK", name: "香港赤鱲角" },
+  "MFM": { country: "MO", region: "MO", name: "澳門" },
+  "UBN": { country: "MN", region: "MN", name: "烏蘭巴托" },
+  "PVG": { country: "CN", region: "CN", name: "上海浦東" },
+  "PEK": { country: "CN", region: "CN", name: "北京首都" },
+  "CAN": { country: "CN", region: "CN", name: "廣州白雲" },
+
+  // 南亞、中東、西亞
+  "DEL": { country: "IN", region: "IN", name: "新德里" },
+  "BOM": { country: "IN", region: "IN", name: "孟買" },
+  "MLE": { country: "MV", region: "MV", name: "馬爾地夫馬列" },
+  "CMB": { country: "LK", region: "LK", name: "斯里蘭卡可倫坡" },
+  "KTM": { country: "NP", region: "NP", name: "尼泊爾加德滿都" },
+  "DXB": { country: "AE", region: "AE", name: "杜拜" },
+  "AUH": { country: "AE", region: "AE", name: "阿布達比" },
+  "IST": { country: "TR", region: "TR", name: "伊斯坦堡" },
+  "SAW": { country: "TR", region: "TR", name: "伊斯坦堡薩比哈" },
+  "TAS": { country: "UZ", region: "UZ", name: "塔什干" }
+};
+
+// 日本機場所屬都道府縣 (日本高難度成就用)
+const JP_PREF = {
+  NRT:'千葉', HND:'東京', KIX:'大阪', ITM:'大阪', NGO:'愛知', FSZ:'靜岡', SDJ:'宮城', CTS:'北海道', HKD:'北海道',
+  FUK:'福岡', KMJ:'熊本', OKA:'沖繩', TAK:'香川', OKJ:'岡山', HIJ:'廣島'
+};
+// 追加的日本機場 [代碼, 地方, 都道府縣, 名稱]
+[
+  ['AOJ','TOHOKU','青森','青森'],['HNA','TOHOKU','岩手','花卷'],['AXT','TOHOKU','秋田','秋田'],['GAJ','TOHOKU','山形','山形'],['FKS','TOHOKU','福島','福島'],
+  ['IBR','KANTO','茨城','茨城'],['HAC','KANTO','東京','八丈島'],
+  ['KIJ','CHUBU','新潟','新潟'],['TOY','CHUBU','富山','富山'],['KMQ','CHUBU','石川','小松'],['NTQ','CHUBU','石川','能登'],['MMJ','CHUBU','長野','松本'],
+  ['UKB','KANSAI','兵庫','神戶'],['SHM','KANSAI','和歌山','南紀白濱'],
+  ['TTJ','CHUGOKU','鳥取','鳥取'],['YGJ','CHUGOKU','鳥取','米子'],['IZO','CHUGOKU','島根','出雲'],['OKI','CHUGOKU','島根','隱岐'],['UBJ','CHUGOKU','山口','山口宇部'],
+  ['TKS','SHIKOKU','德島','德島'],['MYJ','SHIKOKU','愛媛','松山'],['KCZ','SHIKOKU','高知','高知'],
+  ['KKJ','KYUSHU','福岡','北九州'],['HSG','KYUSHU','佐賀','佐賀'],['NGS','KYUSHU','長崎','長崎'],['TSJ','KYUSHU','長崎','對馬'],['OIT','KYUSHU','大分','大分'],
+  ['KMI','KYUSHU','宮崎','宮崎'],['KOJ','KYUSHU','鹿兒島','鹿兒島'],['ASJ','KYUSHU','鹿兒島','奄美'],['KUM','KYUSHU','鹿兒島','屋久島'],
+  ['ISG','OKINAWA','沖繩','石垣'],['MMY','OKINAWA','沖繩','宮古'],['OGN','OKINAWA','沖繩','與那國'],['UEO','OKINAWA','沖繩','久米島'],
+  ['OKD','HOKKAIDO','北海道','札幌丘珠'],['AKJ','HOKKAIDO','北海道','旭川'],['KUH','HOKKAIDO','北海道','釧路'],['MMB','HOKKAIDO','北海道','女滿別'],
+  ['OBO','HOKKAIDO','北海道','帶廣'],['WKJ','HOKKAIDO','北海道','稚內'],['RIS','HOKKAIDO','北海道','利尻']
+].forEach(([c, region, pref, name]) => { AIRPORT_REGIONS[c] = { country: 'JP', region, name }; JP_PREF[c] = pref; });
+// 離島機場 (不含沖繩本島、北海道本島等大島)
+const JP_ISLAND_AIRPORTS = new Set(['ISG','MMY','OGN','UEO','KUM','ASJ','TSJ','OKI','RIS','HAC']);
+// 日本的主要樞紐 (用來定義「地方機場」)
+const JP_MAJOR_HUBS = new Set(['NRT','HND','KIX','ITM','NGO','FUK','CTS','OKA']);
+// 日本籍航空 [顯示名, 比對關鍵字]
+const JP_CARRIERS = [
+  ['日航',['日航','日本航空','jal']], ['全日空',['全日空','ana']], ['天馬',['天馬','skymark']], ['樂桃',['樂桃','peach']],
+  ['捷星日本',['捷星日本']], ['香草',['香草','vanilla']], ['春秋日本',['春秋日本']], ['ZIPAIR',['zipair']], ['AirDo',['airdo','air do']],
+  ['星悅',['星悅','starflyer']], ['亞洲航空日本',['spring japan']]
+];
+
+// ── 國家與洲別 (大洲成就、機場「遇到才學」用) ──
+const COUNTRY_INFO = {};
+[
+  ['AS', '亞洲', [['JP','日本'],['KR','韓國'],['CN','中國大陸'],['HK','香港'],['MO','澳門'],['MN','蒙古'],['TH','泰國'],['VN','越南'],['ID','印尼'],['PH','菲律賓'],['MY','馬來西亞'],['SG','新加坡'],['BN','汶萊'],['KH','柬埔寨'],['LA','寮國'],['MM','緬甸'],['TL','東帝汶'],['IN','印度'],['MV','馬爾地夫'],['LK','斯里蘭卡'],['NP','尼泊爾'],['BD','孟加拉'],['BT','不丹'],['PK','巴基斯坦'],['AE','阿聯酋'],['QA','卡達'],['BH','巴林'],['KW','科威特'],['OM','阿曼'],['SA','沙烏地阿拉伯'],['JO','約旦'],['IL','以色列'],['LB','黎巴嫩'],['IR','伊朗'],['IQ','伊拉克'],['TR','土耳其'],['UZ','烏茲別克'],['KZ','哈薩克'],['KG','吉爾吉斯'],['TJ','塔吉克'],['TM','土庫曼'],['GE','喬治亞'],['AM','亞美尼亞'],['AZ','亞塞拜然']]],
+  ['EU', '歐洲', [['GB','英國'],['IE','愛爾蘭'],['FR','法國'],['DE','德國'],['NL','荷蘭'],['BE','比利時'],['LU','盧森堡'],['CH','瑞士'],['AT','奧地利'],['IT','義大利'],['ES','西班牙'],['PT','葡萄牙'],['GR','希臘'],['MT','馬爾他'],['CY','賽普勒斯'],['CZ','捷克'],['PL','波蘭'],['HU','匈牙利'],['SK','斯洛伐克'],['SI','斯洛維尼亞'],['HR','克羅埃西亞'],['RS','塞爾維亞'],['BA','波士尼亞'],['ME','蒙特內哥羅'],['AL','阿爾巴尼亞'],['MK','北馬其頓'],['BG','保加利亞'],['RO','羅馬尼亞'],['MD','摩爾多瓦'],['UA','烏克蘭'],['BY','白俄羅斯'],['RU','俄羅斯'],['EE','愛沙尼亞'],['LV','拉脫維亞'],['LT','立陶宛'],['FI','芬蘭'],['SE','瑞典'],['NO','挪威'],['DK','丹麥'],['IS','冰島']]],
+  ['NA', '北美洲', [['US','美國'],['CA','加拿大'],['MX','墨西哥'],['CU','古巴'],['DO','多明尼加'],['JM','牙買加'],['BS','巴哈馬'],['PR','波多黎各'],['PA','巴拿馬'],['CR','哥斯大黎加'],['GT','瓜地馬拉'],['SV','薩爾瓦多'],['HN','宏都拉斯'],['NI','尼加拉瓜'],['BZ','貝里斯']]],
+  ['SA', '南美洲', [['BR','巴西'],['AR','阿根廷'],['CL','智利'],['PE','秘魯'],['CO','哥倫比亞'],['EC','厄瓜多'],['VE','委內瑞拉'],['UY','烏拉圭'],['PY','巴拉圭'],['BO','玻利維亞']]],
+  ['OC', '大洋洲', [['AU','澳洲'],['NZ','紐西蘭'],['FJ','斐濟'],['PF','大溪地 (法屬玻里尼西亞)'],['NC','新喀里多尼亞'],['PW','帛琉'],['GU','關島'],['MP','北馬利安納 (塞班)'],['FM','密克羅尼西亞'],['WS','薩摩亞'],['TO','東加'],['VU','萬那杜'],['PG','巴布亞紐幾內亞'],['CK','庫克群島']]],
+  ['AF', '非洲', [['EG','埃及'],['MA','摩洛哥'],['TN','突尼西亞'],['DZ','阿爾及利亞'],['NG','奈及利亞'],['GH','迦納'],['SN','塞內加爾'],['ET','衣索比亞'],['KE','肯亞'],['TZ','坦尚尼亞'],['UG','烏干達'],['RW','盧安達'],['ZA','南非'],['NA','納米比亞'],['BW','波札那'],['ZM','尚比亞'],['ZW','辛巴威'],['MZ','莫三比克'],['MG','馬達加斯加'],['MU','模里西斯'],['SC','塞席爾']]]
+].forEach(([cont, contName, list]) => list.forEach(([code, name]) => { COUNTRY_INFO[code] = { name, cont, contName }; }));
+// 特例：夏威夷、關島、塞班地理上屬於大洋洲，不算「北美大陸」
+const AIRPORT_CONT_OVERRIDE = { HNL: 'OC', OGG: 'OC', KOA: 'OC', LIH: 'OC', GUM: 'OC', SPN: 'OC' };
+function contOf(code) {
+  if (AIRPORT_CONT_OVERRIDE[code]) return AIRPORT_CONT_OVERRIDE[code];
+  const a = AIRPORT_REGIONS[code];
+  const c = a && COUNTRY_INFO[a.country];
+  return c ? c.cont : null;
+}
+function contFirstDate(cont, flights) {
+  for (const r of flights) {
+    if (String(r.route || '').split('-').some(c => contOf(c.trim().toUpperCase()) === cont)) return r.date;
+  }
+  return null;
+}
+// 各洲主要機場 (只放最常去的；沒收錄的機場，程式會問你一次它在哪個國家並記住)
+[
+  ['LHR','GB','倫敦希斯洛'],['LGW','GB','倫敦蓋威克'],['STN','GB','倫敦史丹斯特'],['MAN','GB','曼徹斯特'],['EDI','GB','愛丁堡'],['DUB','IE','都柏林'],
+  ['CDG','FR','巴黎戴高樂'],['ORY','FR','巴黎奧利'],['NCE','FR','尼斯'],['LYS','FR','里昂'],['MRS','FR','馬賽'],['AMS','NL','阿姆斯特丹'],['BRU','BE','布魯塞爾'],
+  ['FRA','DE','法蘭克福'],['MUC','DE','慕尼黑'],['BER','DE','柏林'],['DUS','DE','杜塞道夫'],['HAM','DE','漢堡'],['ZRH','CH','蘇黎世'],['GVA','CH','日內瓦'],
+  ['VIE','AT','維也納'],['PRG','CZ','布拉格'],['WAW','PL','華沙'],['KRK','PL','克拉科夫'],['BUD','HU','布達佩斯'],['FCO','IT','羅馬'],['MXP','IT','米蘭馬爾彭薩'],
+  ['VCE','IT','威尼斯'],['NAP','IT','拿坡里'],['FLR','IT','佛羅倫斯'],['BCN','ES','巴塞隆納'],['MAD','ES','馬德里'],['LIS','PT','里斯本'],['OPO','PT','波多'],
+  ['ATH','GR','雅典'],['JTR','GR','聖托里尼'],['CPH','DK','哥本哈根'],['ARN','SE','斯德哥爾摩'],['OSL','NO','奧斯陸'],['HEL','FI','赫爾辛基'],['KEF','IS','雷克雅維克'],
+  ['SVO','RU','莫斯科謝列梅捷沃'],['DME','RU','莫斯科多莫傑多沃'],['LED','RU','聖彼得堡'],['ZAG','HR','札格拉布'],['DBV','HR','杜布羅夫尼克'],['SOF','BG','索菲亞'],
+  ['OTP','RO','布加勒斯特'],['BEG','RS','貝爾格勒'],['TLL','EE','塔林'],['RIX','LV','里加'],['VNO','LT','維爾紐斯'],['IEV','UA','基輔'],
+  ['LAX','US','洛杉磯'],['SFO','US','舊金山'],['SEA','US','西雅圖'],['JFK','US','紐約甘迺迪'],['EWR','US','紐約紐華克'],['ORD','US','芝加哥歐海爾'],['DFW','US','達拉斯'],
+  ['IAH','US','休士頓'],['ATL','US','亞特蘭大'],['MIA','US','邁阿密'],['BOS','US','波士頓'],['IAD','US','華盛頓杜勒斯'],['LAS','US','拉斯維加斯'],['DEN','US','丹佛'],
+  ['SAN','US','聖地牙哥'],['PDX','US','波特蘭'],['ONT','US','安大略(加州)'],['ANC','US','安克拉治'],['HNL','US','檀香山'],['OGG','US','茂宜島'],['KOA','US','科納'],['LIH','US','里胡埃'],
+  ['YVR','CA','溫哥華'],['YYZ','CA','多倫多'],['YUL','CA','蒙特婁'],['YYC','CA','卡加利'],['MEX','MX','墨西哥城'],['CUN','MX','坎昆'],['PTY','PA','巴拿馬城'],
+  ['SJO','CR','聖荷西(哥斯大黎加)'],['HAV','CU','哈瓦那'],['SJU','PR','聖胡安'],['NAS','BS','拿索'],
+  ['SYD','AU','雪梨'],['MEL','AU','墨爾本'],['BNE','AU','布里斯本'],['PER','AU','伯斯'],['ADL','AU','阿德雷德'],['CNS','AU','凱恩斯'],['OOL','AU','黃金海岸'],
+  ['AKL','NZ','奧克蘭'],['CHC','NZ','基督城'],['WLG','NZ','威靈頓'],['ZQN','NZ','皇后鎮'],['NAN','FJ','斐濟南迪'],['PPT','PF','大溪地'],['NOU','NC','努美阿'],
+  ['GUM','GU','關島'],['SPN','MP','塞班'],['ROR','PW','帛琉'],['YAP','FM','雅浦'],['TKK','FM','楚克'],
+  ['CAI','EG','開羅'],['HRG','EG','赫爾格達'],['SSH','EG','沙姆沙伊赫'],['CMN','MA','卡薩布蘭加'],['RAK','MA','馬拉喀什'],['TUN','TN','突尼斯'],['LOS','NG','拉哥斯'],
+  ['ACC','GH','阿克拉'],['ADD','ET','阿迪斯阿貝巴'],['NBO','KE','奈洛比'],['MBA','KE','蒙巴薩'],['DAR','TZ','三蘭港'],['JRO','TZ','吉力馬札羅'],['ZNZ','TZ','尚吉巴'],
+  ['EBB','UG','恩德培'],['KGL','RW','吉佳利'],['JNB','ZA','約翰尼斯堡'],['CPT','ZA','開普敦'],['DUR','ZA','德班'],['MRU','MU','模里西斯'],['SEZ','SC','塞席爾'],
+  ['TNR','MG','安塔那那利佛'],['WDH','NA','溫荷克'],['LUN','ZM','路沙卡'],['VFA','ZW','維多利亞瀑布'],['GBE','BW','嘉柏隆里'],
+  ['GRU','BR','聖保羅'],['GIG','BR','里約熱內盧'],['EZE','AR','布宜諾斯艾利斯'],['AEP','AR','布宜諾斯艾利斯(城市)'],['SCL','CL','聖地牙哥(智利)'],['LIM','PE','利馬'],
+  ['CUZ','PE','庫斯科'],['BOG','CO','波哥大'],['MDE','CO','麥德林'],['UIO','EC','基多'],['GYE','EC','瓜亞基爾'],['CCS','VE','卡拉卡斯'],['MVD','UY','蒙特維多'],['LPB','BO','拉巴斯'],
+  ['DOH','QA','杜哈'],['BAH','BH','巴林'],['KWI','KW','科威特'],['MCT','OM','馬斯喀特'],['RUH','SA','利雅德'],['JED','SA','吉達'],['AMM','JO','安曼'],['TLV','IL','特拉維夫']
+].forEach(([code, country, name]) => { if (!AIRPORT_REGIONS[code]) AIRPORT_REGIONS[code] = { country, region: country, name }; });
+
+[
+  ['CEI','NORTH_THAI','清萊'],['HGN','NORTH_THAI','夜豐頌'],['PYY','NORTH_THAI','拜城'],['MAQ','NORTH_THAI','湄索'],['LPT','NORTH_THAI','南邦'],['PHS','NORTH_THAI','彭世洛'],
+  ['KKC','NE_THAI','孔敬'],['UBP','NE_THAI','烏汶'],['HHQ','BKK_METRO','華欣'],['TDX','EAST_THAI','達叻'],
+  ['USM','SOUTH_THAI','蘇美島'],['KBV','SOUTH_THAI','喀比'],['URT','SOUTH_THAI','素叻他尼'],['NST','SOUTH_THAI','洛坤'],['TST','SOUTH_THAI','董里'],['UNN','SOUTH_THAI','拉農']
+].forEach(([code, region, name]) => { if (!AIRPORT_REGIONS[code]) AIRPORT_REGIONS[code] = { country: 'TH', region, name }; });
+// 各國國慶日 (固定日期)：節慶成就用
+const NATIONAL_DAYS = { US:'07-04', FR:'07-14', CA:'07-01', SG:'08-09', ID:'08-17', MY:'08-31', PH:'06-12', IN:'08-15', KR:'08-15', VN:'09-02', KH:'11-09', LA:'12-02', MM:'01-04', MN:'07-11', CH:'08-01', DE:'10-03', IT:'06-02', ES:'10-12', BR:'09-07', AR:'07-09', MX:'09-16', AU:'01-26', NZ:'02-06' };
+
+// ── 機場「遇到才學」：沒收錄的機場代碼，問你一次它在哪個國家，之後自動記住 (並存進備份 JSON) ──
+const CUSTOM_AIRPORT_KEY = 'heng_itinerary_custom_airports';
+let customAirports = {};
+try { customAirports = JSON.parse(SafeStorage.get(CUSTOM_AIRPORT_KEY) || '{}') || {}; } catch (e) { customAirports = {}; }
+function applyCustomAirports() {
+  Object.entries(customAirports).forEach(([code, country]) => {
+    if (!AIRPORT_REGIONS[code] && COUNTRY_INFO[country]) AIRPORT_REGIONS[code] = { country, region: country, name: code };
+  });
+}
+applyCustomAirports();
+const skippedAirports = new Set();
+function findUnknownAirports() {
+  const u = new Set();
+  flightData.forEach(r => String(r.route || '').split('-').forEach(c => {
+    c = c.trim().toUpperCase();
+    if (/^[A-Z]{3}$/.test(c) && !AIRPORT_REGIONS[c] && !TW_AIRPORTS.has(c) && !skippedAirports.has(c)) u.add(c);
+  }));
+  return [...u];
+}
+function closeAirportAsk() { const m = document.getElementById('airportAskModal'); if (m) m.remove(); }
+function promptNextUnknownAirport() {
+  if (document.getElementById('airportAskModal')) return;
+  const list = findUnknownAirports();
+  if (!list.length) return;
+  const code = list[0];
+  const groups = {};
+  Object.entries(COUNTRY_INFO).forEach(([cc, info]) => { (groups[info.contName] = groups[info.contName] || []).push([cc, info.name]); });
+  const optHtml = Object.entries(groups).map(([g, arr]) =>
+    `<optgroup label="${g}">${arr.map(([cc, n]) => `<option value="${cc}">${n}</option>`).join('')}</optgroup>`).join('');
+  const m = document.createElement('div');
+  m.id = 'airportAskModal'; m.className = 'modal-backdrop open';
+  m.innerHTML = `<div class="modal-box" style="width:400px;padding:16px;">
+    <div style="font-weight:800;font-size:15px;margin-bottom:6px;">🛬 發現新機場：${code}</div>
+    <div style="font-size:12px;color:#475569;line-height:1.5;margin-bottom:10px;">程式還不認識這個機場在哪個國家。選一次就會記住 (之後的備份 JSON 也會帶著)，大洲、國家相關成就才會正確計算。${list.length > 1 ? `<br>還有 ${list.length - 1} 個待確認。` : ''}</div>
+    <select id="airportAskSel" style="width:100%;padding:6px;font-size:13px;margin-bottom:12px;"><option value="">請選擇國家／地區…</option>${optHtml}</select>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button id="airportAskSkip" style="padding:5px 12px;cursor:pointer;">先略過</button>
+      <button id="airportAskOk" style="padding:5px 14px;cursor:pointer;font-weight:700;">確定</button>
+    </div></div>`;
+  document.body.appendChild(m);
+  document.getElementById('airportAskSkip').onclick = () => { skippedAirports.add(code); closeAirportAsk(); promptNextUnknownAirport(); };
+  document.getElementById('airportAskOk').onclick = () => {
+    const v = document.getElementById('airportAskSel').value;
+    if (!v) return;
+    customAirports[code] = v;
+    SafeStorage.set(CUSTOM_AIRPORT_KEY, JSON.stringify(customAirports));
+    applyCustomAirports();
+    closeAirportAsk();
+    try { renderTable(); renderAchievementsRoom(); } catch (e) {}
+    promptNextUnknownAirport();
+  };
+}
+
+function switchMainTab(tabKey) {
+  currentMainTab = tabKey;
+  document.getElementById('tabBtnSchedule').classList.toggle('active', tabKey === 'schedule');
+  document.getElementById('tabBtnAchievements').classList.toggle('active', tabKey === 'achievements');
+  document.body.classList.toggle('tab-achievements', tabKey === 'achievements');
+
+  if (tabKey === 'achievements') {
+    renderAchievementsRoom();
+  } else {
+    renderTable();
+  }
+}
+
+// 評估成就與解鎖日期
+function evaluateAchievementsState() {
+  const todayStr = getTodayStr();
+
+  // 實戰已購票航段 (依日期升冪排序)
+  const realFlights = flightData
+    .filter(r => r.date && r.date <= todayStr && r.channel && String(r.channel).trim())
+    .sort((a,b) => (a.date||'').localeCompare(b.date||''));
+
+  const allFlights = flightData;
+
+  const realAirports = new Map();
+  const realCountries = new Map();
+  realFlights.forEach(r => {
+    (r.route || '').split('-').forEach(code => {
+      const c = code.trim().toUpperCase();
+      if (!realAirports.has(c)) realAirports.set(c, r.date);
+      if (AIRPORT_REGIONS[c] && !realCountries.has(AIRPORT_REGIONS[c].country)) {
+        realCountries.set(AIRPORT_REGIONS[c].country, r.date);
+      }
+    });
+  });
+
+  const allAirports = new Set();
+  const allCountries = new Set();
+  allFlights.forEach(r => {
+    (r.route || '').split('-').forEach(code => {
+      const c = code.trim().toUpperCase();
+      allAirports.add(c);
+      if (AIRPORT_REGIONS[c]) allCountries.add(AIRPORT_REGIONS[c].country);
+    });
+  });
+
+  const { tripList: realTrips } = computeClosedLoops(realFlights);
+  const { tripList: allTrips } = computeClosedLoops(allFlights);
+
+  // 輔助檢查自訂套票框完成
+  const realFramedFlights = realFlights.filter(r => r.customFrame && r.customFrame.label);
+  const allFramedFlights = allFlights.filter(r => r.customFrame && r.customFrame.label);
+
+  // ── 「已發生」航段 (日期 ≤ 今天)：不要求購票管道欄有填，供空檔與新成就使用 ──
+  const pastFlights = flightData
+    .filter(r => r.date && isValidISODate(r.date) && r.date <= todayStr)
+    .sort((a,b) => (a.date||'').localeCompare(b.date||''));
+  const { tripList: pastTrips } = computeClosedLoops(pastFlights);
+  const POST_COVID_START = '2022-10-01';   // 疫情後 (台灣恢復出國) 起算日
+  const pastCtx = { flights: pastFlights, trips: pastTrips };
+  const allCtx  = { flights: allFlights,  trips: allTrips  };
+
+  // ── 共用小工具 ──
+  const legCodes   = r => (r.route || '').split('-').map(s => s.trim().toUpperCase()).filter(Boolean);
+  const hasLounge  = r => (r.buff || '').includes('貴') || (r.buff || '').includes('龍騰');
+  const dayDiff    = (a, b) => Math.round((new Date(a) - new Date(b)) / 86400000) * -1;
+  const tripDays   = t => dayDiff(t.startDate, t.endDate) + 1;
+  const dow        = d => new Date(d + 'T00:00:00Z').getUTCDay();   // 0=週日 … 5=週五
+  const tripLegs   = (flights, t) => flights.slice(t.startIdx, t.endIdx + 1);
+  const arrivalCountries = legs => {
+    const s = new Set();
+    legs.forEach(r => legCodes(r).slice(1).forEach(c => { if (AIRPORT_REGIONS[c]) s.add(AIRPORT_REGIONS[c].country); }));
+    return s;
+  };
+  // 航空公司正規化：去掉括號備註、商務/平躺/PLUS 等艙等字樣，讓「華航」「華航(FB商)」算同一家
+  const AIRLINE_ALIAS = { '宿霧': '宿霧太平洋' };
+  const normAirline = s => {
+    let a = String(s || '').replace(/[（(][^）)]*[）)]/g, '').replace(/X?平躺座/g, '')
+      .replace(/PLUS/gi, '').replace(/[哩里]商/g, '').replace(/商$/, '').trim().toLowerCase();
+    return AIRLINE_ALIAS[a] || a;
+  };
+  const LCC_SET = new Set(['虎航','酷航','亞航','泰亞航','越捷','泰越捷','獅航','泰獅航','宿霧太平洋','菲亞航','峇迪','德威','天馬','citylink','捷星','樂桃','香草','春秋','釜山航空','濟州航空']);
+  // 日本相關小工具
+  const jpOf = c => (AIRPORT_REGIONS[c] && AIRPORT_REGIONS[c].country === 'JP') ? AIRPORT_REGIONS[c] : null;
+  const jpCodesOf = r => legCodes(r).filter(jpOf);
+  const jpCarrierOf = r => {
+    const raw = String(r.airline || '');
+    if (raw.includes('執飛')) return null;               // 日航代碼但由別家執飛，不算搭到日籍航空
+    const base = normAirline(raw);
+    const hit = JP_CARRIERS.find(([, keys]) => keys.some(k => /^[a-z]{1,3}$/.test(k) ? base === k : base.includes(k)));
+    return hit ? hit[0] : null;
+  };
+  const isJpCarrierFlight = r => !!jpCarrierOf(r);
+  const jpFirstReach = (flights, keyFn, n) => {      // 累計不同 key 達 n 個時的日期
+    const seen = new Set();
+    for (const r of flights) {
+      jpCodesOf(r).forEach(c => { const k = keyFn(c); if (k) seen.add(k); });
+      if (seen.size >= n) return r.date;
+    }
+    return null;
+  };
+  const isJpDomestic = r => { const c = legCodes(r); return c.length >= 2 && c.every(jpOf); };
+  const tripHasJp = (flights, t) => tripLegs(flights, t).some(r => jpCodesOf(r).length > 0);
+  // 跨年度套票框：同一個套票框 (同名) 的航段橫跨兩個年份；回傳每組「橫跨成立」的日期 (已排序)
+  const frameWarpDates = framed => {
+    const g = {};
+    framed.forEach(r => { const k = r.customFrame.label; (g[k] = g[k] || []).push(r); });
+    const out = [];
+    Object.values(g).forEach(list => {
+      list.sort((a, b) => a.date.localeCompare(b.date));
+      const y0 = list[0].date.slice(0, 4);
+      const hit = list.find(r => r.date.slice(0, 4) !== y0);
+      if (hit) out.push(hit.date);
+    });
+    return out.sort();
+  };
+  // 泰國 / 節慶 / 連續同國 / 全程商務 用的小工具
+  const thOf = c => (AIRPORT_REGIONS[c] && AIRPORT_REGIONS[c].country === 'TH') ? AIRPORT_REGIONS[c] : null;
+  const thCodesOf = r => legCodes(r).filter(thOf);
+  const isThDomestic = r => { const c = legCodes(r); return c.length >= 2 && c.every(thOf); };
+  const tripHasTh = (flights, t) => tripLegs(flights, t).some(r => thCodesOf(r).length > 0);
+  const thFirstReach = (flights, keyFn, n) => {
+    const seen = new Set();
+    for (const r of flights) {
+      thCodesOf(r).forEach(c => { const k = keyFn(c); if (k) seen.add(k); });
+      if (seen.size >= n) return r.date;
+    }
+    return null;
+  };
+  const TH_REGIONS5 = ['BKK_METRO', 'NORTH_THAI', 'NE_THAI', 'EAST_THAI', 'SOUTH_THAI'];
+  // 「某天人在哪個國家」：每段航班的降落地，從該段日期住到下一段航班當天 (最多算 45 天，避免漏填回程時被拉很長)
+  const addDaysStr = (d, n) => new Date(new Date(d + 'T00:00:00Z').getTime() + n * 86400000).toISOString().slice(0, 10);
+  const stayData = flights => {
+    const arr = [...flights].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    const ctry = k => TW_AIRPORTS.has(k) ? 'TW' : (AIRPORT_REGIONS[k] ? AIRPORT_REGIONS[k].country : null);
+    const st = [];
+    arr.forEach((r, i) => {
+      const c = legCodes(r); if (c.length < 2) return;
+      st.push({ from: r.date, to: r.date, code: c[0], country: ctry(c[0]) });
+      const last = c[c.length - 1], nx = arr[i + 1];
+      const cap = addDaysStr(r.date, 45);
+      st.push({ from: r.date, to: nx ? (nx.date < cap ? nx.date : cap) : r.date, code: last, country: ctry(last) });
+    });
+    return st;
+  };
+  const inCountry = (st, country, d) => st.some(x => x.country === country && x.from <= d && d <= x.to);
+  const inCont = (st, conts, d) => st.some(x => x.country && x.country !== 'TW' && conts.includes(contOf(x.code)) && x.from <= d && d <= x.to);
+  const yearSpan = flights => { const ys = flights.map(r => +r.date.slice(0, 4)); return ys.length ? [Math.min(...ys), Math.max(...ys) + 1] : [0, -1]; };
+  const natlHits = flights => {
+    const st = stayData(flights), [y0, y1] = yearSpan(flights), hit = {};
+    for (let y = y0; y <= y1; y++) Object.entries(NATIONAL_DAYS).forEach(([cc, md]) => { if (!hit[cc] && inCountry(st, cc, `${y}-${md}`)) hit[cc] = `${y}-${md}`; });
+    return Object.values(hit).sort();
+  };
+  const entryCountry = (flights, t) => { const a = AIRPORT_REGIONS[legCodes(tripLegs(flights, t)[0])[1]]; return a ? a.country : null; };
+  const maxCountryStreak = (flights, trips) => { let run = 0, prev = null, best = 0; trips.forEach(t => { const c = entryCountry(flights, t); run = (c && c === prev) ? run + 1 : 1; prev = c; if (c) best = Math.max(best, run); }); return best; };
+  const streakCalc = n => ({flights, trips}) => {
+    let run = 0, prev = null;
+    for (const t of trips) { const c = entryCountry(flights, t); run = (c && c === prev) ? run + 1 : 1; prev = c; if (c && run >= n) return t.endDate; }
+    return null;
+  };
+  const bizLoopTrips = (flights, trips) => trips.filter(t => { const g = tripLegs(flights, t); return g.length >= 2 && g.every(isBizLeg); });
+  const isBizLeg = r => (r.airline || '').includes('商') || (r.airline || '').includes('平躺');
+  const isMilesLeg = r => /[哩里]程|[哩里]商/.test(r.channel || '') || /[哩里]/.test(r.airline || '');
+  const mkAch = (id, cat, icon, name, desc, calc) => ({
+    id, cat, icon, name, desc,
+    evalReal: () => calc(pastCtx),
+    checkPlan: () => !!calc(allCtx)
+  });
+
+  const ACHIEVEMENTS_DEF = [
+    // --- 東北亞區 ---
+    {
+      id: "JP_LAND", cat: "東北亞區", icon: "🗾",
+      name: "【初次上陸：日出之國】", desc: "首次抵達日本境內任一機場 (NRT, KIX, FUK, CTS, OKA 等)",
+      evalReal: () => realCountries.has("JP") ? realCountries.get("JP") : null,
+      checkPlan: () => allCountries.has("JP")
+    },
+    {
+      id: "JP_TRAVERSE", cat: "東北亞區", icon: "🚅",
+      name: "【大和縱貫線】", desc: "累計起降 5 個不同的日本機場",
+      evalReal: () => {
+        const matched = [];
+        realFlights.forEach(r => {
+          (r.route||'').split('-').forEach(code => {
+            const c = code.trim().toUpperCase();
+            if (AIRPORT_REGIONS[c] && AIRPORT_REGIONS[c].country === 'JP') {
+              if (!matched.some(m => m.code === c)) matched.push({ code: c, date: r.date });
+            }
+          });
+        });
+        return matched.length >= 5 ? matched[4].date : null;
+      },
+      checkPlan: () => {
+        const set = new Set([...allAirports].filter(a => AIRPORT_REGIONS[a] && AIRPORT_REGIONS[a].country === 'JP'));
+        return set.size >= 5;
+      }
+    },
+    {
+      id: "JP_SENGOKU", cat: "東北亞區", icon: "🏯",
+      name: "【戰國征途】", desc: "累計不同點進出關西、中部、關東地區機場 3 次以上",
+      evalReal: () => {
+        let cnt = 0, lastDate = null;
+        const targetRegions = new Set(["KANSAI", "CHUBU", "KANTO"]);
+        realTrips.forEach(t => {
+          const startLeg = realFlights[t.startIdx];
+          const endLeg = realFlights[t.endIdx];
+          const destArr = (startLeg.route||'').split('-')[1]?.trim();
+          const origDep = (endLeg.route||'').split('-')[0]?.trim();
+          if (destArr && origDep && destArr !== origDep) {
+            const r1 = AIRPORT_REGIONS[destArr]?.region;
+            const r2 = AIRPORT_REGIONS[origDep]?.region;
+            if (targetRegions.has(r1) && targetRegions.has(r2)) {
+              cnt++;
+              if (cnt === 3) lastDate = t.endDate;
+            }
+          }
+        });
+        return cnt >= 3 ? lastDate : null;
+      },
+      checkPlan: () => {
+        let cnt = 0;
+        const targetRegions = new Set(["KANSAI", "CHUBU", "KANTO"]);
+        allTrips.forEach(t => {
+          const startLeg = allFlights[t.startIdx];
+          const endLeg = allFlights[t.endIdx];
+          const destArr = (startLeg.route||'').split('-')[1]?.trim();
+          const origDep = (endLeg.route||'').split('-')[0]?.trim();
+          if (destArr && origDep && destArr !== origDep) {
+            const r1 = AIRPORT_REGIONS[destArr]?.region;
+            const r2 = AIRPORT_REGIONS[origDep]?.region;
+            if (targetRegions.has(r1) && targetRegions.has(r2)) cnt++;
+          }
+        });
+        return cnt >= 3;
+      }
+    },
+    {
+      id: "JP_SERVICE", cat: "東北亞區", icon: "🍱",
+      name: "【日式服務】", desc: "累計搭乘 10 段日籍航空 (JAL、ANA、日系LCC)",
+      evalReal: () => {
+        const jL = realFlights.filter(r => isJpCarrierFlight(r));
+        return jL.length >= 10 ? jL[9].date : null;
+      },
+      checkPlan: () => allFlights.filter(r => isJpCarrierFlight(r)).length >= 10
+    },
+    {
+      id: "KR_LAND", cat: "東北亞區", icon: "🏛️",
+      name: "【初次上陸：晨靜之國】", desc: "首次抵達韓國境內任一機場 (ICN, GMP, PUS, CJU 等)",
+      evalReal: () => realCountries.has("KR") ? realCountries.get("KR") : null,
+      checkPlan: () => allCountries.has("KR")
+    },
+    {
+      id: "KR_HANRIVER", cat: "東北亞區", icon: "🇰🇷",
+      name: "【漢江鐵鳥過客】", desc: "經仁川或金浦起降，且曾搭乘韓籍航空 (大韓航空、德威航空等)",
+      evalReal: () => {
+        const f = realFlights.find(r => ((r.route||'').includes('ICN') || (r.route||'').includes('GMP')) && ((r.airline||'').includes('大韓') || (r.airline||'').includes('德威') || (r.airline||'').includes('韓亞')));
+        return f ? f.date : null;
+      },
+      checkPlan: () => allFlights.some(r => ((r.route||'').includes('ICN') || (r.route||'').includes('GMP')) && ((r.airline||'').includes('大韓') || (r.airline||'').includes('德威') || (r.airline||'').includes('韓亞')))
+    },
+
+    // --- 東南亞核心區 ---
+    {
+      id: "TH_LAND", cat: "東南亞區", icon: "🐘",
+      name: "【初次上陸：微笑之國】", desc: "首次抵達泰國境內任一機場 (BKK, DMK, CNX, UTP 等)",
+      evalReal: () => realCountries.has("TH") ? realCountries.get("TH") : null,
+      checkPlan: () => allCountries.has("TH")
+    },
+    {
+      id: "TH_DUAL", cat: "東南亞區", icon: "👑",
+      name: "【暹羅雙機場之主】", desc: "在曼谷素萬那普 (BKK) 與廊曼 (DMK) 兩大新舊樞紐機場皆有過起降紀錄",
+      evalReal: () => (realAirports.has("BKK") && realAirports.has("DMK")) ? (realAirports.get("BKK") > realAirports.get("DMK") ? realAirports.get("BKK") : realAirports.get("DMK")) : null,
+      checkPlan: () => allAirports.has("BKK") && allAirports.has("DMK")
+    },
+    {
+      id: "TH_NORTH", cat: "東南亞區", icon: "🌹",
+      name: "【泰北玫瑰】", desc: "解鎖清邁 (CNX) 或烏隆他尼 (UTH) 等泰國曼谷以北之二線城市/外站航段",
+      evalReal: () => realAirports.has("CNX") ? realAirports.get("CNX") : (realAirports.has("UTH") ? realAirports.get("UTH") : null),
+      checkPlan: () => allAirports.has("CNX") || allAirports.has("UTH")
+    },
+    {
+      id: "VN_LAND", cat: "東南亞區", icon: "🏮",
+      name: "【初次上陸：安南古境】", desc: "首次抵達越南境內任一機場 (HAN, SGN, DAD 等)",
+      evalReal: () => realCountries.has("VN") ? realCountries.get("VN") : null,
+      checkPlan: () => allCountries.has("VN")
+    },
+    {
+      id: "VN_UNIFY", cat: "東南亞區", icon: "🇻🇳",
+      name: "【南北統一鐵鳥】", desc: "航程足跡涵蓋北越 (HAN)、中越 (DAD/CXR) 與南越 (SGN) 三大區域",
+      evalReal: () => {
+        if (realAirports.has("HAN") && (realAirports.has("DAD") || realAirports.has("CXR")) && realAirports.has("SGN")) {
+          const dates = [realAirports.get("HAN"), realAirports.get("DAD") || realAirports.get("CXR"), realAirports.get("SGN")].sort();
+          return dates[dates.length - 1];
+        }
+        return null;
+      },
+      checkPlan: () => allAirports.has("HAN") && (allAirports.has("DAD") || allAirports.has("CXR")) && allAirports.has("SGN")
+    },
+    {
+      id: "ID_LAND", cat: "東南亞區", icon: "🌋",
+      name: "【初次上陸：千島之國】", desc: "首次抵達印尼境內任一機場 (CGK, DPS 等)",
+      evalReal: () => realCountries.has("ID") ? realCountries.get("ID") : null,
+      checkPlan: () => allCountries.has("ID")
+    },
+    {
+      id: "ID_ISLANDS", cat: "東南亞區", icon: "🏝️",
+      name: "【千島萬島任我行】", desc: "完成雅加達轉機至峇里島等地之跳島航程",
+      evalReal: () => {
+        const f = realFlights.find(r => (r.route||'').includes('CGK-DPS') || (r.route||'').includes('DPS-CGK'));
+        return f ? f.date : null;
+      },
+      checkPlan: () => allFlights.some(r => (r.route||'').includes('CGK-DPS') || (r.route||'').includes('DPS-CGK'))
+    },
+    {
+      id: "PH_LAND", cat: "東南亞區", icon: "🐚",
+      name: "【初次上陸：西太平洋明珠】", desc: "首次抵達菲律賓境內任一機場 (MNL, CEB, CRK 等)",
+      evalReal: () => realCountries.has("PH") ? realCountries.get("PH") : null,
+      checkPlan: () => allCountries.has("PH")
+    },
+    {
+      id: "PH_PALAWAN", cat: "東南亞區", icon: "🛶",
+      name: "【最後的處女地】", desc: "航段深入巴拉望公主港 (PPS)，完成深度島嶼探索",
+      evalReal: () => realAirports.has("PPS") ? realAirports.get("PPS") : null,
+      checkPlan: () => allAirports.has("PPS")
+    },
+    {
+      id: "MY_LAND", cat: "東南亞區", icon: "🌴",
+      name: "【初次上陸：大馬風情】", desc: "首次抵達馬來西亞境內任一機場 (KUL, PEN 等)",
+      evalReal: () => realCountries.has("MY") ? realCountries.get("MY") : null,
+      checkPlan: () => allCountries.has("MY")
+    },
+    {
+      id: "MY_BORNEO", cat: "東南亞區", icon: "🦧",
+      name: "【國的兩端】", desc: "完成馬來西亞中馬來半島 (KUL, PEN) 及婆羅洲 (BKI, KCH) 的機場起降紀錄",
+      evalReal: () => {
+        const hasWest = (realAirports.has("KUL") || realAirports.has("PEN") || realAirports.has("AOR"));
+        const hasEast = (realAirports.has("BKI") || realAirports.has("KCH"));
+        return (hasWest && hasEast) ? todayStr : null;
+      },
+      checkPlan: () => (allAirports.has("KUL") || allAirports.has("PEN") || allAirports.has("AOR")) && (allAirports.has("BKI") || allAirports.has("KCH"))
+    },
+    {
+      id: "SG_LAND", cat: "東南亞區", icon: "🦁",
+      name: "【初次上陸：獅城星洲】", desc: "首次抵達新加坡樟宜機場 (SIN)",
+      evalReal: () => realAirports.has("SIN") ? realAirports.get("SIN") : null,
+      checkPlan: () => allAirports.has("SIN")
+    },
+    // 🌟 轉機自動判定（支援分開兩列寫，前後24小時/隔天轉機過夜）
+    {
+      id: "SG_CHANGI", cat: "東南亞區", icon: "⛲",
+      name: "【星耀樟宜的中繼站】", desc: "於樟宜機場 (SIN) 完成一次國際中轉，並使用樟宜貴賓室洗漱充電",
+      evalReal: () => {
+        for (let idx = 0; idx < realFlights.length; idx++) {
+          const r = realFlights[idx];
+          const arrApt = (r.route||'').split('-')[1]?.trim();
+          if (arrApt === 'SIN') {
+            for (let j = idx + 1; j < realFlights.length; j++) {
+              const nextR = realFlights[j];
+              const depApt = (nextR.route||'').split('-')[0]?.trim();
+              if (depApt === 'SIN') {
+                const d1 = new Date(r.date), d2 = new Date(nextR.date);
+                const diffDays = Math.round((d2 - d1) / (1000*60*60*24));
+                if (diffDays <= 2) {
+                  if ((nextR.buff||'').includes('貴') || (nextR.buff||'').includes('JCB') || (r.buff||'').includes('貴')) {
+                    return nextR.date;
+                  }
+                }
+              }
+            }
+          }
+        }
+        return null;
+      },
+      checkPlan: () => allFlights.some(r => (r.route||'').includes('SIN'))
+    },
+    {
+      id: "BN_LAND", cat: "東南亞區", icon: "🕌",
+      name: "【初次上陸：和平之國】", desc: "首次抵達汶萊斯里巴加灣國際機場 (BWN)",
+      evalReal: () => realAirports.has("BWN") ? realAirports.get("BWN") : null,
+      checkPlan: () => allAirports.has("BWN")
+    },
+    {
+      id: "BN_ROYAL", cat: "東南亞區", icon: "👑",
+      name: "【黃金帝國的國教】", desc: "搭乘「汶萊皇家航空 (Royal Brunei)」客機起降 BWN，打卡低調純淨油國",
+      evalReal: () => {
+        const f = realFlights.find(r => (r.route||'').includes('BWN') && (r.airline||'').includes('汶萊'));
+        return f ? f.date : null;
+      },
+      checkPlan: () => allFlights.some(r => (r.route||'').includes('BWN') && (r.airline||'').includes('汶萊'))
+    },
+    {
+      id: "KH_LAND", cat: "東南亞區", icon: "🛕",
+      name: "【初次上陸：高棉大地】", desc: "首次抵達柬埔寨境內任一機場 (金邊 PNH、暹粒 SAI)",
+      evalReal: () => realCountries.has("KH") ? realCountries.get("KH") : null,
+      checkPlan: () => allCountries.has("KH")
+    },
+    {
+      id: "KH_ANGKOR", cat: "東南亞區", icon: "🗿",
+      name: "【高棉古國的掠影】", desc: "起降暹粒 (SAI)，完成出入境探索吳哥文明門戶",
+      evalReal: () => realAirports.has("SAI") ? realAirports.get("SAI") : null,
+      checkPlan: () => allAirports.has("SAI")
+    },
+    {
+      id: "LA_LAND", cat: "東南亞區", icon: "☸️",
+      name: "【初次上陸：瀾滄古國】", desc: "首次抵達寮國境內任一機場 (永珍 VTE、龍坡邦 LPQ)",
+      evalReal: () => realCountries.has("LA") ? realCountries.get("LA") : null,
+      checkPlan: () => allCountries.has("LA")
+    },
+    {
+      id: "LA_SLOW", cat: "東南亞區", icon: "⛵",
+      name: "【瀾滄王國的慢時光】", desc: "只有一趟搭飛機進出寮國 (另一程陸路從其他國起飛)",
+      evalReal: () => {
+        const t = realTrips.find(trip => {
+          let vteCnt = 0;
+          for (let k = trip.startIdx; k <= trip.endIdx; k++) {
+            if ((realFlights[k].route||'').includes('VTE') || (realFlights[k].route||'').includes('LPQ')) vteCnt++;
+          }
+          return vteCnt === 1;
+        });
+        return t ? t.endDate : null;
+      },
+      checkPlan: () => {
+        return allTrips.some(t => {
+          let vteCnt = 0;
+          for (let k = t.startIdx; k <= t.endIdx; k++) {
+            if ((allFlights[k].route||'').includes('VTE') || (allFlights[k].route||'').includes('LPQ')) vteCnt++;
+          }
+          return vteCnt === 1;
+        });
+      }
+    },
+    {
+      id: "MM_LAND", cat: "東南亞區", icon: "✨",
+      name: "【初次上陸：萬塔佛國】", desc: "首次抵達緬甸境內機場 (仰光 RGN 或曼德勒 MDL)",
+      evalReal: () => realCountries.has("MM") ? realCountries.get("MM") : null,
+      checkPlan: () => allCountries.has("MM")
+    },
+    {
+      id: "MM_IRRAWADDY", cat: "東南亞區", icon: "🇲🇲",
+      name: "【伊洛瓦底的天空】", desc: "搭乘緬甸國家航空或其他區域航司完成緬甸國際線進出",
+      evalReal: () => {
+        const f = realFlights.find(r => (r.route||'').includes('RGN') && (r.airline||'').includes('緬甸'));
+        return f ? f.date : null;
+      },
+      checkPlan: () => allFlights.some(r => (r.route||'').includes('RGN') && (r.airline||'').includes('緬甸'))
+    },
+
+    // --- 東亞區 ---
+    {
+      id: "TL_LAND", cat: "東南亞區", icon: "🌅",
+      name: "【初次上陸：東帝汶・最年輕的國度】", desc: "我根本不知道怎麼去那裡",
+      evalReal: () => realCountries.has("TL") ? realCountries.get("TL") : null,
+      checkPlan: () => allCountries.has("TL")
+    },
+    {
+      id: "HK_LAND", cat: "東亞區", icon: "🏙️",
+      name: "【初次上陸：香江之畔】", desc: "首次抵達香港赤鱲角國際機場 (HKG)",
+      evalReal: () => realAirports.has("HKG") ? realAirports.get("HKG") : null,
+      checkPlan: () => allAirports.has("HKG")
+    },
+    {
+      id: "HK_PIER", cat: "東亞區", icon: "🥢",
+      name: "【東方之珠的轉盤】", desc: "於赤鱲角機場搭乘國泰航空並享用「玉衡堂/寰宇堂」專屬貴賓室",
+      evalReal: () => {
+        const f = realFlights.find(r => (r.route||'').includes('HKG') && (r.airline||'').includes('國泰'));
+        return f ? f.date : null;
+      },
+      checkPlan: () => allFlights.some(r => (r.route||'').includes('HKG') && (r.airline||'').includes('國泰'))
+    },
+    {
+      id: "MO_LAND", cat: "東亞區", icon: "🎰",
+      name: "【初次上陸：濠江蓮花】", desc: "首次抵達澳門國際機場 (MFM)",
+      evalReal: () => realAirports.has("MFM") ? realAirports.get("MFM") : null,
+      checkPlan: () => allAirports.has("MFM")
+    },
+    mkAch("MO_HK_OPENJAW", "東亞區", "🌉", "【東方蒙地卡羅】",
+      "同一趟閉環中，港澳進出不同點：一邊進、另一邊出 (例如香港進、澳門出，或澳門進、香港出)",
+      ({flights, trips}) => {
+        const t = trips.find(t => {
+          const g = tripLegs(flights, t);
+          const entry = legCodes(g[0])[1], exit = legCodes(g[g.length - 1])[0];
+          return entry && exit && entry !== exit && ['HKG', 'MFM'].includes(entry) && ['HKG', 'MFM'].includes(exit);
+        });
+        return t ? t.endDate : null;
+      }),
+    {
+      id: "MN_LAND", cat: "東亞區", icon: "🐎",
+      name: "【初次上陸：藍天之國】", desc: "首次抵達烏蘭巴托成吉思汗國際機場 (UBN)",
+      evalReal: () => realAirports.has("UBN") ? realAirports.get("UBN") : null,
+      checkPlan: () => allAirports.has("UBN")
+    },
+    {
+      id: "CN_LAND", cat: "東亞區", icon: "🐼",
+      name: "【初次上陸：神州大地】", desc: "首次抵達中國大陸境內任一民航機場",
+      evalReal: () => realCountries.has("CN") ? realCountries.get("CN") : null,
+      checkPlan: () => allCountries.has("CN")
+    },
+    {
+      id: "CN_TIER1", cat: "東亞區", icon: "🚅",
+      name: "【九百六十萬平方公里】", desc: "完成中國大陸境內一線樞紐 (北上廣深) 之直飛或中轉航程",
+      evalReal: () => {
+        const f = realFlights.find(r => (r.route||'').includes('PVG') || (r.route||'').includes('PEK') || (r.route||'').includes('CAN') || (r.route||'').includes('SZX'));
+        return f ? f.date : null;
+      },
+      checkPlan: () => allAirports.has("PVG") || allAirports.has("SHA") || allAirports.has("PEK") || allAirports.has("PKX") || allAirports.has("CAN") || allAirports.has("SZX")
+    },
+
+    // --- 南亞與西亞 ---
+    {
+      id: "IN_LAND", cat: "南亞與西亞", icon: "🕌",
+      name: "【初次上陸：天竺不思議】", desc: "首次抵達印度境內任一機場 (DEL, BOM 等)",
+      evalReal: () => realCountries.has("IN") ? realCountries.get("IN") : null,
+      checkPlan: () => allCountries.has("IN")
+    },
+    {
+      id: "IN_HOLY", cat: "南亞與西亞", icon: "🕉️",
+      name: "【恆河聖域的洗禮】", desc: "解鎖新德里 (DEL) 或孟買 (BOM) 起降航程，深入南亞次大陸",
+      evalReal: () => realAirports.has("DEL") ? realAirports.get("DEL") : (realAirports.has("BOM") ? realAirports.get("BOM") : null),
+      checkPlan: () => allAirports.has("DEL") || allAirports.has("BOM")
+    },
+    {
+      id: "MV_LAND", cat: "南亞與西亞", icon: "🐠",
+      name: "【初次上陸：散落洋上的珍珠】", desc: "首次降落馬列易卜拉欣·納西爾國際機場 (MLE)",
+      evalReal: () => realAirports.has("MLE") ? realAirports.get("MLE") : null,
+      checkPlan: () => allAirports.has("MLE")
+    },
+    {
+      id: "LK_LAND", cat: "南亞與西亞", icon: "💧",
+      name: "【初次上陸：印度洋之淚】", desc: "首次降落可倫坡班達拉奈克國際機場 (CMB)",
+      evalReal: () => realAirports.has("CMB") ? realAirports.get("CMB") : null,
+      checkPlan: () => allAirports.has("CMB")
+    },
+    {
+      id: "NP_LAND", cat: "南亞與西亞", icon: "🏔️",
+      name: "【初次上陸：雪山之巔】", desc: "首次降落加德滿都特里布萬國際機場 (KTM)",
+      evalReal: () => realAirports.has("KTM") ? realAirports.get("KTM") : null,
+      checkPlan: () => allAirports.has("KTM")
+    },
+    {
+      id: "AE_LAND", cat: "南亞與西亞", icon: "🐪",
+      name: "【初次上陸：沙漠奇蹟】", desc: "首次抵達阿拉伯聯合大公國 (杜拜 DXB、阿布達比 AUH)",
+      evalReal: () => realCountries.has("AE") ? realCountries.get("AE") : null,
+      checkPlan: () => allCountries.has("AE")
+    },
+    {
+      id: "AE_24H", cat: "南亞與西亞", icon: "💎",
+      name: "【土豪之都的二十四小時】", desc: "於 DXB 或 AUH 轉機停留，見證中東三大航中轉樞紐實力",
+      evalReal: () => realAirports.has("DXB") ? realAirports.get("DXB") : (realAirports.has("AUH") ? realAirports.get("AUH") : null),
+      checkPlan: () => allAirports.has("DXB") || allAirports.has("AUH")
+    },
+    {
+      id: "TR_LAND", cat: "南亞與西亞", icon: "🥙",
+      name: "【初次上陸：歐亞十字路口】", desc: "首次抵達土耳其伊斯坦堡機場 (IST) 或薩比哈機場 (SAW)",
+      evalReal: () => realCountries.has("TR") ? realCountries.get("TR") : null,
+      checkPlan: () => allCountries.has("TR")
+    },
+    {
+      id: "UZ_LAND", cat: "南亞與西亞", icon: "🏺",
+      name: "【初次上陸：絲路心臟】", desc: "首次抵達塔什干國際機場 (TAS) 踏上中亞絲路",
+      evalReal: () => realCountries.has("UZ") ? realCountries.get("UZ") : null,
+      checkPlan: () => allCountries.has("UZ")
+    },
+
+    // --- 亞洲之外：各大洲拓荒槽位 ---
+    {
+      id: "CONT_EU", cat: "洲際拓荒槽位", icon: "🇪🇺",
+      name: "【歐陸拓荒者 (The Grand Tour)】", desc: "於歐洲地理範圍（如英、法、德、荷、義等）完成任一航段起降",
+      evalReal: () => contFirstDate('EU', pastFlights), checkPlan: () => !!contFirstDate('EU', allFlights)
+    },
+    {
+      id: "CONT_NA", cat: "洲際拓荒槽位", icon: "🇺🇸",
+      name: "【跨越太平洋 (Pacific Conqueror)】", desc: "起降美加等北美洲機場（如 LAX/SFO/YVR/JFK 等，夏威夷不算）",
+      evalReal: () => contFirstDate('NA', pastFlights), checkPlan: () => !!contFirstDate('NA', allFlights)
+    },
+    {
+      id: "CONT_OC", cat: "洲際拓荒槽位", icon: "🇦🇺",
+      name: "【南十字星的召喚 (Down Under)】", desc: "起降大洋洲任一機場 (澳洲、紐西蘭、帛琉、關島、夏威夷等太平洋島嶼)",
+      evalReal: () => contFirstDate('OC', pastFlights), checkPlan: () => !!contFirstDate('OC', allFlights)
+    },
+    {
+      id: "CONT_AF", cat: "洲際拓荒槽位", icon: "🦁",
+      name: "【非洲大陸的呼喚 (Out of Africa)】", desc: "於非洲大陸任一國家（如埃及 CAI、肯亞 NBO、南非 JNB）完成起降",
+      evalReal: () => contFirstDate('AF', pastFlights), checkPlan: () => !!contFirstDate('AF', allFlights)
+    },
+    {
+      id: "CONT_SA", cat: "洲際拓荒槽位", icon: "🦙",
+      name: "【世界的盡頭 (South America)】", desc: "航程踏上南美洲土地，完成地球另一端的終極遠征",
+      evalReal: () => contFirstDate('SA', pastFlights), checkPlan: () => !!contFirstDate('SA', allFlights)
+    },
+
+    // 🌟🌟🌟🌟🌟【閉環總次數進階階梯 (全面 * 2 翻倍)】🌟🌟🌟🌟🌟
+    {
+      id: "TRIP_COUNT_1", cat: "閉環總次數進階階梯", icon: "🥉",
+      name: "【出國見習生】", desc: "累計完成 1 趟出國閉環行程 (從台灣出發並返抵台灣)",
+      evalReal: () => realTrips.length >= 1 ? realTrips[0].endDate : null,
+      checkPlan: () => allTrips.length >= 1
+    },
+    {
+      id: "TRIP_COUNT_20", cat: "閉環總次數進階階梯", icon: "🥈",
+      name: "【經常飛行者】", desc: "累計完成 20 趟出國閉環行程 (出國頻率名列前茅)",
+      evalReal: () => realTrips.length >= 20 ? realTrips[19].endDate : null,
+      checkPlan: () => allTrips.length >= 20
+    },
+    {
+      id: "TRIP_COUNT_50", cat: "閉環總次數進階階梯", icon: "🥇",
+      name: "【護照消耗者】", desc: "累計完成 50 趟出國閉環行程 (整本護照蓋滿加頁)",
+      evalReal: () => realTrips.length >= 50 ? realTrips[49].endDate : null,
+      checkPlan: () => allTrips.length >= 50
+    },
+    {
+      id: "TRIP_COUNT_100", cat: "閉環總次數進階階梯", icon: "💎",
+      name: "【亞太特派員】", desc: "累計完成 100 趟出國閉環行程 (十年史詩級飛行殿堂)",
+      evalReal: () => realTrips.length >= 100 ? realTrips[99].endDate : null,
+      checkPlan: () => allTrips.length >= 100
+    },
+
+    // 🌟🌟🌟🌟🌟【商務艙與平躺座進階階梯】🌟🌟🌟🌟🌟
+    {
+      id: "BIZ_TIER_1", cat: "商務平躺與哩程階梯", icon: "🥉",
+      name: "【躺平初體驗】", desc: "累計搭乘 1 段商務艙或平躺座椅 (不限廉航或傳統航司)",
+      evalReal: () => {
+        const list = realFlights.filter(r => (r.airline||'').includes('商') || (r.airline||'').includes('平躺'));
+        return list.length >= 1 ? list[0].date : null;
+      },
+      checkPlan: () => allFlights.some(r => (r.airline||'').includes('商') || (r.airline||'').includes('平躺'))
+    },
+    {
+      id: "BIZ_TIER_5", cat: "商務平躺與哩程階梯", icon: "🥈",
+      name: "【商務艙學徒】", desc: "累計搭乘 5 段商務艙或平躺座椅",
+      evalReal: () => {
+        const list = realFlights.filter(r => (r.airline||'').includes('商') || (r.airline||'').includes('平躺'));
+        return list.length >= 5 ? list[4].date : null;
+      },
+      checkPlan: () => allFlights.filter(r => (r.airline||'').includes('商') || (r.airline||'').includes('平躺')).length >= 5
+    },
+    {
+      id: "BIZ_TIER_15", cat: "商務平躺與哩程階梯", icon: "🥇",
+      name: "【高空品酩家】", desc: "累計搭乘 15 段商務艙或平躺座椅",
+      evalReal: () => {
+        const list = realFlights.filter(r => (r.airline||'').includes('商') || (r.airline||'').includes('平躺'));
+        return list.length >= 15 ? list[14].date : null;
+      },
+      checkPlan: () => allFlights.filter(r => (r.airline||'').includes('商') || (r.airline||'').includes('平躺')).length >= 15
+    },
+    {
+      id: "BIZ_TIER_30", cat: "商務平躺與哩程階梯", icon: "💎",
+      name: "【雲端起居室】", desc: "累計搭乘 30 段商務艙或平躺座椅 (習慣平躺看雲海)",
+      evalReal: () => {
+        const list = realFlights.filter(r => (r.airline||'').includes('商') || (r.airline||'').includes('平躺'));
+        return list.length >= 30 ? list[29].date : null;
+      },
+      checkPlan: () => allFlights.filter(r => (r.airline||'').includes('商') || (r.airline||'').includes('平躺')).length >= 30
+    },
+
+    // 🌟🌟🌟🌟🌟【貴賓室白嫖與權益進階階梯】🌟🌟🌟🌟🌟
+    {
+      id: "LOUNGE_TIER_1", cat: "權益白嫖與貴賓室階梯", icon: "🍷",
+      name: "【貴賓室初嚐】", desc: "累計 1 段航班享受貴賓室待遇 (自帶、信用卡或被帶)",
+      evalReal: () => {
+        const list = realFlights.filter(r => (r.buff||'').includes('貴') || (r.buff||'').includes('龍騰'));
+        return list.length >= 1 ? list[0].date : null;
+      },
+      checkPlan: () => allFlights.some(r => (r.buff||'').includes('貴') || (r.buff||'').includes('龍騰'))
+    },
+    {
+      id: "LOUNGE_TIER_15", cat: "權益白嫖與貴賓室階梯", icon: "🥈",
+      name: "【候機吃飽黨】", desc: "累計 15 段航班享受貴賓室待遇",
+      evalReal: () => {
+        const list = realFlights.filter(r => (r.buff||'').includes('貴') || (r.buff||'').includes('龍騰'));
+        return list.length >= 15 ? list[14].date : null;
+      },
+      checkPlan: () => allFlights.filter(r => (r.buff||'').includes('貴') || (r.buff||'').includes('龍騰')).length >= 15
+    },
+    {
+      id: "LOUNGE_TIER_35", cat: "權益白嫖與貴賓室階梯", icon: "🥇",
+      name: "【貴賓室老鴇】", desc: "累計 35 段航班享受貴賓室待遇 (哪家有好牛肉麵瞭若指掌)",
+      evalReal: () => {
+        const list = realFlights.filter(r => (r.buff||'').includes('貴') || (r.buff||'').includes('龍騰'));
+        return list.length >= 35 ? list[34].date : null;
+      },
+      checkPlan: () => allFlights.filter(r => (r.buff||'').includes('貴') || (r.buff||'').includes('龍騰')).length >= 35
+    },
+    {
+      id: "LOUNGE_TIER_60", cat: "權益白嫖與貴賓室階梯", icon: "💎",
+      name: "【地表最強白嫖怪】", desc: "累計 60 段航班享受貴賓室待遇 (各國貴賓室洗澡如同自家浴室)",
+      evalReal: () => {
+        const list = realFlights.filter(r => (r.buff||'').includes('貴') || (r.buff||'').includes('龍騰'));
+        return list.length >= 60 ? list[59].date : null;
+      },
+      checkPlan: () => allFlights.filter(r => (r.buff||'').includes('貴') || (r.buff||'').includes('龍騰')).length >= 60
+    },
+
+    // 🌟🌟🌟🌟🌟【外站套票操作階梯 (依套票框 customFrame 判定)】🌟🌟🌟🌟🌟
+    {
+      id: "FRAME_TIER_1", cat: "外站套票操盤階梯", icon: "🔗",
+      name: "【外站開票初階】", desc: "累計 1 段航班被編入自訂套票框 (如長榮 CGK-TPE-NRT 的跨趟外站套票)",
+      evalReal: () => realFramedFlights.length >= 1 ? realFramedFlights[0].date : null,
+      checkPlan: () => allFramedFlights.length >= 1
+    },
+    {
+      id: "FRAME_TIER_10", cat: "外站套票操盤階梯", icon: "🥈",
+      name: "【外站操盤手】", desc: "累計 10 段航班被編入自訂套票框",
+      evalReal: () => realFramedFlights.length >= 10 ? realFramedFlights[9].date : null,
+      checkPlan: () => allFramedFlights.length >= 10
+    },
+    {
+      id: "FRAME_TIER_20", cat: "外站套票操盤階梯", icon: "🥇",
+      name: "【航網工程師】", desc: "累計 20 段航班被編入自訂套票框",
+      evalReal: () => realFramedFlights.length >= 20 ? realFramedFlights[19].date : null,
+      checkPlan: () => allFramedFlights.length >= 20
+    },
+    {
+      id: "FRAME_TIMEWARP", cat: "外站套票操盤階梯", icon: "💎",
+      name: "【時空扭曲大師】", desc: "累計 3 組「跨年度」自訂套票框 (同一套票框的航段橫跨兩個年份)",
+      evalReal: () => { const d = frameWarpDates(realFramedFlights); return d.length >= 3 ? d[2] : null; },
+      checkPlan: () => frameWarpDates(allFramedFlights).length >= 3
+    },
+
+    // 🌟🌟🌟🌟🌟【特種兵請假槓桿階梯】🌟🌟🌟🌟🌟
+    {
+      id: "LEAVE_0D_1", cat: "特種兵請假槓桿階梯", icon: "⚡",
+      name: "【週末快閃】", desc: "累計 1 趟請假 0 天的出國閉環 (完全靠週末或國定假日)",
+      evalReal: () => {
+        const t = realTrips.find(trip => (trip.leaveRecorded && trip.totalLeave === 0));
+        return t ? t.endDate : null;
+      },
+      checkPlan: () => allTrips.some(t => (t.leaveRecorded && t.totalLeave === 0))
+    },
+    {
+      id: "LEAVE_0D_3", cat: "特種兵請假槓桿階梯", icon: "🥈",
+      name: "【假日收割機】", desc: "累計 3 趟請假 0 天的出國閉環",
+      evalReal: () => {
+        const list = realTrips.filter(trip => (trip.leaveRecorded && trip.totalLeave === 0));
+        return list.length >= 3 ? list[2].endDate : null;
+      },
+      checkPlan: () => allTrips.filter(t => (t.leaveRecorded && t.totalLeave === 0)).length >= 3
+    },
+    {
+      id: "LEAVE_LEVER_5", cat: "特種兵請假槓桿階梯", icon: "🥇",
+      name: "【連假精算師】", desc: "累計 5 趟請假 ≤ 2 天、海外 ≥ 6 天的出國閉環",
+      evalReal: () => {
+        const list = realTrips.filter(t => {
+          if (!t.leaveRecorded || t.totalLeave > 2 || !t.startDate || !t.endDate) return false;
+          const d1 = new Date(t.startDate), d2 = new Date(t.endDate);
+          return Math.round((d2 - d1) / (1000*60*60*24)) + 1 >= 6;
+        });
+        return list.length >= 5 ? list[4].endDate : null;
+      },
+      checkPlan: () => allTrips.filter(t => {
+        if (!t.leaveRecorded || t.totalLeave > 2 || !t.startDate || !t.endDate) return false;
+        const d1 = new Date(t.startDate), d2 = new Date(t.endDate);
+        return Math.round((d2 - d1) / (1000*60*60*24)) + 1 >= 6;
+      }).length >= 5
+    },
+    {
+      id: "LEAVE_LEVER_10", cat: "特種兵請假槓桿階梯", icon: "💎",
+      name: "【時空漏洞特工】", desc: "累計 10 趟請假 ≤ 2 天、海外 ≥ 6 天的出國閉環",
+      evalReal: () => {
+        const list = realTrips.filter(t => {
+          if (!t.leaveRecorded || t.totalLeave > 2 || !t.startDate || !t.endDate) return false;
+          const d1 = new Date(t.startDate), d2 = new Date(t.endDate);
+          return Math.round((d2 - d1) / (1000*60*60*24)) + 1 >= 6;
+        });
+        return list.length >= 10 ? list[9].endDate : null;
+      },
+      checkPlan: () => allTrips.filter(t => {
+        if (!t.leaveRecorded || t.totalLeave > 2 || !t.startDate || !t.endDate) return false;
+        const d1 = new Date(t.startDate), d2 = new Date(t.endDate);
+        return Math.round((d2 - d1) / (1000*60*60*24)) + 1 >= 6;
+      }).length >= 10
+    },
+
+    // 🌟🌟🌟🌟🌟【航點真愛階梯 (單一機場重複打卡)】🌟🌟🌟🌟🌟
+    {
+      id: "LOVE_APT_3", cat: "航點真愛階梯", icon: "❤️",
+      name: "【你一定很愛他】", desc: "單一年度累計前往同一國外機場 3 次",
+      evalReal: () => {
+        const yrMap = {};
+        let trigDate = null;
+        realFlights.forEach(r => {
+          const yr = r.section_year;
+          if (!yrMap[yr]) yrMap[yr] = {};
+          (r.route||'').split('-').forEach(a => {
+            const c = a.trim();
+            if (!TW_AIRPORTS.has(c)) {
+              yrMap[yr][c] = (yrMap[yr][c] || 0) + 1;
+              if (yrMap[yr][c] >= 3 && !trigDate) trigDate = r.date;
+            }
+          });
+        });
+        return trigDate;
+      },
+      checkPlan: () => true
+    },
+    {
+      id: "LOVE_APT_5", cat: "航點真愛階梯", icon: "💖",
+      name: "【當走廚房】", desc: "單一年度累計前往同一國外機場 5 次",
+      evalReal: () => {
+        const yrMap = {};
+        let trigDate = null;
+        realFlights.forEach(r => {
+          const yr = r.section_year;
+          if (!yrMap[yr]) yrMap[yr] = {};
+          (r.route||'').split('-').forEach(a => {
+            const c = a.trim();
+            if (!TW_AIRPORTS.has(c)) {
+              yrMap[yr][c] = (yrMap[yr][c] || 0) + 1;
+              if (yrMap[yr][c] >= 5 && !trigDate) trigDate = r.date;
+            }
+          });
+        });
+        return trigDate;
+      },
+      checkPlan: () => false
+    },
+    {
+      id: "LOVE_APT_10", cat: "航點真愛階梯", icon: "🎖️",
+      name: "【榮譽市民】", desc: "生涯累計前往同一國外機場 10 次 (如雅加達或曼谷)",
+      evalReal: () => {
+        const aptMap = {};
+        let trigDate = null;
+        realFlights.forEach(r => {
+          (r.route||'').split('-').forEach(a => {
+            const c = a.trim();
+            if (!TW_AIRPORTS.has(c)) {
+              aptMap[c] = (aptMap[c] || 0) + 1;
+              if (aptMap[c] >= 10 && !trigDate) trigDate = r.date;
+            }
+          });
+        });
+        return trigDate;
+      },
+      checkPlan: () => true
+    },
+
+    // 🌟 節奏空檔控管
+    {
+      id: "GAP_ANXIETY", cat: "特種兵請假槓桿階梯", icon: "🧳",
+      name: "【空檔焦慮症】", desc: "兩次閉環「回台 → 下一次出發」間隔小於 14 天 (行李箱根本不用收)",
+      // 以「已發生」的航段計算 (不看購票管道欄)，只比較相鄰兩趟都已出發的閉環；
+      // 解鎖日 = 下一趟真正出發的日子 (到那天才確認空檔夠短)。
+      evalReal: () => {
+        const t = pastTrips.find(trip => trip.daysToNextTrip !== undefined && trip.daysToNextTrip >= 0 && trip.daysToNextTrip < 14);
+        return t ? t.nextTripStart : null;
+      },
+      checkPlan: () => allTrips.some(t => t.daysToNextTrip !== undefined && t.daysToNextTrip >= 0 && t.daysToNextTrip < 14)
+    },
+    {
+      id: "GAP_AMNESIA", cat: "特種兵請假槓桿階梯", icon: "🕸️",
+      name: "【出國失憶症】", desc: "兩次閉環「回台 → 下一次出發」間隔大於 90 天 (疫情後 2022-10 起才開始計算，疫情前的空檔不算)",
+      // 只比較「出發日在 POST_COVID_START 之後」的旅程與其下一趟，避開疫情前的舊資料與鎖國空窗。
+      evalReal: () => {
+        const t = pastTrips.find(trip => trip.startDate >= POST_COVID_START && trip.daysToNextTrip !== undefined && trip.daysToNextTrip > 90);
+        return t ? t.nextTripStart : null;
+      },
+      checkPlan: () => allTrips.some(t => t.startDate >= POST_COVID_START && t.daysToNextTrip !== undefined && t.daysToNextTrip > 90)
+    },
+    {
+      id: "TIME_REPORT", cat: "特種兵請假槓桿階梯", icon: "📋",
+      name: "【誠實申報】", desc: "單次閉環請假天數達到或超過 3 天 (乖乖申報出國)",
+      evalReal: () => {
+        const t = realTrips.find(trip => trip.totalLeave >= 3);
+        return t ? t.endDate : null;
+      },
+      checkPlan: () => allTrips.some(t => t.totalLeave >= 3)
+    },
+
+    // 🌟🌟🌟🌟🌟【10 年內看不到車尾燈之終局神級成就】🌟🌟🌟🌟🌟
+    mkAch("LEGEND_ODYSSEY", "🌌 終局傳奇成就", "👑", "【永恆里程碑：十萬哩大長征】",
+      "使用里程兌換商務艙，飛往歐洲或北美洲",
+      ({flights}) => {
+        const r = flights.find(r => isMilesLeg(r) && isBizLeg(r) && legCodes(r).some(c => ['EU', 'NA'].includes(contOf(c))));
+        return r ? r.date : null;
+      }),
+    mkAch("LEGEND_EMPIRES", "🌌 終局傳奇成就", "⚔️", "【天朝霸業：東亞三大帝國】",
+      "同一年內起降日本、中國大陸、蒙古 (日本帝國、中華帝國、蒙古帝國三大舊地)",
+      ({flights}) => {
+        const m = {};
+        for (const r of flights) {
+          const y = r.date.slice(0, 4); m[y] = m[y] || new Set();
+          legCodes(r).forEach(c => { const a = AIRPORT_REGIONS[c]; if (a && ['JP', 'CN', 'MN'].includes(a.country)) m[y].add(a.country); });
+          if (m[y].size >= 3) return r.date;
+        }
+        return null;
+      }),
+    mkAch("LEGEND_OVERLAP", "🌌 終局傳奇成就", "🌪️", "【神級特種兵：百萬時空裂隙】",
+      "單一自然年內完成 ≥ 18 趟出國閉環，且該年每兩趟之間平均間隔小於 18 天",
+      ({trips}) => {
+        const by = {};
+        trips.forEach(t => { const y = t.startDate.slice(0, 4); (by[y] = by[y] || []).push(t); });
+        for (const y of Object.keys(by).sort()) {
+          const l = by[y];
+          for (let k = 18; k <= l.length; k++) {
+            let sum = 0;
+            for (let i = 1; i < k; i++) sum += dayDiff(l[i - 1].endDate, l[i].startDate);
+            if (sum / (k - 1) < 18) return l[k - 1].endDate;
+          }
+        }
+        return null;
+      }),
+    {
+      id: "LEGEND_ALL_ASIA", cat: "🌌 終局傳奇成就", icon: "💎",
+      name: "【亞洲完全制霸：全版圖點燈】", desc: "完整實戰解鎖企劃書中所有 18 個亞洲國家起降紀錄 (東南亞全滿貫、蒙古、印度、中東、中亞絲路全亮)",
+      // 解鎖日 = 第 18 個國家首次出現的日子
+      evalReal: () => { const ds = [...realCountries.entries()].filter(([k]) => COUNTRY_INFO[k] && COUNTRY_INFO[k].cont === 'AS').map(([, d]) => d).sort(); return ds.length >= 18 ? ds[17] : null; },
+      checkPlan: () => [...allCountries].filter(k => COUNTRY_INFO[k] && COUNTRY_INFO[k].cont === 'AS').length >= 18
+    },
+    {
+      id: "LEGEND_CLASSIC_LIEFLAT", cat: "🌌 終局傳奇成就", icon: "🏆",
+      name: "【空中古典主義·極致躺平殿堂】", desc: "生涯實戰完成累計 50 腿商務平躺座艙，且總飛行航段數突破 150 腿 (十年厚重黃金獎盃)",
+      // 解鎖日 = 兩個條件都達成的那一天
+      evalReal: () => {
+        const biz = realFlights.filter(r => (r.airline||'').includes('商') || (r.airline||'').includes('平躺'));
+        if (biz.length < 50 || realFlights.length < 150) return null;
+        const d1 = biz[49].date, d2 = realFlights[149].date;
+        return d1 > d2 ? d1 : d2;
+      },
+      checkPlan: () => false
+    },
+    mkAch("LEGEND_DRAGON", "🌌 終局傳奇成就", "🐉", "【堂島之龍的黃金足跡】",
+      "同一年內起降東京、大阪、廣島/岡山、福岡、沖繩五大日本重鎮舞台大滿貫 (五座城市缺一不可)",
+      ({flights}) => {
+        const CITY = { NRT:'東京', HND:'東京', KIX:'大阪', ITM:'大阪', HIJ:'廣島岡山', OKJ:'廣島岡山', FUK:'福岡', OKA:'沖繩' };
+        const m = {};
+        for (const r of flights) {
+          const y = r.date.slice(0, 4); m[y] = m[y] || new Set();
+          legCodes(r).forEach(c => { if (CITY[c]) m[y].add(CITY[c]); });
+          if (m[y].size >= 5) return r.date;
+        }
+        return null;
+      })
+  ];
+
+  const CAT_NET = "🎰 航網冒險玩家";
+  const CAT_RES = "💳 里程與貴賓室生態";
+  const CAT_TIME = "🗓️ 時間與請假奇觀";
+  const NEW_ACHIEVEMENTS = [
+    mkAch("AIRLINE_BUFFET", CAT_NET, "🎰", "【航空公司自助餐】", "累計搭乘 8 家不同航空公司 (華航與華航商務艙算同一家)", ({flights}) => {
+      const seen = new Set();
+      for (const r of flights) { const a = normAirline(r.airline); if (!a) continue; seen.add(a); if (seen.size >= 8) return r.date; }
+      return null;
+    }),
+    mkAch("TRANSIT_FORGOT", CAT_NET, "🌀", "【轉機轉到忘記目的地】", "單次旅程 (一趟閉環) 累計 4 個以上航段", ({trips}) => {
+      const t = trips.find(t => t.endIdx - t.startIdx + 1 >= 4); return t ? t.endDate : null;
+    }),
+    mkAch("OUTSTATION_ALCHEMY", CAT_NET, "🧩", "【外站票煉金術】", "完成一個起降點都不在台灣的境外航段 (如 KIX-ICN、ITM-OKA)", ({flights}) => {
+      const r = flights.find(r => { const c = legCodes(r); return c.length >= 2 && c.every(x => !TW_AIRPORTS.has(x)); });
+      return r ? r.date : null;
+    }),
+    mkAch("FRAME_COLLECTOR", CAT_NET, "🖼️", "【套票集郵家】", "累計 5 段航班被編入自訂套票框", ({flights}) => {
+      const l = flights.filter(r => r.customFrame && r.customFrame.label); return l.length >= 5 ? l[4].date : null;
+    }),
+    mkAch("PASSPORT_STAMPS", CAT_NET, "🌐", "【護照不是集點卡嗎】", "累計抵達 10 個不同國家／地區 (只算降落地，不含台灣)", ({flights}) => {
+      const seen = new Set();
+      for (const r of flights) {
+        legCodes(r).slice(1).forEach(c => { if (AIRPORT_REGIONS[c]) seen.add(AIRPORT_REGIONS[c].country); });
+        if (seen.size >= 10) return r.date;
+      }
+      return null;
+    }),
+    mkAch("THREE_COUNTRIES", CAT_NET, "🎫", "【一張機票玩三國】", "單一趟旅程降落 3 個以上不同國家", ({flights, trips}) => {
+      const t = trips.find(t => arrivalCountries(tripLegs(flights, t)).size >= 3); return t ? t.endDate : null;
+    }),
+    mkAch("LCC_BELIEVER", CAT_NET, "🪑", "【廉航信徒】", "累計搭乘 10 段廉價航空 (腿長是不是沒人權？)", ({flights}) => {
+      const l = flights.filter(r => LCC_SET.has(normAirline(r.airline))); return l.length >= 10 ? l[9].date : null;
+    }),
+
+    mkAch("LOUNGE_RESIDENT", CAT_RES, "🛋️", "【貴賓室常駐人口】", "累計 5 趟「每個航段都有貴賓室紀錄」的出國閉環 (去也吃、回也吃)", ({flights, trips}) => {
+      const l = trips.filter(t => { const g = tripLegs(flights, t); return g.length >= 2 && g.every(hasLounge); });
+      return l.length >= 5 ? l[4].endDate : null;
+    }),
+    mkAch("MILES_ALCHEMIST", CAT_RES, "🧙", "【里程煉金術士】", "累計 5 段里程相關航班紀錄 (購票管道含里程／哩程)", ({flights}) => {
+      const l = flights.filter(r => /[哩里]程|[哩里]商/.test(r.channel || '') || /[哩里]/.test(r.airline || '')); return l.length >= 5 ? l[4].date : null;
+    }),
+
+    mkAch("WEEKEND_ESCAPE", CAT_TIME, "🗓️", "【週末逃兵】", "週五出發、週日回台，且請假不超過 1 天 (需有登錄請假天數)", ({trips}) => {
+      const t = trips.find(t => t.leaveRecorded && t.totalLeave <= 1 && dow(t.startDate) === 5 && dow(t.endDate) === 0); return t ? t.endDate : null;
+    }),
+    mkAch("SAME_DAY_DOUBLE", CAT_TIME, "⚡", "【今天飛、今天還要飛】", "同一天完成至少 2 段航班", ({flights}) => {
+      const cnt = {}; for (const r of flights) { cnt[r.date] = (cnt[r.date] || 0) + 1; if (cnt[r.date] >= 2) return r.date; } return null;
+    }),
+    mkAch("LEAVE_LOOPHOLE", CAT_TIME, "🥷", "【請假系統的漏洞】", "明確登錄請假 0 天、且人在海外 ≥ 5 天的一趟旅程 (空白不算，要真的填 0)", ({trips}) => {
+      const t = trips.find(t => t.leaveRecorded && t.totalLeave === 0 && tripDays(t) >= 5); return t ? t.endDate : null;
+    }),
+    mkAch("NEW_YEAR_AWAY", CAT_TIME, "🎆", "【跨年不回家】", "同一趟旅程跨越兩個年份", ({trips}) => {
+      const t = trips.find(t => t.startDate.slice(0, 4) !== t.endDate.slice(0, 4)); return t ? t.endDate : null;
+    }),
+    mkAch("MONTH_STREAK", CAT_TIME, "📆", "【月月出走】", "連續 3 個日曆月，每個月都有出發的旅程", ({trips}) => {
+      const first = {}; trips.forEach(t => { const m = t.startDate.slice(0, 7); if (!first[m]) first[m] = t.startDate; });
+      const ms = Object.keys(first).sort();
+      const idx = m => { const [y, mo] = m.split('-').map(Number); return y * 12 + mo; };
+      for (let i = 2; i < ms.length; i++) if (idx(ms[i]) - idx(ms[i - 2]) === 2) return first[ms[i]];
+      return null;
+    }),
+    mkAch("VALENTINE_ABROAD", CAT_TIME, "💔", "【情人節？不在台灣】", "2/14 當天人在海外 (旅程期間包含情人節)", ({trips}) => {
+      const t = trips.find(t => { for (let y = +t.startDate.slice(0, 4); y <= +t.endDate.slice(0, 4); y++) { const d = `${y}-02-14`; if (t.startDate <= d && d <= t.endDate) return true; } return false; });
+      return t ? t.endDate : null;
+    }),
+    mkAch("LONG_HAUL_TRIP", CAT_TIME, "🧭", "【回家的路有點長】", "單一趟旅程在外 ≥ 10 天 (含出發與回台當天)", ({trips}) => {
+      const t = trips.find(t => tripDays(t) >= 10); return t ? t.endDate : null;
+    }),
+    mkAch("YEARLY_8", CAT_TIME, "📍", "【年度打卡王】", "單一年度累計 8 趟出國閉環", ({trips}) => {
+      const cnt = {}; for (const t of trips) { const y = t.startDate.slice(0, 4); cnt[y] = (cnt[y] || 0) + 1; if (cnt[y] >= 8) return t.endDate; } return null;
+    })
+  ];
+
+  const CAT_JP = "🗾 日本深度攻略 (高難度)";
+  const NEW_JP = [
+    mkAch("JP_PREF_10", CAT_JP, "🗺️", "【十都道府縣俱樂部】", "累計起降 10 個不同的日本都道府縣 (成田在千葉、羽田在東京，各算一個)",
+      ({flights}) => jpFirstReach(flights, c => JP_PREF[c], 10)),
+    mkAch("JP_PREF_20", CAT_JP, "🏞️", "【日本半壁江山】", "累計起降 20 個不同的日本都道府縣",
+      ({flights}) => jpFirstReach(flights, c => JP_PREF[c], 20)),
+    mkAch("JP_ALL_REGIONS", CAT_JP, "🎌", "【日本全地方制霸】", "起降過關東、關西、中部、東北、北海道、九州、四國、中國、沖繩全部 9 個地方",
+      ({flights}) => jpFirstReach(flights, c => AIRPORT_REGIONS[c].region, 9)),
+    mkAch("JP_ICE_FIRE", CAT_JP, "🧊", "【冰與火之歌】", "同一個日曆年內，同時起降北海道與沖繩",
+      ({flights}) => {
+        const m = {};
+        for (const r of flights) {
+          const y = r.date.slice(0, 4); m[y] = m[y] || new Set();
+          jpCodesOf(r).forEach(c => m[y].add(AIRPORT_REGIONS[c].region));
+          if (m[y].has('HOKKAIDO') && m[y].has('OKINAWA')) return r.date;
+        }
+        return null;
+      }),
+    mkAch("JP_NORTH_SOUTH", CAT_JP, "🧭", "【日本縱貫大動脈】", "同一趟旅程內，北海道與 (九州或沖繩) 都走過一遍",
+      ({flights, trips}) => {
+        const t = trips.find(t => {
+          const rg = new Set(); tripLegs(flights, t).forEach(r => jpCodesOf(r).forEach(c => rg.add(AIRPORT_REGIONS[c].region)));
+          return rg.has('HOKKAIDO') && (rg.has('KYUSHU') || rg.has('OKINAWA'));
+        });
+        return t ? t.endDate : null;
+      }),
+    mkAch("JP_DOMESTIC_5", CAT_JP, "🛫", "【國內線常客】", "累計搭乘 5 段日本國內線 (起降都在日本)",
+      ({flights}) => { const l = flights.filter(isJpDomestic); return l.length >= 5 ? l[4].date : null; }),
+    mkAch("JP_DOMESTIC_CHAIN", CAT_JP, "⛓️", "【日本境內連環跳】", "單一趟旅程內連續飛 3 段以上日本國內線",
+      ({flights, trips}) => {
+        const t = trips.find(t => tripLegs(flights, t).filter(isJpDomestic).length >= 3); return t ? t.endDate : null;
+      }),
+    mkAch("JP_REMOTE_5", CAT_JP, "🌾", "【地方創生大使】", "累計起降 5 個「非主要樞紐」的日本機場 (排除成田、羽田、關西、伊丹、中部、福岡、新千歲、那霸)",
+      ({flights}) => jpFirstReach(flights, c => JP_MAJOR_HUBS.has(c) ? null : c, 5)),
+    mkAch("JP_ISLANDS_3", CAT_JP, "🏝️", "【離島跳島達人】", "累計起降 3 座日本離島機場 (石垣、宮古、與那國、久米島、屋久島、奄美、對馬、隱岐、利尻、八丈島)",
+      ({flights}) => jpFirstReach(flights, c => JP_ISLAND_AIRPORTS.has(c) ? c : null, 3)),
+    mkAch("JP_SAKURA_3", CAT_JP, "🌸", "【花見常客】", "在 3 個不同年份的 3/20～4/15 賞櫻期間，人在日本機場起降",
+      ({flights}) => {
+        const ys = new Set();
+        for (const r of flights) {
+          const md = r.date.slice(5);
+          if (md >= '03-20' && md <= '04-15' && jpCodesOf(r).length) ys.add(r.date.slice(0, 4));
+          if (ys.size >= 3) return r.date;
+        }
+        return null;
+      }),
+    mkAch("JP_CARRIERS_4", CAT_JP, "🎏", "【日系航空四天王】", "累計搭乘 4 家不同的日本籍航空 (日航、全日空、天馬、樂桃、捷星日本、ZIPAIR…；日航代碼但別家執飛不算)",
+      ({flights}) => {
+        const seen = new Set();
+        for (const r of flights) { const c = jpCarrierOf(r); if (c) seen.add(c); if (seen.size >= 4) return r.date; }
+        return null;
+      }),
+    mkAch("JP_TRIPS_15", CAT_JP, "🍙", "【日本不算出國】", "累計 15 趟涉及日本的出國閉環 (旅程中有日本機場就算)",
+      ({flights, trips}) => {
+        const l = trips.filter(t => tripHasJp(flights, t)); return l.length >= 15 ? l[14].endDate : null;
+      }),
+    mkAch("JP_YEAR_4", CAT_JP, "🏠", "【日本是第二個家】", "單一年度累計 4 趟涉及日本的出國閉環",
+      ({flights, trips}) => {
+        const cnt = {};
+        for (const t of trips) {
+          if (!tripHasJp(flights, t)) continue;
+          const y = t.startDate.slice(0, 4); cnt[y] = (cnt[y] || 0) + 1;
+          if (cnt[y] >= 4) return t.endDate;
+        }
+        return null;
+      })
+  ];
+  NEW_ACHIEVEMENTS.push(...NEW_JP);
+
+  const CAT_TH = "🛕 泰國專區 (含高難度)";
+  const CAT_FEST = "🎉 節慶巡禮 (固定日期)";
+  const NEW_TH_FEST = [
+    mkAch("TH_AIRPORTS_8", CAT_TH, "🛬", "【泰國機場收藏家】", "累計起降 8 個不同的泰國機場",
+      ({flights}) => thFirstReach(flights, c => c, 8)),
+    mkAch("TH_TRIP_REGIONS_4", CAT_TH, "🛕", "【泰國環島大冒險】", "同一趟旅程內起降 4 個以上不同的泰國地區 (曼谷、北部、東北、東部、南部)",
+      ({flights, trips}) => {
+        const t = trips.find(t => { const rg = new Set(); tripLegs(flights, t).forEach(r => thCodesOf(r).forEach(c => { if (TH_REGIONS5.includes(AIRPORT_REGIONS[c].region)) rg.add(AIRPORT_REGIONS[c].region); })); return rg.size >= 4; });
+        return t ? t.endDate : null;
+      }),
+    mkAch("TH_NORTH_SOUTH", CAT_TH, "🧭", "【泰國縱貫大動脈】", "同一趟旅程內，北部 (清邁、清萊等) 與南部 (普吉、喀比、蘇美等) 都走過",
+      ({flights, trips}) => {
+        const t = trips.find(t => { const rg = new Set(); tripLegs(flights, t).forEach(r => thCodesOf(r).forEach(c => rg.add(AIRPORT_REGIONS[c].region))); return rg.has('NORTH_THAI') && rg.has('SOUTH_THAI'); });
+        return t ? t.endDate : null;
+      }),
+    mkAch("TH_DOMESTIC_5", CAT_TH, "🛩️", "【泰國國內線常客】", "累計搭乘 5 段泰國國內線 (起降都在泰國)",
+      ({flights}) => { const l = flights.filter(isThDomestic); return l.length >= 5 ? l[4].date : null; }),
+    mkAch("TH_MONTHS_12", CAT_TH, "🌦️", "【泰國四季輪迴】", "累計 12 個不同的日曆月份人在泰國 (熱季、雨季、涼季全收集)",
+      ({flights}) => {
+        const seen = new Set();
+        for (const r of flights) { if (thCodesOf(r).length) seen.add(r.date.slice(5, 7)); if (seen.size >= 12) return r.date; }
+        return null;
+      }),
+    mkAch("TH_TRIPS_20", CAT_TH, "🛺", "【曼谷是我家後院】", "累計 20 趟涉及泰國的出國閉環 (旅程中有泰國機場就算)",
+      ({flights, trips}) => { const l = trips.filter(t => tripHasTh(flights, t)); return l.length >= 20 ? l[19].endDate : null; }),
+    mkAch("TH_YEAR_5", CAT_TH, "🔁", "【一年五度泰國】", "單一年度累計 5 趟涉及泰國的出國閉環",
+      ({flights, trips}) => {
+        const cnt = {};
+        for (const t of trips) { if (!tripHasTh(flights, t)) continue; const y = t.startDate.slice(0, 4); cnt[y] = (cnt[y] || 0) + 1; if (cnt[y] >= 5) return t.endDate; }
+        return null;
+      }),
+    mkAch("FEST_SONGKRAN", CAT_TH, "💦", "【潑水節倖存者】", "4/13～4/15 潑水節 (宋干節) 期間人在泰國",
+      ({flights}) => {
+        const st = stayData(flights), [y0, y1] = yearSpan(flights);
+        for (let y = y0; y <= y1; y++) for (const md of ['04-13', '04-14', '04-15']) if (inCountry(st, 'TH', `${y}-${md}`)) return `${y}-${md}`;
+        return null;
+      }),
+
+    mkAch("FEST_JP_NYE", CAT_FEST, "🔔", "【除夜之鐘】", "12/31 到隔年 1/1 人在日本跨年",
+      ({flights}) => {
+        const st = stayData(flights), [y0, y1] = yearSpan(flights);
+        for (let y = y0; y <= y1; y++) if (inCountry(st, 'JP', `${y}-12-31`) && inCountry(st, 'JP', `${y + 1}-01-01`)) return `${y + 1}-01-01`;
+        return null;
+      }),
+    mkAch("FEST_XMAS", CAT_FEST, "🎄", "【聖誕節在歐美】", "12/25 聖誕節當天人在歐洲或北美洲",
+      ({flights}) => {
+        const st = stayData(flights), [y0, y1] = yearSpan(flights);
+        for (let y = y0; y <= y1; y++) if (inCont(st, ['EU', 'NA'], `${y}-12-25`)) return `${y}-12-25`;
+        return null;
+      }),
+    mkAch("FEST_NATIONAL_3", CAT_FEST, "🎆", "【國慶日巡禮】", "國慶日當天人在該國，累計 3 個國家 (如美國 7/4、法國 7/14、新加坡 8/9、印尼 8/17)",
+      ({flights}) => { const d = natlHits(flights); return d.length >= 3 ? d[2] : null; }),
+    mkAch("FEST_NATIONAL_8", CAT_FEST, "🌐", "【環球慶典特派員】", "國慶日當天人在該國，累計 8 個國家 (共 23 國可選)",
+      ({flights}) => { const d = natlHits(flights); return d.length >= 8 ? d[7] : null; }),
+
+    mkAch("SAME_COUNTRY_2", "💘 航點真愛與專情階梯", "💞", "【專情的人】", "連續 2 趟旅程都去同一個國家 (以每趟第一個入境的國家為準)", streakCalc(2)),
+    mkAch("SAME_COUNTRY_5", "💘 航點真愛與專情階梯", "🔒", "【此國不渝】", "連續 5 趟旅程都去同一個國家", streakCalc(5)),
+    mkAch("SAME_COUNTRY_10", "💘 航點真愛與專情階梯", "💍", "【非你不可】", "連續 10 趟旅程都去同一個國家", streakCalc(10)),
+
+    mkAch("BIZ_LOOP_1", "💺 商務平躺與哩程階梯", "🥂", "【成功人士的生活】", "累計 1 趟「每個航段都搭商務艙」的出國閉環 (去、回、轉機全部躺平)",
+      ({flights, trips}) => { const l = bizLoopTrips(flights, trips); return l.length >= 1 ? l[0].endDate : null; }),
+    mkAch("BIZ_LOOP_5", "💺 商務平躺與哩程階梯", "💼", "【財富自由預備軍】", "累計 5 趟「每個航段都搭商務艙」的出國閉環",
+      ({flights, trips}) => { const l = bizLoopTrips(flights, trips); return l.length >= 5 ? l[4].endDate : null; }),
+    mkAch("BIZ_LOOP_15", "💺 商務平躺與哩程階梯", "🛩️", "【我的人生沒有經濟艙】", "累計 15 趟「每個航段都搭商務艙」的出國閉環",
+      ({flights, trips}) => { const l = bizLoopTrips(flights, trips); return l.length >= 15 ? l[14].endDate : null; })
+  ];
+  NEW_ACHIEVEMENTS.push(...NEW_TH_FEST);
+
+  // 偉業：疫情前有出國紀錄、疫情後才再出國 (中間整段鎖國期間都撐過來了)
+  NEW_ACHIEVEMENTS.push(
+    mkAch("COVID_SURVIVOR", "🌌 終局傳奇成就", "🦠", "【偉業・鎖國倖存者】", "度過 2019-2022 疫情",
+      ({trips}) => {
+        const t = trips.find(t => t.endDate <= '2020-04-30' && t.nextTripStart && t.nextTripStart >= '2022-09-01');
+        return t ? t.nextTripStart : null;
+      })
+  );
+  ACHIEVEMENTS_DEF.push(...NEW_ACHIEVEMENTS);
+
+  // ── 成就排列：同性質放一起 (沒列在這裡的成就會保留原分類，排在最後) ──
+  const ACH_LAYOUT = [
+    ['🗾 日本專區 (含高難度)', ['JP_LAND','JP_SERVICE','JP_TRAVERSE','JP_SENGOKU','JP_PREF_10','JP_DOMESTIC_5','JP_REMOTE_5','JP_CARRIERS_4','JP_ISLANDS_3','JP_SAKURA_3','JP_TRIPS_15','JP_YEAR_4','JP_ICE_FIRE','JP_DOMESTIC_CHAIN','JP_NORTH_SOUTH','JP_ALL_REGIONS','JP_PREF_20']],
+    ['🛕 泰國專區 (含高難度)', ['TH_LAND','TH_DUAL','TH_NORTH','TH_AIRPORTS_8','TH_DOMESTIC_5','TH_NORTH_SOUTH','TH_TRIP_REGIONS_4','FEST_SONGKRAN','TH_YEAR_5','TH_MONTHS_12','TH_TRIPS_20']],
+    ['🌏 東亞區 (韓港澳中蒙)', ['KR_LAND','KR_HANRIVER','HK_LAND','HK_PIER','MO_LAND','MO_HK_OPENJAW','CN_LAND','CN_TIER1','MN_LAND']],
+    ['🌴 東南亞區', ['VN_LAND','VN_UNIFY','ID_LAND','ID_ISLANDS','PH_LAND','PH_PALAWAN','MY_LAND','MY_BORNEO','SG_LAND','SG_CHANGI','BN_LAND','BN_ROYAL','KH_LAND','KH_ANGKOR','LA_LAND','LA_SLOW','MM_LAND','MM_IRRAWADDY','TL_LAND']],
+    ['🕌 南亞與西亞', ['IN_LAND','IN_HOLY','MV_LAND','LK_LAND','NP_LAND','AE_LAND','AE_24H','TR_LAND','UZ_LAND']],
+    ['🌍 洲際拓荒槽位', ['CONT_EU','CONT_NA','CONT_OC','CONT_AF','CONT_SA']],
+    ['📈 出國次數與足跡階梯', ['TRIP_COUNT_1','TRIP_COUNT_20','YEARLY_8','TRIP_COUNT_50','TRIP_COUNT_100','PASSPORT_STAMPS','THREE_COUNTRIES']],
+    ['💘 航點真愛與專情階梯', ['LOVE_APT_3','SAME_COUNTRY_2','LOVE_APT_5','SAME_COUNTRY_5','LOVE_APT_10','SAME_COUNTRY_10']],
+    ['💺 商務平躺與哩程階梯', ['BIZ_TIER_1','MILES_ALCHEMIST','BIZ_TIER_5','BIZ_LOOP_1','BIZ_TIER_15','BIZ_LOOP_5','BIZ_TIER_30','BIZ_LOOP_15']],
+    ['🥂 權益白嫖與貴賓室階梯', ['LOUNGE_TIER_1','LOUNGE_TIER_15','LOUNGE_RESIDENT','LOUNGE_TIER_35','LOUNGE_TIER_60']],
+    ['🧩 外站套票操盤階梯', ['FRAME_TIER_1','OUTSTATION_ALCHEMY','FRAME_COLLECTOR','FRAME_TIER_10','FRAME_TIER_20','FRAME_TIMEWARP']],
+    ['🎰 航網冒險玩家', ['AIRLINE_BUFFET','LCC_BELIEVER','TRANSIT_FORGOT']],
+    ['🥷 特種兵請假槓桿階梯', ['LEAVE_0D_1','WEEKEND_ESCAPE','LEAVE_0D_3','LEAVE_LOOPHOLE','LEAVE_LEVER_5','LEAVE_LEVER_10','GAP_ANXIETY','GAP_AMNESIA','TIME_REPORT']],
+    ['🗓️ 時間與日期奇觀', ['SAME_DAY_DOUBLE','MONTH_STREAK','NEW_YEAR_AWAY','VALENTINE_ABROAD','LONG_HAUL_TRIP']],
+    ['🎉 節慶巡禮 (固定日期)', ['FEST_JP_NYE','FEST_XMAS','FEST_NATIONAL_3','FEST_NATIONAL_8']],
+    ['🌌 終局傳奇成就', ['LEGEND_ODYSSEY','LEGEND_EMPIRES','LEGEND_OVERLAP','LEGEND_ALL_ASIA','LEGEND_CLASSIC_LIEFLAT','LEGEND_DRAGON','COVID_SURVIVOR']]
+  ];
+  {
+    const byId = new Map(ACHIEVEMENTS_DEF.map(a => [a.id, a]));
+    const ordered = [];
+    ACH_LAYOUT.forEach(([cat, ids]) => ids.forEach(id => { const a = byId.get(id); if (a) { a.cat = cat; ordered.push(a); byId.delete(id); } }));
+    byId.forEach(a => ordered.push(a));
+    ACHIEVEMENTS_DEF.length = 0; ACHIEVEMENTS_DEF.push(...ordered);
+  }
+
+
+  // ── 進度條資料：只有「可累計」的成就才有 (一次性的「初次上陸」類不顯示) ──
+  const isBizFlight = r => (r.airline || '').includes('商') || (r.airline || '').includes('平躺');
+  const pr = (cur, max, unit, label) => ({ cur, max, unit, label });
+  const maxOf = arr => arr.length ? Math.max(...arr) : 0;
+  const pf = pastCtx.flights, pt = pastCtx.trips;
+  const bizN = realFlights.filter(isBizFlight).length;
+  const loungeN = realFlights.filter(hasLounge).length;
+  const frameN = realFramedFlights.length;
+  const zeroLeaveN = realTrips.filter(t => t.leaveRecorded && t.totalLeave === 0).length;
+  const leverN = realTrips.filter(t => t.leaveRecorded && t.totalLeave <= 2 && t.startDate && t.endDate && tripDays(t) >= 6).length;
+  const aptYear = {}, aptLife = {};
+  realFlights.forEach(r => legCodes(r).forEach(c => {
+    if (TW_AIRPORTS.has(c)) return;
+    const k = r.section_year + '|' + c; aptYear[k] = (aptYear[k] || 0) + 1; aptLife[c] = (aptLife[c] || 0) + 1;
+  }));
+  const jpDistinct = keyFn => { const st = new Set(); pf.forEach(r => jpCodesOf(r).forEach(c => { const k = keyFn(c); if (k) st.add(k); })); return st.size; };
+  const perYearMax = (arr, keyFn) => { const m = {}; arr.forEach(x => { const y = keyFn(x); m[y] = (m[y] || 0) + 1; }); return maxOf(Object.values(m)); };
+  const tripMax = fn => maxOf(pt.map(t => fn(tripLegs(pf, t))));
+  const jpTrips = pt.filter(t => tripHasJp(pf, t));
+  const sakuraYears = new Set(pf.filter(r => { const md = r.date.slice(5); return md >= '03-20' && md <= '04-15' && jpCodesOf(r).length; }).map(r => r.date.slice(0, 4))).size;
+  const iceFire = (() => { const m = {}; pf.forEach(r => { const y = r.date.slice(0, 4); m[y] = m[y] || new Set(); jpCodesOf(r).forEach(c => m[y].add(AIRPORT_REGIONS[c].region)); });
+    return maxOf(Object.values(m).map(st => (st.has('HOKKAIDO') ? 1 : 0) + (st.has('OKINAWA') ? 1 : 0))); })();
+  const monthRun = (() => {
+    const ms = [...new Set(pt.map(t => t.startDate.slice(0, 7)))].sort();
+    const idx = m => { const [y, mo] = m.split('-').map(Number); return y * 12 + mo; };
+    let best = 0, run = 0, prev = null;
+    ms.forEach(m => { run = (prev !== null && idx(m) - prev === 1) ? run + 1 : 1; prev = idx(m); best = Math.max(best, run); });
+    return best;
+  })();
+  const PROG = {};
+  [['TRIP_COUNT', [1, 20, 50, 100], realTrips.length, '趟'], ['BIZ_TIER', [1, 5, 15, 30], bizN, '段'],
+   ['LOUNGE_TIER', [1, 15, 35, 60], loungeN, '段'], ['LEAVE_0D', [1, 3], zeroLeaveN, '趟'], ['LEAVE_LEVER', [5, 10], leverN, '趟']]
+    .forEach(([pre, ns, cur, u]) => ns.forEach(n => { PROG[pre + '_' + n] = [pr(cur, n, u)]; }));
+  [['FRAME_TIER_1', 1], ['FRAME_COLLECTOR', 5], ['FRAME_TIER_10', 10], ['FRAME_TIER_20', 20]].forEach(([id, n]) => { PROG[id] = [pr(frameN, n, '段')]; });
+  PROG.FRAME_TIMEWARP = [pr(frameWarpDates(realFramedFlights).length, 3, '組')];
+  PROG.LOVE_APT_3 = [pr(maxOf(Object.values(aptYear)), 3, '次')];
+  PROG.LOVE_APT_5 = [pr(maxOf(Object.values(aptYear)), 5, '次')];
+  PROG.LOVE_APT_10 = [pr(maxOf(Object.values(aptLife)), 10, '次')];
+  PROG.JP_SERVICE = [pr(realFlights.filter(isJpCarrierFlight).length, 10, '段')];
+  PROG.JP_TRAVERSE = [pr(new Set(realFlights.flatMap(r => jpCodesOf(r))).size, 5, '個')];
+  PROG.JP_PREF_10 = [pr(jpDistinct(c => JP_PREF[c]), 10, '個')];
+  PROG.JP_PREF_20 = [pr(jpDistinct(c => JP_PREF[c]), 20, '個')];
+  PROG.JP_ALL_REGIONS = [pr(jpDistinct(c => AIRPORT_REGIONS[c].region), 9, '個')];
+  PROG.JP_ICE_FIRE = [pr(iceFire, 2, '地', '同一年內')];
+  PROG.JP_NORTH_SOUTH = [pr(tripMax(g => { const rg = new Set(); g.forEach(r => jpCodesOf(r).forEach(c => rg.add(AIRPORT_REGIONS[c].region)));
+    return (rg.has('HOKKAIDO') ? 1 : 0) + ((rg.has('KYUSHU') || rg.has('OKINAWA')) ? 1 : 0); }), 2, '地', '單趟內')];
+  PROG.JP_DOMESTIC_5 = [pr(pf.filter(isJpDomestic).length, 5, '段')];
+  PROG.JP_DOMESTIC_CHAIN = [pr(tripMax(g => g.filter(isJpDomestic).length), 3, '段', '單趟最高')];
+  PROG.JP_REMOTE_5 = [pr(jpDistinct(c => JP_MAJOR_HUBS.has(c) ? null : c), 5, '個')];
+  PROG.JP_ISLANDS_3 = [pr(jpDistinct(c => JP_ISLAND_AIRPORTS.has(c) ? c : null), 3, '座')];
+  PROG.JP_SAKURA_3 = [pr(sakuraYears, 3, '年')];
+  PROG.JP_CARRIERS_4 = [pr(new Set(pf.map(jpCarrierOf).filter(Boolean)).size, 4, '家')];
+  PROG.JP_TRIPS_15 = [pr(jpTrips.length, 15, '趟')];
+  PROG.JP_YEAR_4 = [pr(perYearMax(jpTrips, t => t.startDate.slice(0, 4)), 4, '趟', '單年最高')];
+  PROG.AIRLINE_BUFFET = [pr(new Set(pf.map(r => normAirline(r.airline)).filter(Boolean)).size, 8, '家')];
+  PROG.LCC_BELIEVER = [pr(pf.filter(r => LCC_SET.has(normAirline(r.airline))).length, 10, '段')];
+  PROG.TRANSIT_FORGOT = [pr(tripMax(g => g.length), 4, '段', '單趟最高')];
+  PROG.PASSPORT_STAMPS = [pr(arrivalCountries(pf).size, 10, '國')];
+  PROG.THREE_COUNTRIES = [pr(tripMax(g => arrivalCountries(g).size), 3, '國', '單趟最高')];
+  PROG.LOUNGE_RESIDENT = [pr(pt.filter(t => { const g = tripLegs(pf, t); return g.length >= 2 && g.every(hasLounge); }).length, 5, '趟')];
+  PROG.MILES_ALCHEMIST = [pr(pf.filter(r => /[哩里]程|[哩里]商/.test(r.channel || '') || /[哩里]/.test(r.airline || '')).length, 5, '段')];
+  PROG.MONTH_STREAK = [pr(monthRun, 3, '個月')];
+  PROG.YEARLY_8 = [pr(perYearMax(pt, t => t.startDate.slice(0, 4)), 8, '趟', '單年最高')];
+  PROG.LONG_HAUL_TRIP = [pr(maxOf(pt.map(tripDays)), 10, '天', '最長一趟')];
+  PROG.LEGEND_EMPIRES = [pr((() => { const m = {}; pf.forEach(r => { const y = r.date.slice(0, 4); m[y] = m[y] || new Set();
+    legCodes(r).forEach(c => { const a = AIRPORT_REGIONS[c]; if (a && ['JP', 'CN', 'MN'].includes(a.country)) m[y].add(a.country); }); });
+    return maxOf(Object.values(m).map(st => st.size)); })(), 3, '國', '同一年內')];
+  PROG.LEGEND_OVERLAP = [pr(perYearMax(pt, t => t.startDate.slice(0, 4)), 18, '趟', '單年最高')];
+  PROG.LEGEND_ALL_ASIA = [pr([...realCountries.keys()].filter(k => COUNTRY_INFO[k] && COUNTRY_INFO[k].cont === 'AS').length, 18, '國')];
+  PROG.LEGEND_CLASSIC_LIEFLAT = [pr(bizN, 50, '段', '商務平躺'), pr(realFlights.length, 150, '段', '總航段')];
+  const thTrips = pt.filter(t => tripHasTh(pf, t));
+  const thDistinct = keyFn => { const st = new Set(); pf.forEach(r => thCodesOf(r).forEach(c => { const k = keyFn(c); if (k) st.add(k); })); return st.size; };
+  PROG.TH_AIRPORTS_8 = [pr(thDistinct(c => c), 8, '個')];
+  PROG.TH_TRIP_REGIONS_4 = [pr(tripMax(g => { const rg = new Set(); g.forEach(r => thCodesOf(r).forEach(c => { if (TH_REGIONS5.includes(AIRPORT_REGIONS[c].region)) rg.add(AIRPORT_REGIONS[c].region); })); return rg.size; }), 4, '區', '單趟最高')];
+  PROG.TH_DOMESTIC_5 = [pr(pf.filter(isThDomestic).length, 5, '段')];
+  PROG.TH_MONTHS_12 = [pr(new Set(pf.filter(r => thCodesOf(r).length).map(r => r.date.slice(5, 7))).size, 12, '個月')];
+  PROG.TH_TRIPS_20 = [pr(thTrips.length, 20, '趟')];
+  PROG.TH_YEAR_5 = [pr(perYearMax(thTrips, t => t.startDate.slice(0, 4)), 5, '趟', '單年最高')];
+  PROG.FEST_NATIONAL_3 = [pr(natlHits(pf).length, 3, '國')];
+  PROG.FEST_NATIONAL_8 = [pr(natlHits(pf).length, 8, '國')];
+  [2, 5, 10].forEach(n => { PROG['SAME_COUNTRY_' + n] = [pr(maxCountryStreak(pf, pt), n, '趟', '最長連續')]; });
+  [1, 5, 15].forEach(n => { PROG['BIZ_LOOP_' + n] = [pr(bizLoopTrips(pf, pt).length, n, '趟')]; });
+  ACHIEVEMENTS_DEF.forEach(a => { if (PROG[a.id]) a.progress = PROG[a.id]; });
+
+  let unlockedTotal = 0;
+  ACHIEVEMENTS_DEF.forEach(item => {
+    const unlockDate = item.evalReal();
+    item.isUnlocked = !!unlockDate;
+    item.unlockDate = unlockDate;
+    item.isPlanned = !item.isUnlocked && item.checkPlan();
+    if (item.isUnlocked) unlockedTotal++;
+  });
+
+  return {
+    achievements: ACHIEVEMENTS_DEF,
+    unlockedTotal: unlockedTotal,
+    totalCount: ACHIEVEMENTS_DEF.length,
+    realLegsCount: realFlights.length,
+    realBizCount: realFlights.filter(r => (r.airline||'').includes('商') || (r.airline||'').includes('平躺')).length,
+    visitedCountriesCount: realCountries.size
+  };
+}
+
+// 渲染 Steam 成就陳列室 (發光時間戳記 ＆ 階梯分類)
+function renderAchievementsRoom() {
+  const data = evaluateAchievementsState();
+  const container = document.getElementById('achievementsContainer');
+  if (!container) return;
+
+  document.getElementById('metricAchieveCount').innerText = `${data.unlockedTotal} / ${data.totalCount}`;
+  document.getElementById('metricCountryCount').innerText = `${data.visitedCountriesCount} 國`;
+  document.getElementById('metricBizCount').innerText = `${data.realBizCount} 腿`;
+  document.getElementById('metricLegCount').innerText = `${data.realLegsCount} 腿`;
+
+  let rankTitle = `飛行學徒 · ${userName}`;
+  let badgeLvl = 'Lv.1 探索新手';
+  if (data.realLegsCount >= 60) {
+    rankTitle = `亞太傳奇特工 · ${userName}`;
+    badgeLvl = 'Lv.10 寰宇總指揮官 ★★★★★';
+  } else if (data.realLegsCount >= 40) {
+    rankTitle = `資深跨國特工 · ${userName}`;
+    badgeLvl = 'Lv.8 亞洲拓荒特工 ★★★★';
+  } else if (data.realLegsCount >= 20) {
+    rankTitle = `區域飛行特工 · ${userName}`;
+    badgeLvl = 'Lv.5 經常飛行者 ★★★';
+  }
+  document.getElementById('agentRankTitle').innerText = rankTitle;
+  document.getElementById('agentBadgeLevel').innerText = badgeLvl;
+
+  const catMap = {};
+  data.achievements.forEach(item => {
+    if (!catMap[item.cat]) catMap[item.cat] = [];
+    catMap[item.cat].push(item);
+  });
+
+  let html = '';
+  for (let cat in catMap) {
+    const list = catMap[cat];
+    const catUnlocked = list.filter(i => i.isUnlocked).length;
+    html += `
+      <div class="achieve-category-title">
+        <span>${cat}</span>
+        <span style="font-size:11px; font-weight:normal; color:#94a3b8; font-family:Consolas, monospace;">(${catUnlocked} / ${list.length} 解鎖)</span>
+      </div>
+      <div class="achieve-grid">
+    `;
+
+    list.forEach(item => {
+      let stateCls = 'locked';
+      let pillHtml = '<span class="badge-status-pill locked">🔒 尚未解鎖</span>';
+
+      if (item.isUnlocked) {
+        stateCls = 'unlocked';
+        pillHtml = `<span class="badge-status-pill unlocked">🏆 於 ${item.unlockDate} 飛完解鎖</span>`;
+      } else if (item.isPlanned) {
+        stateCls = 'planned';
+        pillHtml = '<span class="badge-status-pill planned">⏳ 規劃中 (已排定出發)</span>';
+      }
+
+      let progHtml = '';
+      if (item.progress) {
+        progHtml = item.progress.map(p => {
+          const cur = Math.min(p.cur, p.max);
+          const pct = Math.round(cur / p.max * 100);
+          return `<div class="badge-progress"><div class="badge-progress-track"><div class="badge-progress-fill" style="width:${pct}%"></div></div>` +
+                 `<span class="badge-progress-text">${p.label ? p.label + ' ' : ''}${cur} / ${p.max} ${p.unit || ''}</span></div>`;
+        }).join('');
+      }
+      html += `
+        <div class="steam-badge-card ${stateCls}${item.progress ? ' has-progress' : ''}">
+          <div class="badge-icon-box">${item.icon}</div>
+          <div class="badge-text-box">
+            <div class="badge-name">${item.name}</div>
+            <div class="badge-desc">${item.desc}</div>
+            ${progHtml}
+            ${pillHtml}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+// ── 唯讀分享頁：讀取 share.json ──
+function initShareMode() {
+  const noop = () => {};
+  ['updateField','deleteRow','insertRowAfter','duplicateRow','quickAddFlight','openBuffModal','saveBuffModal','clearCurrentBuff',
+   'openBenefitMgr','addCustomBenefit','restoreDefaultBenefits','resetData','triggerImportJSON','handleJSONFile','promptNextUnknownAirport']
+    .forEach(n => { if (typeof window[n] === 'function') window[n] = noop; });
+  const el = document.getElementById('userNameEl');
+  if (el) { el.setAttribute('contenteditable', 'false'); el.removeAttribute('title'); }
+  const b = document.createElement('div');
+  b.id = 'shareBanner'; b.className = 'share-banner';
+  b.innerHTML = `👀 <strong>唯讀分享頁</strong><span id="shareBannerMsg">載入 share.json 中…</span><a href="${location.pathname}">✏️ 建立我自己的行程表</a>`;
+  document.body.insertBefore(b, document.body.firstChild);
+  loadShareData();
+}
+function setShareMsg(html) { const m = document.getElementById('shareBannerMsg'); if (m) m.innerHTML = html; }
+function applyShareData(data) {
+  const fl = Array.isArray(data) ? data : (data && data.flights);
+  if (!Array.isArray(fl)) throw new Error('檔案格式不符 (找不到 flights)');
+  flightData = fl.filter(r => r && typeof r === 'object').map(r => {
+    const o = Object.assign({}, r);
+    const y = parseInt(o.section_year, 10);
+    o.section_year = y || ((o.date && /^\d{4}/.test(o.date)) ? parseInt(o.date.slice(0, 4), 10) : new Date().getFullYear());
+    return o;
+  });
+  sortFlightsChronologically();
+  if (!Array.isArray(data) && Array.isArray(data.benefits)) { benefits = normalizeBenefits(data.benefits); syncQuotaDefs(); }
+  if (!Array.isArray(data) && data.profile && data.profile.name) userName = cleanName(data.profile.name);
+  if (!Array.isArray(data) && data.customAirports && typeof data.customAirports === 'object') {
+    Object.entries(data.customAirports).forEach(([k, v]) => { if (/^[A-Z]{3}$/.test(k) && COUNTRY_INFO[v]) customAirports[k] = v; });
+    applyCustomAirports();
+  }
+  currentYearFilter = 'ALL';
+  syncQuotaSelectOptions();
+  renderTable();
+  applyUserName();
+  const when = (!Array.isArray(data) && data.exportedAt) ? `，資料更新於 ${String(data.exportedAt).slice(0, 10)}` : '';
+  setShareMsg(`${userName}的行程，共 ${flightData.length} 筆航段${when}。這個頁面只能看，不能修改。`);
+  if (new URLSearchParams(location.search).get('tab') === 'achievements') switchMainTab('achievements');
+}
+function showShareFallback(reason) {
+  setShareMsg(`讀不到資料 (${reason})。若是直接雙擊開啟本機檔案，請放到網站上，或在這裡選擇 share.json 預覽： <input type="file" id="shareFileInput" accept=".json">`);
+  const inp = document.getElementById('shareFileInput');
+  if (inp) inp.onchange = ev => {
+    const f = ev.target.files[0]; if (!f) return;
+    const rd = new FileReader();
+    rd.onload = e => { try { applyShareData(JSON.parse(e.target.result)); } catch (err) { setShareMsg('檔案讀取失敗：' + err.message); } };
+    rd.readAsText(f);
+  };
+}
+async function loadShareData() {
+  let srcName = new URLSearchParams(location.search).get('src') || 'share.json';
+  if (!/^[\w\-.]+\.json$/.test(srcName) || srcName.includes('..')) srcName = 'share.json';   // 只允許同資料夾的 .json 檔名
+  try {
+    const res = await fetch(srcName + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    applyShareData(await res.json());
+  } catch (e) {
+    showShareFallback(String(e && e.message || e));
+  }
+}
+
+// 啟動渲染
+syncQuotaSelectOptions();
+renderTable();
+if (IS_SHARE) initShareMode();
+if (!IS_SHARE) setTimeout(promptNextUnknownAirport, 400);
+
+// 名稱可編輯 (點標題中的名字，Enter 或離開輸入框就儲存)
+(function initUserName() {
+  const el = document.getElementById('userNameEl');
+  if (el) {
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } });
+    el.addEventListener('blur', () => { setUserName(el.textContent); el.textContent = userName; });
+    el.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData.getData('text') || '').replace(/[\r\n]+/g, ' ')); });
+  }
+  applyUserName();
+})();
+
+// 第一次開啟 (或瀏覽器資料被清空)：提醒目前是範例資料，引導匯入備份
+if (!IS_SHARE && IS_FIRST_VISIT && !SafeStorage.get('heng_welcome_seen')) {
+  const b = document.createElement('div');
+  b.id = 'welcomeBanner'; b.className = 'welcome-banner';
+  b.innerHTML = '👋 目前顯示的是<strong>範例資料</strong>。有備份檔的話請按「匯入 JSON」還原；沒有的話直接改名字、開始新增自己的行程即可。' +
+    '<button onclick="triggerImportJSON()">📂 匯入 JSON</button><button onclick="SafeStorage.set(\'heng_welcome_seen\',\'1\');this.parentNode.remove()">我知道了</button>';
+  document.body.insertBefore(b, document.body.firstChild);
+}
+</script>
+</body>
+</html>

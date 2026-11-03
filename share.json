@@ -1,0 +1,2447 @@
+{
+  "version": 2,
+  "profile": {
+    "name": "恆"
+  },
+  "exportedAt": "2026-10-30T10:24:01.433Z",
+  "flights": [
+    {
+      "section_year": 2016,
+      "date": "2016-03-03",
+      "route": "TPE-NRT",
+      "airline": "酷航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2016,
+      "date": "2016-03-07",
+      "route": "NRT-TPE",
+      "airline": "威航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2016,
+      "date": "2016-10-07",
+      "route": "TPE-HKG",
+      "airline": "華航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2016,
+      "date": "2016-10-11",
+      "route": "HKG-TPE",
+      "airline": "華航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2018,
+      "date": "2018-01-10",
+      "route": "TPE-KIX",
+      "airline": "捷星",
+      "buff": "國旅卡",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2018,
+      "date": "2018-01-14",
+      "route": "KIX-TPE",
+      "airline": "捷星",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2018,
+      "date": "2018-07-13",
+      "route": "TPE-SIN",
+      "airline": "酷航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2018,
+      "date": "2018-07-16",
+      "route": "SIN-TPE",
+      "airline": "酷航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2019,
+      "date": "2019-01-25",
+      "route": "TPE-BKK",
+      "airline": "華航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2019,
+      "date": "2019-01-30",
+      "route": "BKK-TPE",
+      "airline": "華航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2019,
+      "date": "2019-04-19",
+      "route": "TPE-SGN",
+      "airline": "越捷",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2019,
+      "date": "2019-04-22",
+      "route": "SGN-TPE",
+      "airline": "越捷",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2019,
+      "date": "2019-09-11",
+      "route": "TPE-CRK",
+      "airline": "菲亞航",
+      "buff": "延遲補償",
+      "leave": "",
+      "channel": "跟團",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2019,
+      "date": "2019-09-15",
+      "route": "CRK-TPE",
+      "airline": "菲亞航",
+      "buff": "",
+      "leave": "",
+      "channel": "跟團",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2019,
+      "date": "2019-11-09",
+      "route": "TPE-FUK",
+      "airline": "長榮",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2019,
+      "date": "2019-11-14",
+      "route": "FUK-TPE",
+      "airline": "長榮",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2020,
+      "date": "2020-01-03",
+      "route": "TPE-MFM",
+      "airline": "虎航",
+      "buff": "延遲補償",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2020,
+      "date": "2020-01-06",
+      "route": "MFM-TPE",
+      "airline": "虎航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2020,
+      "date": "2020-01-22",
+      "route": "TPE-HKD",
+      "airline": "虎航",
+      "buff": "",
+      "leave": "",
+      "channel": "跟團",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2020,
+      "date": "2020-01-26",
+      "route": "HKD-TPE",
+      "airline": "虎航",
+      "buff": "",
+      "leave": "",
+      "channel": "跟團",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2020,
+      "date": "2020-02-28",
+      "route": "TPE-HAN",
+      "airline": "越捷",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2020,
+      "date": "2020-03-03",
+      "route": "HAN-TPE",
+      "airline": "越捷",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2022,
+      "date": "2022-10-06",
+      "route": "TPE-BKK",
+      "airline": "星宇",
+      "buff": "",
+      "leave": "",
+      "channel": "跟團",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2022,
+      "date": "2022-10-13",
+      "route": "BKK-TPE",
+      "airline": "星宇",
+      "buff": "",
+      "leave": "",
+      "channel": "跟團",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2022,
+      "date": "2022-12-08",
+      "route": "TPE-KIX",
+      "airline": "虎航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2022,
+      "date": "2022-12-11",
+      "route": "ITM-OKA",
+      "airline": "ANA",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2022,
+      "date": "2022-12-12",
+      "route": "OKA-TPE",
+      "airline": "虎航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-01-19",
+      "route": "TPE-MNL",
+      "airline": "長榮",
+      "buff": "",
+      "leave": "",
+      "channel": "跟團",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-01-26",
+      "route": "MNL-TPE",
+      "airline": "長榮",
+      "buff": "",
+      "leave": "",
+      "channel": "跟團",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-02-23",
+      "route": "TPE-DMK",
+      "airline": "虎航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-02-28",
+      "route": "BKK-TPE",
+      "airline": "華航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-03-15",
+      "route": "TPE-CGK",
+      "airline": "長榮",
+      "buff": "",
+      "leave": "",
+      "channel": "跟團",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-03-21",
+      "route": "CGK-TPE",
+      "airline": "長榮",
+      "buff": "",
+      "leave": "",
+      "channel": "跟團",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-04-22",
+      "route": "TPE-CRK",
+      "airline": "長榮",
+      "buff": "國旅卡貴賓室",
+      "leave": 1,
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-04-24",
+      "route": "CRK-TPE",
+      "airline": "長榮",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-06-21",
+      "route": "TPE-HAN",
+      "airline": "越航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-06-25",
+      "route": "HAN-TPE",
+      "airline": "越航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-09-07",
+      "route": "TPE-CEB",
+      "airline": "宿霧",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-09-10",
+      "route": "CEB-TPE",
+      "airline": "宿霧",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-10-07",
+      "route": "TPE-DMK",
+      "airline": "獅航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2023,
+      "date": "2023-10-15",
+      "route": "BKK-TPE",
+      "airline": "泰航",
+      "buff": "",
+      "leave": "",
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-01-04",
+      "route": "TPE-OKJ",
+      "airline": "虎航",
+      "buff": "",
+      "leave": 3,
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-01-08",
+      "route": "OKJ-TPE",
+      "airline": "虎航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-02-08",
+      "route": "TPE-CGK",
+      "airline": "長榮",
+      "buff": "被帶貴賓室",
+      "leave": 3,
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-02-14",
+      "route": "CGK-DPS",
+      "airline": "citylink",
+      "buff": "被帶貴賓室",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-02-17",
+      "route": "DPS-TPE",
+      "airline": "長榮",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-02-28",
+      "route": "TPE-BKK",
+      "airline": "華航",
+      "buff": "被帶貴賓室",
+      "leave": 2,
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-03-03",
+      "route": "BKK-TPE",
+      "airline": "華航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-04-03",
+      "route": "TPE-NRT",
+      "airline": "酷航(+)",
+      "buff": "",
+      "leave": 2,
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-04-08",
+      "route": "NRT-TPE",
+      "airline": "國泰(商)",
+      "buff": "貴賓室",
+      "leave": "",
+      "channel": "易遊網",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "國泰外站",
+        "color": "yellow"
+      }
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-06-06",
+      "route": "TPE-NRT",
+      "airline": "國泰(商)",
+      "buff": "貴賓室",
+      "leave": 3,
+      "channel": "易遊網",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "國泰外站",
+        "color": "yellow"
+      }
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-06-11",
+      "route": "KIX-TPE",
+      "airline": "峇迪",
+      "buff": "",
+      "leave": 2.5,
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-07-18",
+      "route": "TPE-KUL",
+      "airline": "亞航",
+      "buff": "",
+      "leave": "",
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-07-20",
+      "route": "KUL-AOR",
+      "airline": "馬航",
+      "buff": "",
+      "leave": "",
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-07-22",
+      "route": "HDY-BKK",
+      "airline": "亞航",
+      "buff": "",
+      "leave": "",
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-07-22",
+      "route": "BKK-TPE",
+      "airline": "星宇",
+      "buff": "JCB貴賓室",
+      "leave": "",
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-09-13",
+      "route": "TPE-CRK",
+      "airline": "長榮",
+      "buff": "被帶貴賓室",
+      "leave": 2,
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-09-17",
+      "route": "CRK-TPE",
+      "airline": "長榮",
+      "buff": "被帶貴賓室",
+      "leave": "",
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-10-09",
+      "route": "TPE-HAN",
+      "airline": "越捷",
+      "buff": "",
+      "leave": 1,
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-10-13",
+      "route": "HAN-TPE",
+      "airline": "越捷",
+      "buff": "JCB貴賓室",
+      "leave": "",
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-11-28",
+      "route": "TPE-CGK",
+      "airline": "華航",
+      "buff": "匯豐接1貴1",
+      "leave": 2,
+      "channel": "AGODA",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2024,
+      "date": "2024-12-02",
+      "route": "CGK-TPE",
+      "airline": "華航",
+      "buff": "被帶貴賓室優先行李",
+      "leave": "",
+      "channel": "AGODA",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-01-23",
+      "route": "TPE-BKK",
+      "airline": "華航",
+      "buff": "",
+      "leave": 2,
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-01-24",
+      "route": "BKK-CNX",
+      "airline": "曼航",
+      "buff": "曼谷航空貴賓室",
+      "leave": "",
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-01-26",
+      "route": "CNX-UTP",
+      "airline": "獅航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-01-31",
+      "route": "BKK-PNH",
+      "airline": "曼航",
+      "buff": "被帶貴賓室",
+      "leave": "",
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-02-03",
+      "route": "PNH-TPE",
+      "airline": "華航",
+      "buff": "被帶貴賓室",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-02-27",
+      "route": "TPE-CGK",
+      "airline": "長榮(哩商)",
+      "buff": "貴賓室",
+      "leave": 3,
+      "channel": "哩程/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-03-03",
+      "route": "CGK-SIN",
+      "airline": "酷航",
+      "buff": "",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-03-04",
+      "route": "SIN-TPE",
+      "airline": "酷航",
+      "buff": "JCB貴賓室1-1",
+      "leave": "",
+      "channel": "官網",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-03-29",
+      "route": "TPE-NRT",
+      "airline": "星宇(ASM)",
+      "buff": "匯豐送2貴2",
+      "leave": 3,
+      "channel": "哩程/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-04-03",
+      "route": "KIX-ICN",
+      "airline": "德威",
+      "buff": "日JCB貴賓室",
+      "leave": "",
+      "channel": "TRIP",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-04-06",
+      "route": "ICN-TPE",
+      "airline": "大韓(商)",
+      "buff": "貴賓室",
+      "leave": "",
+      "channel": "官網/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-05-23",
+      "route": "TPE-DMK",
+      "airline": "獅航",
+      "buff": "",
+      "leave": 1,
+      "channel": "LY/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-05-25",
+      "route": "BKK-TPE",
+      "airline": "泰越捷",
+      "buff": "JCB貴賓室1-2",
+      "leave": "",
+      "channel": "LY/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-07-17",
+      "route": "TPE-BKK",
+      "airline": "華航",
+      "buff": "友人龍騰(絕版)",
+      "leave": 2,
+      "channel": "LY/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-07-21",
+      "route": "BKK-TPE",
+      "airline": "華航",
+      "buff": "JCB貴賓室2-1",
+      "leave": "",
+      "channel": "LY/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-09-11",
+      "route": "TPE-MNL",
+      "airline": "宿霧太平洋",
+      "buff": "trip.com貴賓室白金1",
+      "leave": 2,
+      "channel": "TRIP/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-09-11",
+      "route": "MNL-PPS",
+      "airline": "菲航",
+      "buff": "",
+      "leave": "",
+      "channel": "TRIP/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-09-14",
+      "route": "PPS-MNL",
+      "airline": "宿霧太平洋",
+      "buff": "",
+      "leave": "",
+      "channel": "TRIP/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-09-14",
+      "route": "MNL-TPE",
+      "airline": "菲亞航",
+      "buff": "匯豐接1",
+      "leave": "",
+      "channel": "官網/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-10-09",
+      "route": "TPE-SGN",
+      "airline": "越航",
+      "buff": "匯豐貴1",
+      "leave": 3,
+      "channel": "官網/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-10-11",
+      "route": "SGN-DAD",
+      "airline": "越捷",
+      "buff": "",
+      "leave": "",
+      "channel": "TRIP/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-10-14",
+      "route": "DAD-TPE",
+      "airline": "星宇(ASM商)",
+      "buff": "貴賓室",
+      "leave": "",
+      "channel": "里程/匯豐",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "AS里程組合",
+        "color": "orange"
+      }
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-10-24",
+      "route": "TPE-OKA",
+      "airline": "星宇(ASM商)",
+      "buff": "貴賓室",
+      "leave": 0,
+      "channel": "里程/匯豐",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "AS里程組合",
+        "color": "orange"
+      }
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-10-25",
+      "route": "OKA-HND",
+      "airline": "天馬",
+      "buff": "",
+      "leave": "",
+      "channel": "TRIP/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-10-26",
+      "route": "NRT-TPE",
+      "airline": "獅航",
+      "buff": "",
+      "leave": "",
+      "channel": "TRIP/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-11-27",
+      "route": "TPE-CGK",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": 2,
+      "channel": "AGODA/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2025,
+      "date": "2025-12-01",
+      "route": "CGK-TPE",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": "",
+      "channel": "AGODA/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-01-14",
+      "route": "TPE-SDJ",
+      "airline": "星宇(ASM)",
+      "buff": "匯豐貴2",
+      "leave": 3,
+      "channel": "哩程/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-01-18",
+      "route": "NRT-TPE",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室 匯豐接2",
+      "leave": "",
+      "channel": "TRIP/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-02-14",
+      "route": "TPE-CGK",
+      "airline": "長榮",
+      "buff": "中信指定貴賓室1",
+      "leave": 0,
+      "channel": "TRIP/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-02-19",
+      "route": "CGK-TPE",
+      "airline": "長榮",
+      "buff": "中信指定貴賓室2",
+      "leave": "",
+      "channel": "TRIP/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-02-26",
+      "route": "TPE-HAN",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": 2,
+      "channel": "官網/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-03-02",
+      "route": "HAN-TPE",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": "",
+      "channel": "官網/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-03-27",
+      "route": "TPE-BKK",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": 4,
+      "channel": "LY/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-03-28",
+      "route": "DMK-VTE",
+      "airline": "泰亞航",
+      "buff": "中信指定貴賓室3",
+      "leave": "",
+      "channel": "官網/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-04-04",
+      "route": "UTH-BKK",
+      "airline": "泰航",
+      "buff": "",
+      "leave": "",
+      "channel": "TRIP/中信",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-04-05",
+      "route": "BKK-TPE",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室 中信接送1",
+      "leave": "",
+      "channel": "LY/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-06-19",
+      "route": "TPE-NGO",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": 2,
+      "channel": "TRIP/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-06-23",
+      "route": "NRT-TPE",
+      "airline": "酷航PLUS",
+      "buff": "trip貴賓室鑽石1",
+      "leave": "",
+      "channel": "TRIP/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-07-23",
+      "route": "TPE-CGK",
+      "airline": "華航(FB商)",
+      "buff": "貴賓室 中信接送2",
+      "leave": 2.2,
+      "channel": "哩程/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-07-27",
+      "route": "CGK-TPE",
+      "airline": "長榮",
+      "buff": "匯豐御貴1接1",
+      "leave": "",
+      "channel": "TRIP/國泰",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "長榮套票 (CGK-TPE-NRT)",
+        "color": "cyan"
+      }
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-09-25",
+      "route": "TPE-NRT",
+      "airline": "長榮",
+      "buff": "trip貴賓室鑽石2(舊額度)",
+      "leave": 2,
+      "channel": "TRIP/國泰",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "長榮套票 (CGK-TPE-NRT)",
+        "color": "cyan"
+      }
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-09-30",
+      "route": "KIX-TPE",
+      "airline": "亞航X平躺座",
+      "buff": "匯豐御貴2接2",
+      "leave": "",
+      "channel": "官網/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-10-07",
+      "route": "TPE-CRK",
+      "airline": "星宇",
+      "buff": "匯豐無貴1",
+      "leave": 1.5,
+      "channel": "TRIP/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-10-11",
+      "route": "CRK-TPE",
+      "airline": "星宇",
+      "buff": "匯豐無貴2",
+      "leave": "",
+      "channel": "TRIP/匯豐",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-12-23",
+      "route": "TPE-BKK",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": 1,
+      "channel": "官網/中信",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2026,
+      "date": "2026-12-27",
+      "route": "BKK-TPE",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": "",
+      "channel": "官網/中信",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-01-08",
+      "route": "TPE-BKK",
+      "airline": "泰越捷",
+      "buff": "匯豐無貴3",
+      "leave": 1.5,
+      "channel": "官網/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-01-11",
+      "route": "BKK-TPE",
+      "airline": "泰越捷",
+      "buff": "JCB貴賓室",
+      "leave": "",
+      "channel": "官網/國泰",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-02-03",
+      "route": "TPE-CGK",
+      "airline": "華航商",
+      "buff": "貴賓室",
+      "leave": 3,
+      "channel": "哩程/中信",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-02-07",
+      "route": "CGK-TPE",
+      "airline": "長榮哩商",
+      "buff": "貴賓室",
+      "leave": "",
+      "channel": "哩程/匯豐",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "長榮里程轉機票",
+        "color": "cyan"
+      }
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-02-08",
+      "route": "TSA-HND",
+      "airline": "長榮哩商",
+      "buff": "貴賓室 匯豐無接",
+      "leave": "",
+      "channel": "哩程/匯豐",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "長榮里程轉機票",
+        "color": "cyan"
+      }
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-02-14",
+      "route": "NRT-TPE",
+      "airline": "日航",
+      "buff": "匯豐無貴4",
+      "leave": "",
+      "channel": "官網/匯豐",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "日航外站票 (NRT-TPE-KIX)",
+        "color": "purple"
+      }
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-02-27",
+      "route": "TPE-HAN",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": 3,
+      "channel": "TRIP/中信",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-02-28",
+      "route": "HAN-CXR",
+      "airline": "越航",
+      "buff": "匯豐無貴",
+      "leave": "",
+      "channel": "",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-03-04",
+      "route": "SGN-TPE",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": "",
+      "channel": "TRIP/中信",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-04-03",
+      "route": "TPE-",
+      "airline": "",
+      "buff": "",
+      "leave": 2,
+      "channel": "",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-04-06",
+      "route": "-TPE",
+      "airline": "",
+      "buff": "",
+      "leave": "",
+      "channel": "",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-04-15",
+      "route": "TPE-BWN",
+      "airline": "汶萊航空",
+      "buff": "匯豐無貴",
+      "leave": 4,
+      "channel": "TRIP/中信",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-04-17",
+      "route": "BWN-BKK",
+      "airline": "汶萊航空",
+      "buff": "trip貴賓室鑽石2",
+      "leave": "",
+      "channel": "TRIP/中信",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-04-20",
+      "route": "BKK-TPE",
+      "airline": "華航",
+      "buff": "華航金卡貴賓室",
+      "leave": "",
+      "channel": "agoda/匯豐無",
+      "swipe_date": "2026-09-20"
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-06-05",
+      "route": "TPE-KIX",
+      "airline": "日航(華航執飛)",
+      "buff": "華航金卡貴賓室(應該有)",
+      "leave": 3,
+      "channel": "官網/匯豐",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "日航外站票 (NRT-TPE-KIX)",
+        "color": "purple"
+      }
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-06-10",
+      "route": "KIX-TPE",
+      "airline": "星宇(ASM商)",
+      "buff": "貴賓室",
+      "leave": "",
+      "channel": "哩程/匯豐",
+      "swipe_date": "2026-07-31"
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-07-30",
+      "route": "TPE-CGK",
+      "airline": "長榮哩商",
+      "buff": "貴賓室",
+      "leave": 2,
+      "channel": "哩程/匯豐無",
+      "swipe_date": "2026-10-05"
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-08-02",
+      "route": "CGK-TPE",
+      "airline": "",
+      "buff": "匯豐無貴",
+      "leave": "",
+      "channel": "",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "CGK-TPE-NRT組合",
+        "color": "orange"
+      }
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-10-08",
+      "route": "TPE-BKK-RGN",
+      "airline": "泰航",
+      "buff": "匯豐無貴 JCB貴賓室",
+      "leave": 3,
+      "channel": "",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-10-11",
+      "route": "RGN-HAN",
+      "airline": "緬甸航空",
+      "buff": "匯豐無貴",
+      "leave": "",
+      "channel": "",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-10-13",
+      "route": "HAN-TPE",
+      "airline": "星宇(ASM商)",
+      "buff": "貴賓室",
+      "leave": "",
+      "channel": "",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "阿拉斯加大法",
+        "color": "pink"
+      }
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-10-23",
+      "route": "TPE-OKA",
+      "airline": "星宇(ASM商)",
+      "buff": "貴賓室",
+      "leave": "",
+      "channel": "",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "阿拉斯加大法",
+        "color": "pink"
+      }
+    },
+    {
+      "section_year": 2027,
+      "date": "2027-10-25",
+      "route": "OKA-TPE",
+      "airline": "",
+      "buff": "匯豐無貴",
+      "leave": "",
+      "channel": "",
+      "swipe_date": ""
+    },
+    {
+      "section_year": 2028,
+      "date": "2028-01-06",
+      "route": "TPE-NRT",
+      "airline": "",
+      "buff": "",
+      "leave": "",
+      "channel": "",
+      "swipe_date": "",
+      "customFrame": {
+        "label": "CGK-TPE-NRT組合",
+        "color": "orange"
+      }
+    },
+    {
+      "section_year": 2028,
+      "date": "2028-01-06",
+      "route": "NRT-TPE",
+      "airline": "",
+      "buff": "",
+      "leave": "",
+      "channel": "",
+      "swipe_date": ""
+    }
+  ],
+  "benefits": [
+    {
+      "enabled": true,
+      "endDate": "",
+      "offsets": {},
+      "mode": "prefix",
+      "keywords": [
+        "匯豐無貴"
+      ],
+      "limit": 8,
+      "cycleType": "JUL",
+      "cls": "buff-hsbc-lounge",
+      "group": "HSBC",
+      "unit": "貴",
+      "builtin": true,
+      "id": "HSBC_INF_LOUNGE",
+      "name": "🦁 匯豐無限貴賓室",
+      "short": "無限貴賓室"
+    },
+    {
+      "enabled": true,
+      "endDate": "",
+      "offsets": {},
+      "mode": "prefix",
+      "keywords": [
+        "匯豐無接",
+        "匯豐無送"
+      ],
+      "limit": 4,
+      "cycleType": "JUL",
+      "cls": "buff-transfer",
+      "group": "HSBC",
+      "unit": "接",
+      "builtin": true,
+      "id": "HSBC_INF_TRANS",
+      "name": "🚐 匯豐無限接送",
+      "short": "無限接送"
+    },
+    {
+      "enabled": false,
+      "endDate": "2026-10-31",
+      "offsets": {},
+      "mode": "prefix",
+      "keywords": [
+        "中信指定貴賓室"
+      ],
+      "limit": 4,
+      "cycleType": "JAN",
+      "cls": "buff-ctbc-lounge",
+      "group": "CTBC",
+      "unit": "貴",
+      "builtin": true,
+      "id": "CTBC_LOUNGE",
+      "name": "✈️ 中信指定貴賓室",
+      "short": "指定貴賓室"
+    },
+    {
+      "enabled": false,
+      "endDate": "",
+      "offsets": {},
+      "mode": "prefix",
+      "keywords": [
+        "中信接送"
+      ],
+      "limit": 2,
+      "cycleType": "JAN",
+      "cls": "buff-transfer",
+      "group": "CTBC",
+      "unit": "接",
+      "builtin": true,
+      "id": "CTBC_TRANS",
+      "name": "🚐 中信華航接送",
+      "short": "接送"
+    },
+    {
+      "enabled": true,
+      "endDate": "",
+      "offsets": {},
+      "mode": "prefix",
+      "keywords": [
+        "trip貴賓室鑽石"
+      ],
+      "limit": 2,
+      "cycleType": "AUG",
+      "cls": "buff-trip-lounge",
+      "group": "TRIP",
+      "unit": "次",
+      "builtin": true,
+      "id": "TRIP_DIA_LOUNGE",
+      "name": "💎 Trip鑽石貴賓室",
+      "short": "鑽石貴賓室"
+    },
+    {
+      "enabled": true,
+      "endDate": "",
+      "offsets": {},
+      "mode": "contains",
+      "keywords": [
+        "JCB"
+      ],
+      "limit": 4,
+      "cycleType": "JAN",
+      "cls": "buff-jcb-lounge",
+      "group": "STATUS",
+      "unit": "次",
+      "builtin": true,
+      "id": "JCB_LOUNGE",
+      "name": "💳 JCB免費貴賓室",
+      "short": "JCB貴賓室",
+      "modalToken": "JCB貴賓室"
+    },
+    {
+      "enabled": true,
+      "endDate": "",
+      "offsets": {},
+      "mode": "prefix",
+      "keywords": [
+        "國旅卡"
+      ],
+      "limit": 2,
+      "cycleType": "JAN",
+      "cls": "buff-biz-lounge",
+      "group": "STATUS",
+      "unit": "次",
+      "builtin": false,
+      "id": "CUSTOM_1793328470077",
+      "name": "🆕國旅卡貴賓室"
+    }
+  ],
+  "customAirports": {},
+  "achievements": [
+    {
+      "id": "JP_LAND",
+      "name": "【初次上陸：日出之國】",
+      "unlocked": true,
+      "unlockDate": "2016-03-03",
+      "planned": false
+    },
+    {
+      "id": "JP_SERVICE",
+      "name": "【日式服務】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_TRAVERSE",
+      "name": "【大和縱貫線】",
+      "unlocked": true,
+      "unlockDate": "2022-12-11",
+      "planned": false
+    },
+    {
+      "id": "JP_SENGOKU",
+      "name": "【戰國征途】",
+      "unlocked": true,
+      "unlockDate": "2026-09-30",
+      "planned": false
+    },
+    {
+      "id": "JP_PREF_10",
+      "name": "【十都道府縣俱樂部】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_DOMESTIC_5",
+      "name": "【國內線常客】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_REMOTE_5",
+      "name": "【地方創生大使】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_CARRIERS_4",
+      "name": "【日系航空四天王】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_ISLANDS_3",
+      "name": "【離島跳島達人】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_SAKURA_3",
+      "name": "【花見常客】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_TRIPS_15",
+      "name": "【日本不算出國】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "JP_YEAR_4",
+      "name": "【日本是第二個家】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_ICE_FIRE",
+      "name": "【冰與火之歌】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_DOMESTIC_CHAIN",
+      "name": "【日本境內連環跳】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_NORTH_SOUTH",
+      "name": "【日本縱貫大動脈】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_ALL_REGIONS",
+      "name": "【日本全地方制霸】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "JP_PREF_20",
+      "name": "【日本半壁江山】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "TH_LAND",
+      "name": "【初次上陸：微笑之國】",
+      "unlocked": true,
+      "unlockDate": "2019-01-25",
+      "planned": false
+    },
+    {
+      "id": "TH_DUAL",
+      "name": "【暹羅雙機場之主】",
+      "unlocked": true,
+      "unlockDate": "2023-02-23",
+      "planned": false
+    },
+    {
+      "id": "TH_NORTH",
+      "name": "【泰北玫瑰】",
+      "unlocked": true,
+      "unlockDate": "2025-01-24",
+      "planned": false
+    },
+    {
+      "id": "TH_AIRPORTS_8",
+      "name": "【泰國機場收藏家】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "TH_DOMESTIC_5",
+      "name": "【泰國國內線常客】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "TH_NORTH_SOUTH",
+      "name": "【泰國縱貫大動脈】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "TH_TRIP_REGIONS_4",
+      "name": "【泰國環島大冒險】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "FEST_SONGKRAN",
+      "name": "【潑水節倖存者】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "TH_YEAR_5",
+      "name": "【一年五度泰國】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "TH_MONTHS_12",
+      "name": "【泰國四季輪迴】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "TH_TRIPS_20",
+      "name": "【曼谷是我家後院】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "KR_LAND",
+      "name": "【初次上陸：晨靜之國】",
+      "unlocked": true,
+      "unlockDate": "2025-04-03",
+      "planned": false
+    },
+    {
+      "id": "KR_HANRIVER",
+      "name": "【漢江鐵鳥過客】",
+      "unlocked": true,
+      "unlockDate": "2025-04-03",
+      "planned": false
+    },
+    {
+      "id": "HK_LAND",
+      "name": "【初次上陸：香江之畔】",
+      "unlocked": true,
+      "unlockDate": "2016-10-07",
+      "planned": false
+    },
+    {
+      "id": "HK_PIER",
+      "name": "【東方之珠的轉盤】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "MO_LAND",
+      "name": "【初次上陸：濠江蓮花】",
+      "unlocked": true,
+      "unlockDate": "2020-01-03",
+      "planned": false
+    },
+    {
+      "id": "MO_HK_OPENJAW",
+      "name": "【東方蒙地卡羅】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "CN_LAND",
+      "name": "【初次上陸：神州大地】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "CN_TIER1",
+      "name": "【九百六十萬平方公里】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "MN_LAND",
+      "name": "【初次上陸：藍天之國】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "VN_LAND",
+      "name": "【初次上陸：安南古境】",
+      "unlocked": true,
+      "unlockDate": "2019-04-19",
+      "planned": false
+    },
+    {
+      "id": "VN_UNIFY",
+      "name": "【南北統一鐵鳥】",
+      "unlocked": true,
+      "unlockDate": "2025-10-11",
+      "planned": false
+    },
+    {
+      "id": "ID_LAND",
+      "name": "【初次上陸：千島之國】",
+      "unlocked": true,
+      "unlockDate": "2023-03-15",
+      "planned": false
+    },
+    {
+      "id": "ID_ISLANDS",
+      "name": "【千島萬島任我行】",
+      "unlocked": true,
+      "unlockDate": "2024-02-14",
+      "planned": false
+    },
+    {
+      "id": "PH_LAND",
+      "name": "【初次上陸：西太平洋明珠】",
+      "unlocked": true,
+      "unlockDate": "2019-09-11",
+      "planned": false
+    },
+    {
+      "id": "PH_PALAWAN",
+      "name": "【最後的處女地】",
+      "unlocked": true,
+      "unlockDate": "2025-09-11",
+      "planned": false
+    },
+    {
+      "id": "MY_LAND",
+      "name": "【初次上陸：大馬風情】",
+      "unlocked": true,
+      "unlockDate": "2024-07-18",
+      "planned": false
+    },
+    {
+      "id": "MY_BORNEO",
+      "name": "【國的兩端】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "SG_LAND",
+      "name": "【初次上陸：獅城星洲】",
+      "unlocked": true,
+      "unlockDate": "2018-07-13",
+      "planned": false
+    },
+    {
+      "id": "SG_CHANGI",
+      "name": "【星耀樟宜的中繼站】",
+      "unlocked": true,
+      "unlockDate": "2025-03-04",
+      "planned": false
+    },
+    {
+      "id": "BN_LAND",
+      "name": "【初次上陸：和平之國】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "BN_ROYAL",
+      "name": "【黃金帝國的國教】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "KH_LAND",
+      "name": "【初次上陸：高棉大地】",
+      "unlocked": true,
+      "unlockDate": "2025-01-31",
+      "planned": false
+    },
+    {
+      "id": "KH_ANGKOR",
+      "name": "【高棉古國的掠影】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LA_LAND",
+      "name": "【初次上陸：瀾滄古國】",
+      "unlocked": true,
+      "unlockDate": "2026-03-28",
+      "planned": false
+    },
+    {
+      "id": "LA_SLOW",
+      "name": "【瀾滄王國的慢時光】",
+      "unlocked": true,
+      "unlockDate": "2026-04-05",
+      "planned": false
+    },
+    {
+      "id": "MM_LAND",
+      "name": "【初次上陸：萬塔佛國】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "MM_IRRAWADDY",
+      "name": "【伊洛瓦底的天空】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "TL_LAND",
+      "name": "【初次上陸：東帝汶・最年輕的國度】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "IN_LAND",
+      "name": "【初次上陸：天竺不思議】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "IN_HOLY",
+      "name": "【恆河聖域的洗禮】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "MV_LAND",
+      "name": "【初次上陸：散落洋上的珍珠】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LK_LAND",
+      "name": "【初次上陸：印度洋之淚】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "NP_LAND",
+      "name": "【初次上陸：雪山之巔】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "AE_LAND",
+      "name": "【初次上陸：沙漠奇蹟】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "AE_24H",
+      "name": "【土豪之都的二十四小時】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "TR_LAND",
+      "name": "【初次上陸：歐亞十字路口】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "UZ_LAND",
+      "name": "【初次上陸：絲路心臟】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "CONT_EU",
+      "name": "【歐陸拓荒者 (The Grand Tour)】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "CONT_NA",
+      "name": "【跨越太平洋 (Pacific Conqueror)】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "CONT_OC",
+      "name": "【南十字星的召喚 (Down Under)】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "CONT_AF",
+      "name": "【非洲大陸的呼喚 (Out of Africa)】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "CONT_SA",
+      "name": "【世界的盡頭 (South America)】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "TRIP_COUNT_1",
+      "name": "【出國見習生】",
+      "unlocked": true,
+      "unlockDate": "2016-03-07",
+      "planned": false
+    },
+    {
+      "id": "TRIP_COUNT_20",
+      "name": "【經常飛行者】",
+      "unlocked": true,
+      "unlockDate": "2023-10-15",
+      "planned": false
+    },
+    {
+      "id": "YEARLY_8",
+      "name": "【年度打卡王】",
+      "unlocked": true,
+      "unlockDate": "2024-10-13",
+      "planned": false
+    },
+    {
+      "id": "TRIP_COUNT_50",
+      "name": "【護照消耗者】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "TRIP_COUNT_100",
+      "name": "【亞太特派員】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "PASSPORT_STAMPS",
+      "name": "【護照不是集點卡嗎】",
+      "unlocked": true,
+      "unlockDate": "2025-01-31",
+      "planned": false
+    },
+    {
+      "id": "THREE_COUNTRIES",
+      "name": "【一張機票玩三國】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "LOVE_APT_3",
+      "name": "【你一定很愛他】",
+      "unlocked": true,
+      "unlockDate": "2024-06-06",
+      "planned": false
+    },
+    {
+      "id": "SAME_COUNTRY_2",
+      "name": "【專情的人】",
+      "unlocked": true,
+      "unlockDate": "2024-06-11",
+      "planned": false
+    },
+    {
+      "id": "LOVE_APT_5",
+      "name": "【當走廚房】",
+      "unlocked": true,
+      "unlockDate": "2025-07-17",
+      "planned": false
+    },
+    {
+      "id": "SAME_COUNTRY_5",
+      "name": "【此國不渝】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LOVE_APT_10",
+      "name": "【榮譽市民】",
+      "unlocked": true,
+      "unlockDate": "2024-07-22",
+      "planned": false
+    },
+    {
+      "id": "SAME_COUNTRY_10",
+      "name": "【非你不可】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "BIZ_TIER_1",
+      "name": "【躺平初體驗】",
+      "unlocked": true,
+      "unlockDate": "2024-04-08",
+      "planned": false
+    },
+    {
+      "id": "MILES_ALCHEMIST",
+      "name": "【里程煉金術士】",
+      "unlocked": true,
+      "unlockDate": "2026-01-14",
+      "planned": false
+    },
+    {
+      "id": "BIZ_TIER_5",
+      "name": "【商務艙學徒】",
+      "unlocked": true,
+      "unlockDate": "2025-10-14",
+      "planned": false
+    },
+    {
+      "id": "BIZ_LOOP_1",
+      "name": "【成功人士的生活】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "BIZ_TIER_15",
+      "name": "【高空品酩家】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "BIZ_LOOP_5",
+      "name": "【財富自由預備軍】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "BIZ_TIER_30",
+      "name": "【雲端起居室】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "BIZ_LOOP_15",
+      "name": "【我的人生沒有經濟艙】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LOUNGE_TIER_1",
+      "name": "【貴賓室初嚐】",
+      "unlocked": true,
+      "unlockDate": "2023-04-22",
+      "planned": false
+    },
+    {
+      "id": "LOUNGE_TIER_15",
+      "name": "【候機吃飽黨】",
+      "unlocked": true,
+      "unlockDate": "2025-02-03",
+      "planned": false
+    },
+    {
+      "id": "LOUNGE_RESIDENT",
+      "name": "【貴賓室常駐人口】",
+      "unlocked": true,
+      "unlockDate": "2025-12-01",
+      "planned": false
+    },
+    {
+      "id": "LOUNGE_TIER_35",
+      "name": "【貴賓室老鴇】",
+      "unlocked": true,
+      "unlockDate": "2026-03-02",
+      "planned": false
+    },
+    {
+      "id": "LOUNGE_TIER_60",
+      "name": "【地表最強白嫖怪】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "FRAME_TIER_1",
+      "name": "【外站開票初階】",
+      "unlocked": true,
+      "unlockDate": "2024-04-08",
+      "planned": false
+    },
+    {
+      "id": "OUTSTATION_ALCHEMY",
+      "name": "【外站票煉金術】",
+      "unlocked": true,
+      "unlockDate": "2022-12-11",
+      "planned": false
+    },
+    {
+      "id": "FRAME_COLLECTOR",
+      "name": "【套票集郵家】",
+      "unlocked": true,
+      "unlockDate": "2026-07-27",
+      "planned": false
+    },
+    {
+      "id": "FRAME_TIER_10",
+      "name": "【外站操盤手】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": true
+    },
+    {
+      "id": "FRAME_TIER_20",
+      "name": "【航網工程師】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "FRAME_TIMEWARP",
+      "name": "【時空扭曲大師】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "AIRLINE_BUFFET",
+      "name": "【航空公司自助餐】",
+      "unlocked": true,
+      "unlockDate": "2020-01-03",
+      "planned": false
+    },
+    {
+      "id": "LCC_BELIEVER",
+      "name": "【廉航信徒】",
+      "unlocked": true,
+      "unlockDate": "2020-01-03",
+      "planned": false
+    },
+    {
+      "id": "TRANSIT_FORGOT",
+      "name": "【轉機轉到忘記目的地】",
+      "unlocked": true,
+      "unlockDate": "2024-07-22",
+      "planned": false
+    },
+    {
+      "id": "LEAVE_0D_1",
+      "name": "【週末快閃】",
+      "unlocked": true,
+      "unlockDate": "2025-10-26",
+      "planned": false
+    },
+    {
+      "id": "WEEKEND_ESCAPE",
+      "name": "【週末逃兵】",
+      "unlocked": true,
+      "unlockDate": "2025-05-25",
+      "planned": false
+    },
+    {
+      "id": "LEAVE_0D_3",
+      "name": "【假日收割機】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LEAVE_LOOPHOLE",
+      "name": "【請假系統的漏洞】",
+      "unlocked": true,
+      "unlockDate": "2026-02-19",
+      "planned": false
+    },
+    {
+      "id": "LEAVE_LEVER_5",
+      "name": "【連假精算師】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LEAVE_LEVER_10",
+      "name": "【時空漏洞特工】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "GAP_ANXIETY",
+      "name": "【空檔焦慮症】",
+      "unlocked": true,
+      "unlockDate": "2024-02-28",
+      "planned": false
+    },
+    {
+      "id": "GAP_AMNESIA",
+      "name": "【出國失憶症】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "TIME_REPORT",
+      "name": "【誠實申報】",
+      "unlocked": true,
+      "unlockDate": "2024-01-08",
+      "planned": false
+    },
+    {
+      "id": "SAME_DAY_DOUBLE",
+      "name": "【今天飛、今天還要飛】",
+      "unlocked": true,
+      "unlockDate": "2024-07-22",
+      "planned": false
+    },
+    {
+      "id": "MONTH_STREAK",
+      "name": "【月月出走】",
+      "unlocked": true,
+      "unlockDate": "2023-02-23",
+      "planned": false
+    },
+    {
+      "id": "NEW_YEAR_AWAY",
+      "name": "【跨年不回家】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "VALENTINE_ABROAD",
+      "name": "【情人節？不在台灣】",
+      "unlocked": true,
+      "unlockDate": "2024-02-17",
+      "planned": false
+    },
+    {
+      "id": "LONG_HAUL_TRIP",
+      "name": "【回家的路有點長】",
+      "unlocked": true,
+      "unlockDate": "2024-02-17",
+      "planned": false
+    },
+    {
+      "id": "FEST_JP_NYE",
+      "name": "【除夜之鐘】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "FEST_XMAS",
+      "name": "【聖誕節在歐美】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "FEST_NATIONAL_3",
+      "name": "【國慶日巡禮】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "FEST_NATIONAL_8",
+      "name": "【環球慶典特派員】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LEGEND_ODYSSEY",
+      "name": "【永恆里程碑：十萬哩大長征】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LEGEND_EMPIRES",
+      "name": "【天朝霸業：東亞三大帝國】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LEGEND_OVERLAP",
+      "name": "【神級特種兵：百萬時空裂隙】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LEGEND_ALL_ASIA",
+      "name": "【亞洲完全制霸：全版圖點燈】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LEGEND_CLASSIC_LIEFLAT",
+      "name": "【空中古典主義·極致躺平殿堂】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "LEGEND_DRAGON",
+      "name": "【堂島之龍的黃金足跡】",
+      "unlocked": false,
+      "unlockDate": null,
+      "planned": false
+    },
+    {
+      "id": "COVID_SURVIVOR",
+      "name": "【偉業・鎖國倖存者】",
+      "unlocked": true,
+      "unlockDate": "2022-10-06",
+      "planned": false
+    }
+  ]
+}
