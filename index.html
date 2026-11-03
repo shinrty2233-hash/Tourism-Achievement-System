@@ -48,6 +48,68 @@
   body.share-mode .top-actions, body.share-mode .quick-add-bar, body.share-mode .col-act, body.share-mode thead th:last-child { display: none !important; }
   body.share-mode [contenteditable], body.share-mode .cell-date-input { pointer-events: none; }
   body.share-mode .editable-name { border-bottom: none; cursor: default; }
+  .ach-filter { display: flex; gap: 6px; margin: 0 0 4px 0; }
+  .ach-filter button { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; border-radius: 14px; padding: 4px 14px; font-size: 12px; cursor: pointer; }
+  .ach-filter button.on { background: #0369a1; color: #fff; border-color: #38bdf8; font-weight: 700; }
+  .cell-date-text { font-family: Consolas, monospace; font-size: 12px; }
+  /* 唯讀頁 (桌機)：隱藏 年度 / 刷卡日 / 操作 欄；閉環的綠框改畫在日期欄 */
+  body.share-mode .col-year, body.share-mode .col-swipe, body.share-mode thead th:nth-child(2), body.share-mode thead th:nth-child(10) { display: none !important; }
+  body.share-mode tr.in-closed-loop td.col-date { border-left: 2px solid #16a34a !important; }
+  /* 手機版 */
+  @media (max-width: 760px) {
+    body { font-size: 13px; padding-bottom: 24px; }
+    .excel-topbar { padding: 6px 10px; flex-wrap: wrap; gap: 4px; }
+    .excel-title { flex-wrap: wrap; gap: 4px 8px; font-size: 12.5px; }
+    body.share-mode .btn-insert-gap { display: none !important; }
+  @media (max-width: 760px) {
+    body { padding-bottom: 46px; }
+    .excel-topbar { position: static; }
+    .share-banner { font-size: 12px; padding: 5px 10px; gap: 6px 10px; }
+    .excel-bottombar { height: auto; flex-direction: column; align-items: stretch; padding: 3px 6px 4px; gap: 3px; }
+    .sheet-tabs-container { height: auto; }
+    .sheet-tab-btn, .sheet-tab-btn.active { height: auto; padding: 6px 10px; white-space: nowrap; font-size: 12px; flex: 1; justify-content: center; }
+    #statusSummary { display: none; }
+    body.share-mode .filter-bar { display: none !important; }
+    body.share-mode table.excel-grid tbody tr.data-row td { border: 0 !important; background: transparent !important; }
+    body.share-mode tr.data-row .col-date { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 6px; }
+    body.share-mode .cell-date-text { white-space: nowrap; }
+    .gap-row-content { flex-wrap: wrap; gap: 4px; }
+  }
+  .badge-file { display: none; }
+    .next-trip-banner-box { padding: 3px 10px; font-size: 11px; }
+    .quota-ribbon { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; padding: 6px 8px; }
+    .quota-card { min-width: 250px; scroll-snap-align: start; flex: 0 0 auto; }
+    #view-achievements { padding: 10px 10px; }
+    .agent-profile-card { flex-direction: column; align-items: flex-start; padding: 14px; gap: 12px; }
+    .agent-metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 18px; width: 100%; }
+    .agent-metric-item { text-align: left; }
+    .achieve-grid { grid-template-columns: 1fr; }
+    .year-banner-inner { flex-wrap: wrap; }
+    .year-stat { margin-left: 0; flex-wrap: wrap; }
+    /* 唯讀頁：航班表改成卡片列 */
+    body.share-mode .table-container { overflow-x: visible; }
+    body.share-mode table.excel-grid, body.share-mode table.excel-grid tbody { display: block; width: 100%; }
+    body.share-mode table.excel-grid thead { display: none; }
+    body.share-mode table.excel-grid td { display: block; border: none !important; white-space: normal; overflow: visible; padding: 1px 0; background: transparent; box-shadow: none !important; }
+    body.share-mode tr.data-row { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; padding: 9px 12px; border-bottom: 1px solid #e5e7eb; background: #fff; border-left: 4px solid #d97706; }
+    body.share-mode tr.data-row.confirmed-row { border-left-color: #16a34a; background: #f7fcf9; }
+    body.share-mode tr.data-row.collapsed-hide { display: none !important; }
+    body.share-mode tr.data-row .row-num { display: none; }
+    body.share-mode tr.data-row .col-date { grid-column: 1; grid-row: 1; font-weight: 700; border: none !important; }
+    body.share-mode tr.data-row .col-wk { grid-column: 2; grid-row: 1; text-align: right; }
+    body.share-mode tr.data-row .col-route { grid-column: 1; grid-row: 2; font-size: 15px; font-weight: 800; font-family: Consolas, monospace; }
+    body.share-mode tr.data-row .col-air { grid-column: 2; grid-row: 2; text-align: right; }
+    body.share-mode tr.data-row .col-buff { grid-column: 1 / -1; grid-row: 3; }
+    body.share-mode tr.data-row.no-buff .col-buff { display: none; }
+    body.share-mode tr.data-row .col-leave { grid-column: 1; grid-row: 4; font-size: 11.5px; color: #475569; }
+    body.share-mode tr.data-row .col-leave:not(:empty)::before { content: '請假 '; }
+    body.share-mode tr.data-row .col-leave:empty { display: none; }
+    body.share-mode tr.data-row .col-chan { grid-column: 2; grid-row: 4; text-align: right; font-size: 11.5px; color: #475569; }
+    body.share-mode tr.data-row .channel-cell-wrap { justify-content: flex-end; }
+    body.share-mode tr.in-closed-loop { border-left-color: #16a34a; }
+    body.share-mode tr.year-banner-row td, body.share-mode tr td[colspan] { display: block; width: 100%; }
+    body.share-mode tr:not(.data-row) { display: block; }
+  }
   .badge-file { background: rgba(255,255,255,0.25); padding: 2px 7px; border-radius: 3px; font-size: 11px; }
   .top-actions { display: flex; align-items: center; gap: 6px; }
   .btn-tool {
@@ -834,6 +896,11 @@
     </div>
 
     <!-- 成就動態渲染容器 -->
+    <div class="ach-filter" id="achFilter">
+      <button data-f="all" class="on" onclick="setAchFilter('all')">全部</button>
+      <button data-f="unlocked" onclick="setAchFilter('unlocked')">🏆 已解鎖</button>
+      <button data-f="locked" onclick="setAchFilter('locked')">🔒 未解鎖</button>
+    </div>
     <div id="achievementsContainer"></div>
   </div>
 
@@ -955,6 +1022,7 @@ const SafeStorage = {
 
 // ── 唯讀分享模式：網址加 ?view=share，只讀取 share.json 顯示，不讀也不寫這個瀏覽器自己的資料 ──
 const IS_SHARE = new URLSearchParams(location.search).get('view') === 'share';
+const ROW_COLSPAN = IS_SHARE ? 7 : 10;   // 唯讀頁隱藏 年度/刷卡日/操作 三欄，橫條要跟著縮
 if (IS_SHARE) {
   SafeStorage.get = () => null;
   SafeStorage.set = () => {};
@@ -1588,7 +1656,7 @@ function renderTable() {
 
     bannerTr.innerHTML = `
       <td class="row-num"></td>
-      <td colspan="10">
+      <td colspan="${ROW_COLSPAN}">
         <div class="year-banner-inner">
           <span class="bn-arrow">${arrowSymbol}</span>
           <span class="year-banner-title">📅 ${yrNum} 年度 ${statusText}</span>
@@ -1667,13 +1735,13 @@ function renderTable() {
       if (badges.length > 0) {
         buffChipsHtml += badges.map(b => `<span class="buff-chip ${b.cls}">${b.label}</span>`).join('');
       }
-      const buffContainerHtml = buffChipsHtml || '<span style="color:#aaa;">＋ 點擊選取福利/外站套票</span>';
+      const buffContainerHtml = buffChipsHtml || (IS_SHARE ? '' : '<span style="color:#aaa;">＋ 點擊選取福利/外站套票</span>');
 
       const isPast = uiState.dimPast && row.date && row.date < todayStr;
       const isLeaveOverThree = !isNaN(leaveNum) && leaveNum >= 3;
 
       const tr = document.createElement('tr');
-      tr.className = `data-row ${loopCls} ${isConfirmed ? 'confirmed-row' : 'planned-row'}${isPast ? ' past-row' : ''}${yCollapsed ? ' collapsed-hide' : ''}`;
+      tr.className = `data-row ${loopCls} ${isConfirmed ? 'confirmed-row' : 'planned-row'}${isPast ? ' past-row' : ''}${yCollapsed ? ' collapsed-hide' : ''}${(IS_SHARE && !buffChipsHtml) ? ' no-buff' : ''}`;
       tr.id = `row-${idx}`;
       tr.dataset.year = yrNum;
       if (row.customFrame && row.customFrame.label) {
@@ -1686,7 +1754,7 @@ function renderTable() {
         <td class="col-date ${dateCellExtraCls}">
           ${hoverCardHtml}
           ${loopTag}
-          <input type="date" class="cell-date-input" value="${row.date || ''}" onchange="updateDateField(${idx}, this.value)">
+          ${IS_SHARE ? `<span class="cell-date-text">${row.date || ''}</span>` : `<input type="date" class="cell-date-input" value="${row.date || ''}" onchange="updateDateField(${idx}, this.value)">`}
         </td>
         <td class="col-wk"><span class="${wkCls}">${wk || '—'}</span></td>
         <td class="col-route editable-text" contenteditable="true" onblur="updateField(${idx}, 'route', this.innerText)">${row.route || ''}</td>
@@ -1731,7 +1799,7 @@ function renderTable() {
         gapTr.dataset.year = yrNum;
         gapTr.innerHTML = `
           <td class="row-num" style="background:#f8fafc; border-left:none;"></td>
-          <td colspan="10">
+          <td colspan="${ROW_COLSPAN}">
             <div class="gap-row-content">
               <div class="gap-left">
                 <span class="gap-pill ${pillCls}">${gapHint}</span>
@@ -4008,6 +4076,25 @@ function evaluateAchievementsState() {
   };
 }
 
+let achFilter = 'all';
+function setAchFilter(f) { achFilter = f; applyAchFilter(); }
+function applyAchFilter() {
+  const c = document.getElementById('achievementsContainer'); if (!c) return;
+  document.querySelectorAll('#achFilter button').forEach(b => b.classList.toggle('on', b.dataset.f === achFilter));
+  c.querySelectorAll('.achieve-grid').forEach(g => {
+    let vis = 0;
+    g.querySelectorAll('.steam-badge-card').forEach(card => {
+      const un = card.classList.contains('unlocked');
+      const show = achFilter === 'all' || (achFilter === 'unlocked' ? un : !un);
+      card.style.display = show ? '' : 'none';
+      if (show) vis++;
+    });
+    g.style.display = vis ? '' : 'none';
+    const t = g.previousElementSibling;
+    if (t && t.classList.contains('achieve-category-title')) t.style.display = vis ? '' : 'none';
+  });
+}
+
 // 渲染 Steam 成就陳列室 (發光時間戳記 ＆ 階梯分類)
 function renderAchievementsRoom() {
   const data = evaluateAchievementsState();
@@ -4090,16 +4177,19 @@ function renderAchievementsRoom() {
   }
 
   container.innerHTML = html;
+  applyAchFilter();
 }
 
 // ── 唯讀分享頁：讀取 share.json ──
 function initShareMode() {
   const noop = () => {};
   ['updateField','deleteRow','insertRowAfter','duplicateRow','quickAddFlight','openBuffModal','saveBuffModal','clearCurrentBuff',
-   'openBenefitMgr','addCustomBenefit','restoreDefaultBenefits','resetData','triggerImportJSON','handleJSONFile','promptNextUnknownAirport']
+   'insertTripInGap','openBenefitMgr','addCustomBenefit','restoreDefaultBenefits','resetData','triggerImportJSON','handleJSONFile','promptNextUnknownAirport']
     .forEach(n => { if (typeof window[n] === 'function') window[n] = noop; });
   const el = document.getElementById('userNameEl');
   if (el) { el.setAttribute('contenteditable', 'false'); el.removeAttribute('title'); }
+  const ths = document.querySelectorAll('thead th');
+  if (ths.length >= 9) { ths[2].textContent = '日期'; ths[6].textContent = '福利 / 外站套票'; ths[8].textContent = '購票方式'; }
   const b = document.createElement('div');
   b.id = 'shareBanner'; b.className = 'share-banner';
   b.innerHTML = `👀 <strong>唯讀分享頁</strong><span id="shareBannerMsg">載入 share.json 中…</span><a href="${location.pathname}">✏️ 建立我自己的行程表</a>`;
@@ -4125,10 +4215,20 @@ function applyShareData(data) {
   }
   currentYearFilter = 'ALL';
   syncQuotaSelectOptions();
+  if (new URLSearchParams(location.search).get('open') === 'all') {
+    uiState.collapsed = [];
+  } else {
+    // 預設只展開今年(含)以後；若沒有今年以後的資料，就展開最近一年。點年度橫條可展開/收合。
+    const ys = [...new Set(flightData.map(r => Number(r.section_year)).filter(Number.isFinite))].sort((a, b) => a - b);
+    const cur = Number(getTodayStr().slice(0, 4));
+    const open = ys.filter(y => y >= cur);
+    if (!open.length && ys.length) open.push(ys[ys.length - 1]);
+    uiState.collapsed = ys.filter(y => !open.includes(y)).map(y => 'Y' + y);
+  }
   renderTable();
   applyUserName();
   const when = (!Array.isArray(data) && data.exportedAt) ? `，資料更新於 ${String(data.exportedAt).slice(0, 10)}` : '';
-  setShareMsg(`${userName}的行程，共 ${flightData.length} 筆航段${when}。這個頁面只能看，不能修改。`);
+  setShareMsg(`${userName}的行程，共 ${flightData.length} 筆航段${when}。這個頁面只能看。點年度橫條可展開／收合歷史行程。`);
   if (new URLSearchParams(location.search).get('tab') === 'achievements') switchMainTab('achievements');
 }
 function showShareFallback(reason) {
